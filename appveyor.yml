@@ -13,7 +13,7 @@ assembly_info:
 environment:
   nuget_user: dd4t
   nuget_password:
-    secure: jddDaP9QBeCKjtrNE//jlw==
+    secure: fcubeaS+/aDXFPSjbqgrQg==
 install:
 - nuget sources add -Name Incentro -Source http://developer.incentro.com/nexus/service/local/nuget/tridion.net/ -UserName %nuget_user% -Password %nuget_password%
 - choco install msbuild.communitytasks -y
