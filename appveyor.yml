@@ -29,11 +29,4 @@ deploy:
 - provider: NuGet
   api_key:
     secure: fnfp0KvYrSJ4VETGtf4WyajYJnyKVIQsde+8uzQ42ERjcSPpCfX9fYlqrK3kHEp5
-  artifact: '*.nupkg'
-- provider: GitHub
-  tag: v{appveyor_build_version}
-  auth_token:
-    secure: UfVipK2YzugPd54B3ls2zFwGuZVeMTH9cXwP22V9RVO/AACEjvROyFGspb1/ljwm
-  artifact: '*.zip'
-  on:
-    branch: master
+  artifact: 'build/package/**/*.nupkg'
