@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package>
+  <metadata>
+    <id>DD4T.Providers.SDLTridion2011sp1</id>
+    <version></version>
+    <authors>DD4T Community</authors>
+    <owners>DD4T Community</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>DD4T Provider for SDL Tridion 2011 SP1</description>
+    <releaseNotes>
+    </releaseNotes>
+    <tags>SDLTridion Tridion DD4T</tags>
+    <dependencies>
+      <dependency id="DD4T.NET" version="2.0.0-alpha1" />
+    </dependencies>
+  </metadata>
+</package>
