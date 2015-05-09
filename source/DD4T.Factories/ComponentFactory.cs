@@ -58,6 +58,17 @@ namespace DD4T.Factories
             }
         }
 
+        private static XmlSerializer _componentPresentationSerializer = null;
+        private static XmlSerializer ComponentPresentationSerializer
+        {
+            get
+            {
+                if (_componentPresentationSerializer == null)
+                    _componentPresentationSerializer = new XmlSerializer(typeof(ComponentPresentation));
+                return _componentPresentationSerializer;
+            }
+        }
+
         #region IComponentFactory members
 
         /// <summary>
@@ -78,6 +89,23 @@ namespace DD4T.Factories
             return component;
         }
 
+        /// <summary>
+        /// Create IComponentPresentation from a string representing that IComponentPresentation (XML)
+        /// </summary>
+        /// <param name="componentPresentationStringContent">XML content to deserialize into an IComponent</param>
+        /// <returns></returns>
+        public IComponentPresentation GetIComponentPresentationObject(string componentPresentationStringContent)
+        {
+            XmlDocument xmlcontent = new XmlDocument();
+            xmlcontent.LoadXml(componentPresentationStringContent);
+
+            IComponentPresentation cp = null;
+            using (var reader = new XmlNodeReader(xmlcontent.DocumentElement))
+            {
+                cp = (IComponentPresentation)ComponentPresentationSerializer.Deserialize(reader);
+            }
+            return cp;
+        }
 
         /// <summary>
         /// Returns the Component contents which could be found. Components that couldn't be found don't appear in the list. 
@@ -92,6 +120,20 @@ namespace DD4T.Factories
                 components.Add(GetIComponentObject(content));
             }
             return components;
+        }
+
+        public IComponentPresentation GetComponentPresentation(string componentUri, string templateUri = "")
+        {
+            LoggerService.Debug(">>GetComponentPresentation ({0})", LoggingCategory.Performance, componentUri);
+            IComponentPresentation cp;
+            if (!TryGetComponentPresentation(componentUri, out cp, templateUri))
+            {
+                LoggerService.Debug("<<GetComponentPresentation ({0}) -- not found", LoggingCategory.Performance, componentUri);
+                throw new ComponentNotFoundException();
+            }
+
+            LoggerService.Debug("<<GetComponentPresentation ({0})", LoggingCategory.Performance, componentUri);
+            return cp;
         }
 
         public IList<IComponent> FindComponents(IQuery queryParameters, int pageIndex, int pageSize, out int totalCount)
@@ -138,6 +180,10 @@ namespace DD4T.Factories
             {
                 return GetLastPublishedDate(((IComponent)cachedItem).Id);
             }
+            if (cachedItem is IComponentPresentation)
+            {
+                return GetLastPublishedDate(((IComponentPresentation)cachedItem).Component.Id);
+            }
             throw new Exception(string.Format("GetLastPublishedDateCallBack called for unexpected object type '{0}' or with unexpected key '{1}'", cachedItem.GetType(), key));
         }
         /// <summary>
@@ -162,18 +208,18 @@ namespace DD4T.Factories
             }
         }
 
-        public bool TryGetComponent(string componentUri, out IComponent component, string templateUri = "")
+        private bool TryGetComponentPresentationOrComponent(string componentUri, out object cpOrComp, string templateUri = "")
         {
-            LoggerService.Debug(">>TryGetComponent ({0})", LoggingCategory.Performance, componentUri);
+            LoggerService.Debug(">>TryGetComponentPresentationOrComponent ({0})", LoggingCategory.Performance, componentUri);
 
-            component = null;
+            cpOrComp = null;
 
             string cacheKey = String.Format(CacheKeyFormatByUri, componentUri, templateUri);
-            component = (IComponent)CacheAgent.Load(cacheKey);
+            cpOrComp = CacheAgent.Load(cacheKey);
 
-            if (component != null)
+            if (cpOrComp != null)
             {
-                LoggerService.Debug("<<TryGetComponent ({0}) - from cache", LoggingCategory.Performance, componentUri);
+                LoggerService.Debug("<<TryGetComponentPresentationOrComponent ({0}) - from cache", LoggingCategory.Performance, componentUri);
                 return true;
             }
 
@@ -181,21 +227,61 @@ namespace DD4T.Factories
 
             if (string.IsNullOrEmpty(content))
             {
-                LoggerService.Debug("<<TryGetComponent ({0}) - from provider", LoggingCategory.Performance, componentUri);
+                LoggerService.Debug("<<TryGetComponentPresentationOrComponent ({0}) - from provider", LoggingCategory.Performance, componentUri);
                 return false;
             }
 
-            LoggerService.Debug("about to create IComponent from content ({0})", LoggingCategory.Performance, componentUri);
-            component = GetIComponentObject(content);
-            LoggerService.Debug("finished creating IComponent from content ({0})", LoggingCategory.Performance, componentUri);
+            // note: we need to introduce logic to detect the data format (json/xml, compressed/uncompressed) BEFORE we do this
+            // for the time being we will assume the data is uncompressed xml
+            if (content.StartsWith("<ComponentPresentation"))
+            {
+                cpOrComp = GetIComponentPresentationObject(content);
+                if (IncludeLastPublishedDate)
+                    ((ComponentPresentation)cpOrComp).Component.LastPublishedDate = ComponentProvider.GetLastPublishedDate(componentUri);
+            }
+            else
+            {
+                cpOrComp = GetIComponentObject(content);
+                if (IncludeLastPublishedDate)
+                    ((Component)cpOrComp).LastPublishedDate = ComponentProvider.GetLastPublishedDate(componentUri);
+            }
 
-            if (IncludeLastPublishedDate)
-                ((Component)component).LastPublishedDate = ComponentProvider.GetLastPublishedDate(componentUri);
-            LoggerService.Debug("about to store IComponent in cache ({0})", LoggingCategory.Performance, componentUri);
-            CacheAgent.Store(cacheKey, CacheRegion, component);
+            LoggerService.Debug("about to store object in cache ({0})", LoggingCategory.Performance, componentUri);
+            CacheAgent.Store(cacheKey, CacheRegion, cpOrComp);
             LoggerService.Debug("finished storing IComponent in cache ({0})", LoggingCategory.Performance, componentUri);
-            LoggerService.Debug("<<TryGetComponent ({0})", LoggingCategory.Performance, componentUri);
+            LoggerService.Debug("<<TryGetComponentPresentationOrComponent ({0})", LoggingCategory.Performance, componentUri);
             return true;
+        }
+
+        public bool TryGetComponentPresentation(string componentUri, out IComponentPresentation cp, string templateUri = "")
+        {
+            object cpobj = null;
+            if (TryGetComponentPresentationOrComponent(componentUri, out cpobj, templateUri))
+            {
+                cp = (IComponentPresentation)cpobj;
+                return true;
+            }
+            cp = null;
+            return false;
+        }
+
+        public bool TryGetComponent(string componentUri, out IComponent component, string templateUri = "")
+        {
+            object compobj = null;
+            if (TryGetComponentPresentationOrComponent(componentUri, out compobj, templateUri))
+            {
+                if (compobj is IComponentPresentation)
+                {
+                    component = ((IComponentPresentation)compobj).Component;
+                }
+                else
+                {
+                    component = (IComponent)compobj;
+                }
+                return true;
+            }
+            component = null;
+            return false;
         }
 
         public IComponent GetComponent(string componentUri, string templateUri = "")

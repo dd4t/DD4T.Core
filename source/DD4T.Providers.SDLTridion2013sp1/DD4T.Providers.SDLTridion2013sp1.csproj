@@ -60,75 +60,45 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DD4T.ContentModel">
-      <HintPath>..\packages\DD4T-Model.2.0.2-beta\lib\DD4T.ContentModel.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="DD4T.ContentModel, Version=2.0.0.0, Culture=neutral, PublicKeyToken=4450e3c7f68bf872, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\DD4T2-MODEL-DRAFT.2.0.0.1\lib\DD4T.ContentModel.dll</HintPath>
     </Reference>
-    <Reference Include="DD4T.ContentModel.Contracts">
-      <HintPath>..\packages\DD4T-Model.2.0.2-beta\lib\DD4T.ContentModel.Contracts.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="DD4T.ContentModel.Contracts, Version=2.0.0.0, Culture=neutral, PublicKeyToken=4450e3c7f68bf872, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\DD4T2-MODEL-DRAFT.2.0.0.1\lib\DD4T.ContentModel.Contracts.dll</HintPath>
     </Reference>
-    <Reference Include="DD4T.ContentModel.XmlSerializers">
-      <HintPath>..\packages\DD4T-Model.2.0.2-beta\lib\DD4T.ContentModel.XmlSerializers.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="DD4T.ContentModel.XmlSerializers, Version=2.0.0.0, Culture=neutral, PublicKeyToken=4450e3c7f68bf872, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\DD4T2-MODEL-DRAFT.2.0.0.1\lib\DD4T.ContentModel.XmlSerializers.dll</HintPath>
     </Reference>
-    <Reference Include="DD4T.Serialization">
-      <HintPath>..\packages\DD4T-Model.2.0.2-beta\lib\DD4T.Serialization.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="DD4T.Serialization, Version=2.0.0.0, Culture=neutral, PublicKeyToken=4450e3c7f68bf872, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\DD4T2-MODEL-DRAFT.2.0.0.1\lib\DD4T.Serialization.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\DD4T-Model.2.0.2-beta\lib\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="log4net, Version=1.2.11.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Visual Studio 2013\Projects\SmartTargetDemo\Tridion 2013 SP1 DLLs\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="netrtsn">
+      <HintPath>..\..\..\Visual Studio 2013\Projects\SmartTargetDemo\Tridion 2013 SP1 DLLs\netrtsn.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Web" />
     <Reference Include="System.Data" />
-    <Reference Include="Tridion.Common">
-      <HintPath>..\packages\sdl-tridion-content-delivery-2013-sp1.1.0.2\lib\net40\Tridion.Common.dll</HintPath>
-    </Reference>
     <Reference Include="Tridion.ContentDelivery">
-      <HintPath>..\packages\sdl-tridion-content-delivery-2013-sp1.1.0.2\lib\net40\Tridion.ContentDelivery.dll</HintPath>
+      <HintPath>..\..\..\Visual Studio 2013\Projects\SmartTargetDemo\Tridion 2013 SP1 DLLs\Tridion.ContentDelivery.dll</HintPath>
     </Reference>
     <Reference Include="Tridion.ContentDelivery.AmbientData">
-      <HintPath>..\packages\sdl-tridion-content-delivery-2013-sp1.1.0.2\lib\net40\Tridion.ContentDelivery.AmbientData.dll</HintPath>
+      <HintPath>..\..\..\Visual Studio 2013\Projects\SmartTargetDemo\Tridion 2013 SP1 DLLs\Tridion.ContentDelivery.AmbientData.dll</HintPath>
     </Reference>
     <Reference Include="Tridion.ContentDelivery.Configuration">
-      <HintPath>..\packages\sdl-tridion-content-delivery-2013-sp1.1.0.2\lib\net40\Tridion.ContentDelivery.Configuration.dll</HintPath>
+      <HintPath>..\..\..\Visual Studio 2013\Projects\SmartTargetDemo\Tridion 2013 SP1 DLLs\Tridion.ContentDelivery.Configuration.dll</HintPath>
     </Reference>
     <Reference Include="Tridion.ContentDelivery.Interop">
-      <HintPath>..\packages\sdl-tridion-content-delivery-2013-sp1.1.0.2\lib\net40\Tridion.ContentDelivery.Interop.dll</HintPath>
-    </Reference>
-    <Reference Include="Tridion.ContentManager">
-      <HintPath>..\packages\sdl-tridion-content-delivery-2013-sp1.1.0.2\lib\net40\Tridion.ContentManager.dll</HintPath>
-    </Reference>
-    <Reference Include="Tridion.ContentManager.Common">
-      <HintPath>..\packages\sdl-tridion-content-delivery-2013-sp1.1.0.2\lib\net40\Tridion.ContentManager.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="Tridion.ContentManager.Publishing">
-      <HintPath>..\packages\sdl-tridion-content-delivery-2013-sp1.1.0.2\lib\net40\Tridion.ContentManager.Publishing.dll</HintPath>
-    </Reference>
-    <Reference Include="Tridion.ContentManager.Queuing">
-      <HintPath>..\packages\sdl-tridion-content-delivery-2013-sp1.1.0.2\lib\net40\Tridion.ContentManager.Queuing.dll</HintPath>
-    </Reference>
-    <Reference Include="Tridion.ContentManager.TemplateTypes">
-      <HintPath>..\packages\sdl-tridion-content-delivery-2013-sp1.1.0.2\lib\net40\Tridion.ContentManager.TemplateTypes.dll</HintPath>
-    </Reference>
-    <Reference Include="Tridion.ContentManager.Templating">
-      <HintPath>..\packages\sdl-tridion-content-delivery-2013-sp1.1.0.2\lib\net40\Tridion.ContentManager.Templating.dll</HintPath>
-    </Reference>
-    <Reference Include="Tridion.ContentManager.TypeRegistration">
-      <HintPath>..\packages\sdl-tridion-content-delivery-2013-sp1.1.0.2\lib\net40\Tridion.ContentManager.TypeRegistration.dll</HintPath>
-    </Reference>
-    <Reference Include="Tridion.ExternalContentLibrary">
-      <HintPath>..\packages\sdl-tridion-content-delivery-2013-sp1.1.0.2\lib\net40\Tridion.ExternalContentLibrary.dll</HintPath>
-    </Reference>
-    <Reference Include="Tridion.ExternalContentLibrary.V2">
-      <HintPath>..\packages\sdl-tridion-content-delivery-2013-sp1.1.0.2\lib\net40\Tridion.ExternalContentLibrary.V2.dll</HintPath>
-    </Reference>
-    <Reference Include="Tridion.Logging">
-      <HintPath>..\packages\sdl-tridion-content-delivery-2013-sp1.1.0.2\lib\net40\Tridion.Logging.dll</HintPath>
+      <HintPath>..\..\..\Visual Studio 2013\Projects\SmartTargetDemo\Tridion 2013 SP1 DLLs\Tridion.ContentDelivery.Interop.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -152,10 +122,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Newtonsoft.Json.xml" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
