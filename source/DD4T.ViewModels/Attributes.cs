@@ -79,7 +79,7 @@ namespace DD4T.ViewModels.Attributes
         }
     }
     /// <summary>
-    /// A Rich Text field
+    /// A Rich Text field. Uses the default ResolveRichText extension method.
     /// </summary>
     public class RichTextFieldAttribute : FieldAttributeBase
     {
@@ -87,7 +87,7 @@ namespace DD4T.ViewModels.Attributes
         public override IEnumerable GetFieldValues(IField field, IModelProperty property, ITemplate template, IViewModelFactory factory)
         {
             return field.Values.Cast<string>()
-                .Select(v => v.ResolveRichText()); //Hidden dependency on DD4T implementation
+                .Select(v => v.ResolveRichText()); //Hidden dependency on DD4T Resolve Rich Text implementation
         }
 
         public override Type ExpectedReturnType

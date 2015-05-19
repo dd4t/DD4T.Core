@@ -32,16 +32,24 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DD4T.ContentModel">
+    <Reference Include="DD4T.ContentModel, Version=2.0.0.0, Culture=neutral, PublicKeyToken=4450e3c7f68bf872, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\DD4T-Model.2.0.2-beta\lib\DD4T.ContentModel.dll</HintPath>
     </Reference>
-    <Reference Include="DD4T.ContentModel.XmlSerializers">
+    <Reference Include="DD4T.ContentModel.Contracts, Version=2.0.0.0, Culture=neutral, PublicKeyToken=4450e3c7f68bf872, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\DD4T-Model.2.0.2-beta\lib\DD4T.ContentModel.Contracts.dll</HintPath>
+    </Reference>
+    <Reference Include="DD4T.ContentModel.XmlSerializers, Version=2.0.0.0, Culture=neutral, PublicKeyToken=4450e3c7f68bf872, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\DD4T-Model.2.0.2-beta\lib\DD4T.ContentModel.XmlSerializers.dll</HintPath>
     </Reference>
-    <Reference Include="DD4T.Serialization">
+    <Reference Include="DD4T.Serialization, Version=2.0.0.0, Culture=neutral, PublicKeyToken=4450e3c7f68bf872, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\DD4T-Model.2.0.2-beta\lib\DD4T.Serialization.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json">
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\DD4T-Model.2.0.2-beta\lib\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
@@ -72,20 +80,16 @@
     <Compile Include="XPM\XpmMarkupService.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Newtonsoft.Json.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\dd4t-2-model\source\DD4T.ContentModel.Contracts\DD4T.ContentModel.Contracts.csproj">
-      <Project>{c21f66f0-01ce-4af3-b76c-cd262b7ea1c0}</Project>
-      <Name>DD4T.ContentModel.Contracts</Name>
-    </ProjectReference>
     <ProjectReference Include="..\DD4T.Mvc\DD4T.Mvc.csproj">
       <Project>{3ac37be3-9832-4317-a5e2-2c24c61decbd}</Project>
       <Name>DD4T.Mvc</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Newtonsoft.Json.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
