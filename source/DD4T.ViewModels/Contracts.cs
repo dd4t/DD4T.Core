@@ -548,15 +548,15 @@ namespace DD4T.ViewModels.Contracts
         /// <summary>
         /// If true, this Field is multi-value
         /// </summary>
-        bool AllowMultipleValues { get; }
+        //bool AllowMultipleValues { get; }
         /// <summary>
         /// Inline Editable - for semantic purposes only
         /// </summary>
-        bool InlineEditable { get; }
+        //bool InlineEditable { get; }
         /// <summary>
         /// Is Mandatory - for semantic purposes only
         /// </summary>
-        bool Mandatory { get; }
+        //bool Mandatory { get; }
         /// <summary>
         /// True if this is a Metadata Field of the Model
         /// </summary>

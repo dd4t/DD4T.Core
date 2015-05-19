@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using DD4T.ViewModels.Attributes;
-using Dynamic = DD4T.ContentModel;
 using DD4T.ViewModels.Contracts;
 using DD4T.ViewModels.Reflection;
 using DD4T.Mvc.Html;
@@ -25,13 +24,13 @@ namespace DD4T.ViewModels.Attributes
         //public ResolvedUrlFieldAttribute(string fieldName) : base(fieldName) { }
         public override IEnumerable GetFieldValues(IField field, IModelProperty property, ITemplate template, IViewModelFactory factory)
         {
-            return field.Values.Cast<Dynamic.IComponent>()
+            return field.Values.Cast<IComponent>()
                 .Select(x => x.GetResolvedUrl());
         }
 
         public override Type ExpectedReturnType
         {
-            get { return AllowMultipleValues ? typeof(IList<string>) : typeof(string); }
+            get { return typeof(string); }
         }
     }
 
@@ -43,12 +42,12 @@ namespace DD4T.ViewModels.Attributes
         //public MultimediaFieldAttribute(string fieldName) : base(fieldName) { }
         public override IEnumerable GetFieldValues(IField field, IModelProperty property, ITemplate template, IViewModelFactory factory)
         {
-            return field.Values.Cast<Dynamic.IComponent>().Select(x => x.Multimedia);
+            return field.Values.Cast<IComponent>().Select(x => x.Multimedia);
         }
 
         public override Type ExpectedReturnType
         {
-            get { return AllowMultipleValues ? typeof(IList<Dynamic.IMultimedia>) : typeof(Dynamic.IMultimedia); }
+            get { return typeof(IMultimedia); }
         }
     }
     /// <summary>
@@ -75,9 +74,7 @@ namespace DD4T.ViewModels.Attributes
         {
             get
             {
-                if (AllowMultipleValues)
-                    return IsBooleanValue ? typeof(IList<bool>) : typeof(IList<string>);
-                else return IsBooleanValue ? typeof(bool) : typeof(string);
+                return IsBooleanValue ? typeof(bool) : typeof(string);
             }
         }
     }
@@ -95,7 +92,7 @@ namespace DD4T.ViewModels.Attributes
 
         public override Type ExpectedReturnType
         {
-            get { return AllowMultipleValues ? typeof(IList<MvcHtmlString>) : typeof(MvcHtmlString); }
+            get { return typeof(MvcHtmlString); }
         }
     }
     /// <summary>
@@ -111,7 +108,7 @@ namespace DD4T.ViewModels.Attributes
 
         public override Type ExpectedReturnType
         {
-            get { return AllowMultipleValues ? typeof(IList<double>) : typeof(double); }
+            get { return typeof(double); }
         }
 
     }
@@ -128,7 +125,7 @@ namespace DD4T.ViewModels.Attributes
 
         public override Type ExpectedReturnType
         {
-            get { return AllowMultipleValues ? typeof(IList<DateTime>) : typeof(DateTime); }
+            get { return typeof(DateTime); }
         }
     }
     /// <summary>
@@ -144,7 +141,7 @@ namespace DD4T.ViewModels.Attributes
         public override IEnumerable GetFieldValues(IField field, IModelProperty property, ITemplate template, IViewModelFactory factory)
         {
             IEnumerable value = null;
-            var values = field.Values.Cast<Dynamic.IKeyword>();
+            var values = field.Values.Cast<IKeyword>();
             if (IsBooleanValue)
                 value = values.Select(k => { bool b; return bool.TryParse(k.Key, out b) && b; });
             else value = values.Select(k => k.Key);
@@ -159,9 +156,7 @@ namespace DD4T.ViewModels.Attributes
         {
             get
             {
-                if (AllowMultipleValues)
-                    return IsBooleanValue ? typeof(IList<bool>) : typeof(IList<string>);
-                else return IsBooleanValue ? typeof(bool) : typeof(string);
+                return IsBooleanValue ? typeof(bool) : typeof(string);
             }
         }
     }
@@ -173,7 +168,7 @@ namespace DD4T.ViewModels.Attributes
         //public NumericKeywordKeyFieldAttribute(string fieldName) : base(fieldName) { }
         public override IEnumerable GetFieldValues(IField field, IModelProperty property, ITemplate template, IViewModelFactory factory)
         {
-            return field.Values.Cast<Dynamic.IKeyword>()
+            return field.Values.Cast<IKeyword>()
                 .Select(k => { double i; double.TryParse(k.Key, out i); return i; });
         }
 
@@ -181,7 +176,7 @@ namespace DD4T.ViewModels.Attributes
         {
             get
             {
-                return AllowMultipleValues ? typeof(IList<double>) : typeof(double);
+                return typeof(double);
             }
         }
     }
@@ -248,7 +243,7 @@ namespace DD4T.ViewModels.Attributes
 
         public override IEnumerable GetPropertyValues(IComponent component, IModelProperty property, ITemplate template, IViewModelFactory factory)
         {
-            Dynamic.IMultimedia[] result = null;
+            IMultimedia[] result = null;
             if (component != null && component.Multimedia != null)
             {
                 result = new IMultimedia[] { component.Multimedia };
@@ -258,7 +253,7 @@ namespace DD4T.ViewModels.Attributes
 
         public override Type ExpectedReturnType
         {
-            get { return typeof(Dynamic.IMultimedia); }
+            get { return typeof(IMultimedia); }
         }
     }
     /// <summary>
@@ -342,7 +337,7 @@ namespace DD4T.ViewModels.Attributes
 
         public override Type ExpectedReturnType
         {
-            get { return AllowMultipleValues ? typeof(IList<Enum>) : typeof(Enum); }
+            get { return typeof(Enum); }
         }
 
         private bool EnumTryParse(Type enumType, object value, out object parsedEnum)

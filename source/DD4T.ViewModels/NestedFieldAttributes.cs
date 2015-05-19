@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using DD4T.ViewModels.Attributes;
-using Dynamic = DD4T.ContentModel;
 using DD4T.ViewModels.Contracts;
 using DD4T.ViewModels.Reflection;
 using DD4T.Mvc.Html;
@@ -23,7 +22,7 @@ namespace DD4T.ViewModels.Attributes
     {
         public override IEnumerable GetRawValues(IField field)
         {
-            return field.Values.Cast<Dynamic.IFieldSet>();
+            return field.Values.Cast<IFieldSet>();
         }
 
         public Type EmbeddedModelType
@@ -73,7 +72,7 @@ namespace DD4T.ViewModels.Attributes
     {
         public override IEnumerable GetRawValues(IField field)
         {
-            return field.Values.Cast<Dynamic.IComponent>();
+            return field.Values.Cast<IComponent>();
         }
         public Type[] LinkedComponentTypes //Is there anyway to enforce the types passed to this?
         {
@@ -118,7 +117,7 @@ namespace DD4T.ViewModels.Attributes
     {
         public override IEnumerable GetRawValues(IField field)
         {
-            return field.Values.Cast<Dynamic.IKeyword>();
+            return field.Values.Cast<IKeyword>();
         }
         public Type KeywordType { get; set; }
         protected override IModel BuildModelData(object value, IField field, ITemplate template)

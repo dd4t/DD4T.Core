@@ -14,7 +14,7 @@ namespace DD4T.ViewModels.Base
     /// </summary>
     public abstract class ViewModelBase : IViewModel
     {
-        [EditorBrowsable(EditorBrowsableState.Never)]
+        [EditorBrowsable(EditorBrowsableState.Never)] //Hidden from intellisense as View Authors should not access this directly
         public IModel ModelData
         {
             get;

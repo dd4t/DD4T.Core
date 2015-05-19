@@ -128,53 +128,13 @@ namespace DD4T.ViewModels.Attributes
         public abstract IEnumerable GetFieldValues(IField field, IModelProperty property, ITemplate template,IViewModelFactory factory = null);
 
         /// <summary>
-        /// The Tridion schema field name for this property. If not used, the property name with pascal casing is used
-        /// e.g. public string SubTitle {get;set;} will use field name "subTitle" if this value is not specified.
+        /// The Tridion schema field name for this property. If not used, the property name with camel casing is used
+        /// e.g. public string SubTitle { get; set; } will use schema field name "subTitle" if FieldName is not specified.
         /// </summary>
         public string FieldName
         {
             get;
             set;
-        }
-        /// <summary>
-        /// Semantic only - Is a multi value field. Actualy determination of multi versus single value is done by
-        /// inspection the Type of the property.
-        /// </summary>
-        public bool AllowMultipleValues
-        {
-            get
-            {
-                return allowMultipleValues;
-            }
-            set { allowMultipleValues = value; }
-        }
-        /// <summary>
-        /// Semantic only - Is inline editable.
-        /// </summary>
-        public bool InlineEditable
-        {
-            get
-            {
-                return inlineEditable;
-            }
-            set
-            {
-                inlineEditable = value;
-            }
-        }
-        /// <summary>
-        /// Is a mandatory field. For semantic use only.
-        /// </summary>
-        public bool Mandatory
-        {
-            get
-            {
-                return mandatory;
-            }
-            set
-            {
-                mandatory = value;
-            }
         }
         /// <summary>
         /// Is a metadata field. False indicates this is a content field.
@@ -546,8 +506,8 @@ namespace DD4T.ViewModels.Attributes
             get
             {
                 if (ComplexTypeMapping != null)
-                    return AllowMultipleValues ? typeof(ICollection<>) : typeof(object);
-                else return AllowMultipleValues ? typeof(ICollection<IViewModel>) : typeof(IViewModel);
+                    return typeof(object);
+                else return typeof(IViewModel);
             }
         }
     }
