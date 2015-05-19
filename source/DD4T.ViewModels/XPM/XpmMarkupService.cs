@@ -10,9 +10,8 @@ using DD4T.ContentModel;
 namespace DD4T.ViewModels.XPM
 {
     /// <summary>
-    /// XPM Markup Service for the DD4T DVM4T implementation
+    /// XPM Markup Service for the DD4T implementation
     /// </summary>
-    /// <remarks>Does not support use of other DVM4T Implementations</remarks>
     public class XpmMarkupService : IXpmMarkupService
     {
         public string RenderXpmMarkupForField(IField field, int index = -1)

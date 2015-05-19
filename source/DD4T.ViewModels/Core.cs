@@ -151,7 +151,7 @@ namespace DD4T.ViewModels
         /// </summary>
         public Func<object, object> Get { get; set; }
         /// <summary>
-        /// The DVM4T PropertyAttribute of the Property
+        /// The DD4T PropertyAttribute of the Property
         /// </summary>
         public IPropertyAttribute PropertyAttribute { get; set; }
         /// <summary>

@@ -471,7 +471,7 @@ namespace DD4T.ViewModels.Contracts
         /// </summary>
         Func<object, object> Get { get; }
         /// <summary>
-        /// The DVM4T PropertyAttribute of the Property
+        /// The DD4T PropertyAttribute of the Property
         /// </summary>
         IPropertyAttribute PropertyAttribute { get; }
         /// <summary>
