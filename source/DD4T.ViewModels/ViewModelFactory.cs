@@ -40,7 +40,8 @@ namespace DD4T.ViewModels
             {
                 if (!loadedAssemblies.Contains(assembly))
                 {
-                    loadedAssemblies.Add(assembly);
+                    //Josh Einhorn - Performance Question: Should we incur the memory overhead of storing Assembly objects in the heap or allow same assembly to get processed multiple times?
+                    loadedAssemblies.Add(assembly); 
                     IModelAttribute viewModelAttr;
                     foreach (var type in assembly.GetTypes())
                     {
@@ -165,8 +166,8 @@ namespace DD4T.ViewModels
                 propAttribute = prop.PropertyAttribute;//prop.GetCustomAttributes(typeof(FieldAttributeBase), true).FirstOrDefault() as FieldAttributeBase;
                 if (propAttribute != null) //It has a FieldAttribute
                 {
-                    //value = propAttribute.GetPropertyValues(viewModel.ModelData, prop, this); //delegate all the real work to the Property Attribute object itself. Allows for custom attribute types to easily be added
-                    var values = propAttribute.GetPropertyValues(viewModel.ModelData, prop, this); //TODO: switch GetPropertyValue to return IEnumerable
+
+                    var values = propAttribute.GetPropertyValues(viewModel.ModelData, prop, this); //delegate work to the Property Attribute object itself. Allows for custom attribute types to easily be added
                     if (values != null)
                     {
                         try

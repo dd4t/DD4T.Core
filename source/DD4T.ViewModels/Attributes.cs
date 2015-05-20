@@ -18,13 +18,14 @@ namespace DD4T.ViewModels.Attributes
     /// <summary>
     /// An Attribute for a Property representing the Link Resolved URL for a Linked or Multimedia Component
     /// </summary>
-    /// <remarks>Uses the default DD4T GetResolvedUrl helper method</remarks>
+    /// <remarks>Uses the default DD4T GetResolvedUrl extension method. To override behavior you must implement
+    /// your own Field Attribute. Future DD4T versions will hopefully allow for IoC of this implementation.</remarks>
     public class ResolvedUrlFieldAttribute : FieldAttributeBase
     {
         //public ResolvedUrlFieldAttribute(string fieldName) : base(fieldName) { }
         public override IEnumerable GetFieldValues(IField field, IModelProperty property, ITemplate template, IViewModelFactory factory)
         {
-            return field.Values.Cast<IComponent>()
+            return field.LinkedComponentValues
                 .Select(x => x.GetResolvedUrl());
         }
 
@@ -42,7 +43,7 @@ namespace DD4T.ViewModels.Attributes
         //public MultimediaFieldAttribute(string fieldName) : base(fieldName) { }
         public override IEnumerable GetFieldValues(IField field, IModelProperty property, ITemplate template, IViewModelFactory factory)
         {
-            return field.Values.Cast<IComponent>().Select(x => x.Multimedia);
+            return field.LinkedComponentValues.Select(x => x.Multimedia);
         }
 
         public override Type ExpectedReturnType
@@ -58,7 +59,7 @@ namespace DD4T.ViewModels.Attributes
         public override IEnumerable GetFieldValues(IField field, IModelProperty property, ITemplate template, IViewModelFactory factory)
         {
             IEnumerable fieldValue = null;
-            var values = field.Values.Cast<string>();
+            var values = field.Values;
             if (IsBooleanValue)
                 fieldValue = values.Select(v => { bool b; return bool.TryParse(v, out b) && b; });
             else fieldValue = values;
@@ -81,12 +82,15 @@ namespace DD4T.ViewModels.Attributes
     /// <summary>
     /// A Rich Text field. Uses the default ResolveRichText extension method.
     /// </summary>
+    /// <remarks>This Attribute is dependent on a specific implementation for resolving Rich Text. 
+    /// In future versions of DD4T, the rich text resolver will hopefully be abstracted to allow for IoC, 
+    /// but for now, to change the behavior you must implement your own Attribute.</remarks>
     public class RichTextFieldAttribute : FieldAttributeBase
     {
         //public RichTextFieldAttribute(string fieldName) : base(fieldName) { }
         public override IEnumerable GetFieldValues(IField field, IModelProperty property, ITemplate template, IViewModelFactory factory)
         {
-            return field.Values.Cast<string>()
+            return field.Values
                 .Select(v => v.ResolveRichText()); //Hidden dependency on DD4T Resolve Rich Text implementation
         }
 
@@ -103,7 +107,7 @@ namespace DD4T.ViewModels.Attributes
         //public NumberFieldAttribute(string fieldName) : base(fieldName) { }
         public override IEnumerable GetFieldValues(IField field, IModelProperty property, ITemplate template, IViewModelFactory factory)
         {
-            return field.Values.Cast<double>();
+            return field.NumericValues;
         }
 
         public override Type ExpectedReturnType
@@ -120,7 +124,7 @@ namespace DD4T.ViewModels.Attributes
         //public DateFieldAttribute(string fieldName) : base(fieldName) { }
         public override IEnumerable GetFieldValues(IField field, IModelProperty property, ITemplate template, IViewModelFactory factory)
         {
-            return field.Values.Cast<DateTime>();
+            return field.DateTimeValues;
         }
 
         public override Type ExpectedReturnType
@@ -141,7 +145,7 @@ namespace DD4T.ViewModels.Attributes
         public override IEnumerable GetFieldValues(IField field, IModelProperty property, ITemplate template, IViewModelFactory factory)
         {
             IEnumerable value = null;
-            var values = field.Values.Cast<IKeyword>();
+            var values = field.Keywords;
             if (IsBooleanValue)
                 value = values.Select(k => { bool b; return bool.TryParse(k.Key, out b) && b; });
             else value = values.Select(k => k.Key);
@@ -168,7 +172,7 @@ namespace DD4T.ViewModels.Attributes
         //public NumericKeywordKeyFieldAttribute(string fieldName) : base(fieldName) { }
         public override IEnumerable GetFieldValues(IField field, IModelProperty property, ITemplate template, IViewModelFactory factory)
         {
-            return field.Values.Cast<IKeyword>()
+            return field.Keywords
                 .Select(k => { double i; double.TryParse(k.Key, out i); return i; });
         }
 
@@ -269,7 +273,7 @@ namespace DD4T.ViewModels.Attributes
                         if (cp.ComponentTemplate != null && cp.ComponentTemplate.MetadataFields != null
                             && cp.ComponentTemplate.MetadataFields.ContainsKey("view"))
                         {
-                            var view = cp.ComponentTemplate.MetadataFields["view"].Values.Cast<string>().FirstOrDefault();
+                            var view = cp.ComponentTemplate.MetadataFields["view"].Values.FirstOrDefault();
                             if (view != null && view.StartsWith(ViewPrefix))
                             {
                                 result = true;
@@ -317,7 +321,7 @@ namespace DD4T.ViewModels.Attributes
     }
 
     /// <summary>
-    /// Field that is parsed into an Enum
+    /// Field that is parsed into an Enum. Must be a Text field (not Keyword).
     /// </summary>
     public class EnumFieldAttribute : FieldAttributeBase
     {  

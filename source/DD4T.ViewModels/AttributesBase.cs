@@ -137,7 +137,7 @@ namespace DD4T.ViewModels.Attributes
             set;
         }
         /// <summary>
-        /// Is a metadata field. False indicates this is a content field.
+        /// Is a metadata field. False (default) indicates this is a content field.
         /// </summary>
         public bool IsMetadata
         {
@@ -145,7 +145,7 @@ namespace DD4T.ViewModels.Attributes
             set { isMetadata = value; }
         }
         /// <summary>
-        /// Is a template metadata field (if template exists in the context of the property).
+        /// Is a template metadata field (if a template exists in the context of the property).
         /// </summary>
         public bool IsTemplateMetadata { get; set; }
 
@@ -169,7 +169,7 @@ namespace DD4T.ViewModels.Attributes
                             cpData.ComponentTemplate, factory);
                     }
                 }
-                else if (modelData is IComponent) //Not all components come with Templates
+                else if (modelData is IComponent) //Not all components come with Templates (Multimedia?)
                 {
                     result = GetPropertyValues(modelData as IComponent, property, null, factory);
                 }
@@ -270,9 +270,9 @@ namespace DD4T.ViewModels.Attributes
 
 
     /// <summary>
-    /// An Attribute for identifying a Content View Model
+    /// An Attribute for identifying a Content View Model. Can be based on either Embedded Schema or Component Schema
     /// </summary>
-    public class ComponentModelAttribute : Attribute, IComponentModelAttribute //Should be re-named ContentViewModelAttribute
+    public class ContentModelAttribute : Attribute, IContentModelAttribute 
     {
         //TODO: De-couple this from the Schema name specifically? What would make sense?
         //TOOD: Possibly change this to use purely ViewModelKey and make that an object, leave it to the key provider to assign objects with logical equals overrides
@@ -287,7 +287,7 @@ namespace DD4T.ViewModels.Attributes
         /// <param name="schemaName">Tridion schema name for component type for this View Model</param>
         /// <param name="isDefault">Is this the default View Model for this schema. If true, Components
         /// with this schema will use this class if no other View Models' Keys match.</param>
-        public ComponentModelAttribute(string schemaName, bool isDefault)
+        public ContentModelAttribute(string schemaName, bool isDefault)
         {
             this.schemaName = schemaName;
             this.isDefault = isDefault;
@@ -342,9 +342,9 @@ namespace DD4T.ViewModels.Attributes
         }
         public override bool Equals(object obj)
         {
-            if (obj != null && obj is ComponentModelAttribute)
+            if (obj != null && obj is ContentModelAttribute)
             {
-                ComponentModelAttribute key = (ComponentModelAttribute)obj;
+                ContentModelAttribute key = (ContentModelAttribute)obj;
                 if (this.ViewModelKeys != null && key.ViewModelKeys != null)
                 {
                     //if both have a ViewModelKey set, use both ViewModelKey and schema
@@ -371,23 +371,31 @@ namespace DD4T.ViewModels.Attributes
             return false;
         }
 
-        public bool IsMatch(IModel data, IViewModelKeyProvider provider)
-        {
-            var key = provider.GetViewModelKey(data);
-            return IsMatch(data, key);
-        }
-
         public bool IsMatch(IModel data, string key)
         {
             bool result = false;
-            if (data is IComponent)
+            string schemaName = null;
+            if (data != null)
             {
-                var definedData = data as IComponent;
-                var compare = new ComponentModelAttribute(definedData.Schema.Title, false)
+                //Ideally we'd have a common interface for these 2 that have a Schema property
+                if (data is IComponent)
                 {
-                    ViewModelKeys = key == null ? null : new string[] { key }
-                };
-                result = this.Equals(compare);
+                    var definedData = data as IComponent;
+                    schemaName = definedData.Schema.Title;
+                }
+                else if (data is IEmbeddedFields)
+                {
+                    var definedData = data as IEmbeddedFields;
+                    schemaName = definedData.EmbeddedSchema.Title;
+                }
+                if (!String.IsNullOrEmpty(schemaName))
+                {
+                    var compare = new ContentModelAttribute(schemaName, false)
+                    {
+                        ViewModelKeys = key == null ? null : new string[] { key }
+                    };
+                    result = this.Equals(compare);
+                }
             }
             return result;
         }
@@ -408,20 +416,13 @@ namespace DD4T.ViewModels.Attributes
             set;
         }
 
-        public bool IsMatch(IModel data, IViewModelKeyProvider provider)
-        {
-            string key = provider.GetViewModelKey(data);
-            return IsMatch(data, key);
-        }
-
         public bool IsMatch(IModel data, string key)
         {
-
             bool result = false;
             if (data is IPage)
             {
                 var contentData = data as IPage;
-                return ViewModelKeys.Any(x => x.Equals(key));
+                result = ViewModelKeys.Any(x => x.Equals(key));
             }
             return result;
         }
@@ -445,18 +446,13 @@ namespace DD4T.ViewModels.Attributes
             get;
             set;
         }
-        public bool IsMatch(IModel data, IViewModelKeyProvider provider)
-        {
-            string key = provider.GetViewModelKey(data);
-            return IsMatch(data, key);
-        }
 
         public bool IsMatch(IModel data, string key)
         {
             bool result = false;
             if (data is IKeyword)
             {
-                return ViewModelKeys.Any(x => x.Equals(key));
+                result = ViewModelKeys.Any(x => x.Equals(key));
             }
             return result;
         }

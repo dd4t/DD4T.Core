@@ -22,7 +22,7 @@ namespace DD4T.ViewModels.Attributes
     {
         public override IEnumerable GetRawValues(IField field)
         {
-            return field.Values.Cast<IFieldSet>();
+            return field.EmbeddedValues;
         }
 
         public Type EmbeddedModelType
@@ -72,7 +72,7 @@ namespace DD4T.ViewModels.Attributes
     {
         public override IEnumerable GetRawValues(IField field)
         {
-            return field.Values.Cast<IComponent>();
+            return field.LinkedComponentValues;
         }
         public Type[] LinkedComponentTypes //Is there anyway to enforce the types passed to this?
         {
@@ -95,7 +95,7 @@ namespace DD4T.ViewModels.Attributes
             Type result = null;
             try
             {
-                result = factory.FindViewModelByAttribute<IComponentModelAttribute>(data, LinkedComponentTypes);
+                result = factory.FindViewModelByAttribute<IContentModelAttribute>(data, LinkedComponentTypes);
             }
             catch (ViewModelTypeNotFoundException)
             {
@@ -117,7 +117,7 @@ namespace DD4T.ViewModels.Attributes
     {
         public override IEnumerable GetRawValues(IField field)
         {
-            return field.Values.Cast<IKeyword>();
+            return field.Keywords;
         }
         public Type KeywordType { get; set; }
         protected override IModel BuildModelData(object value, IField field, ITemplate template)

@@ -23,7 +23,7 @@ namespace DD4T.ViewModels
     {
         //Singletons
         private static readonly IViewModelKeyProvider keyProvider =
-            new WebConfigViewModelKeyProvider("DD4T.DomainModels.ViewModelKeyFieldName");
+            new WebConfigViewModelKeyProvider("DD4T.ViewModels.ViewModelKeyFieldName");
 
         private static readonly IReflectionHelper reflectionHelper = new ReflectionOptimizer();
         private static readonly IViewModelResolver resolver = new DefaultViewModelResolver(reflectionHelper);
@@ -54,7 +54,7 @@ namespace DD4T.ViewModels
         /// exists, it will throw an Exception.</remarks>
         public static IViewModelResolver ModelResolver { get { return resolver; } }
         /// <summary>
-        /// Optimized Reflection Helper that caches resuslts of resource-heavy tasks (e.g. MemberInfo.GetCustomAttributes)
+        /// Optimized Reflection Helper that caches results of resource-heavy tasks (e.g. MemberInfo.GetCustomAttributes)
         /// </summary>
         public static IReflectionHelper ReflectionCache { get { return reflectionHelper; } }
         /// <summary>

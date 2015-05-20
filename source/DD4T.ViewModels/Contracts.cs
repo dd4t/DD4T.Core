@@ -26,6 +26,9 @@ namespace DD4T.ViewModels.Contracts
         IModel ModelData { get; set; }
     }
 
+    /// <summary>
+    /// Special container to enable passing Embedded Schema Fields as a standalone Model.
+    /// </summary>
     public interface IEmbeddedFields : IModel
     {
         IFieldSet Fields { get; }
@@ -633,7 +636,7 @@ namespace DD4T.ViewModels.Contracts
     /// <summary>
     /// An Attribute for identifying a Defined (has a Schema) View Model class
     /// </summary>
-    public interface IComponentModelAttribute : IModelAttribute
+    public interface IContentModelAttribute : IModelAttribute
     {
         /// <summary>
         /// XML Name of the Schema
