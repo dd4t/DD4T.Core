@@ -16,7 +16,7 @@ namespace DD4T.Providers.SDLTridion2011sp1
     /// <summary>
     /// 
     /// </summary>
-    public class TridionComponentProvider : BaseProvider, IComponentProvider
+    public class TridionComponentPresentationProvider : BaseProvider, IComponentPresentationProvider
     {
 
         Dictionary<int,T.ComponentPresentationFactory> _cpFactoryList = null;
@@ -25,7 +25,7 @@ namespace DD4T.Providers.SDLTridion2011sp1
         private string selectByComponentTemplateId;
         private string selectByOutputFormat;
 
-        public TridionComponentProvider()
+        public TridionComponentPresentationProvider()
         {
             selectByComponentTemplateId = ConfigurationHelper.SelectComponentByComponentTemplateId;
             selectByOutputFormat = ConfigurationHelper.SelectComponentByOutputFormat;

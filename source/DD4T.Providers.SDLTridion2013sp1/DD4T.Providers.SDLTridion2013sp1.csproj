@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -10,10 +10,11 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>DD4T.Providers.SDLTridion2013sp1</RootNamespace>
     <AssemblyName>DD4T.Providers.SDLTridion2013sp1</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -23,6 +24,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -31,6 +33,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release2011SP1|AnyCPU'">
     <OutputPath>bin\Release2011SP1\</OutputPath>
@@ -40,6 +43,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release2013|AnyCPU'">
     <OutputPath>..\..\build\tridion2013\</OutputPath>
@@ -49,6 +53,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'MVC3|AnyCPU'">
     <OutputPath>bin\MVC3\</OutputPath>
@@ -58,30 +63,31 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="DD4T.ContentModel, Version=2.0.0.0, Culture=neutral, PublicKeyToken=4450e3c7f68bf872, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\DD4T2-MODEL-DRAFT.2.0.0.1\lib\DD4T.ContentModel.dll</HintPath>
+      <HintPath>..\packages\DD4T-Model.2.0.4-draft\lib\DD4T.ContentModel.dll</HintPath>
     </Reference>
     <Reference Include="DD4T.ContentModel.Contracts, Version=2.0.0.0, Culture=neutral, PublicKeyToken=4450e3c7f68bf872, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\DD4T2-MODEL-DRAFT.2.0.0.1\lib\DD4T.ContentModel.Contracts.dll</HintPath>
+      <HintPath>..\packages\DD4T-Model.2.0.4-draft\lib\DD4T.ContentModel.Contracts.dll</HintPath>
     </Reference>
     <Reference Include="DD4T.ContentModel.XmlSerializers, Version=2.0.0.0, Culture=neutral, PublicKeyToken=4450e3c7f68bf872, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\DD4T2-MODEL-DRAFT.2.0.0.1\lib\DD4T.ContentModel.XmlSerializers.dll</HintPath>
+      <HintPath>..\packages\DD4T-Model.2.0.4-draft\lib\DD4T.ContentModel.XmlSerializers.dll</HintPath>
     </Reference>
     <Reference Include="DD4T.Serialization, Version=2.0.0.0, Culture=neutral, PublicKeyToken=4450e3c7f68bf872, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\DD4T2-MODEL-DRAFT.2.0.0.1\lib\DD4T.Serialization.dll</HintPath>
-    </Reference>
-    <Reference Include="log4net, Version=1.2.11.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Visual Studio 2013\Projects\SmartTargetDemo\Tridion 2013 SP1 DLLs\log4net.dll</HintPath>
+      <HintPath>..\packages\DD4T-Model.2.0.4-draft\lib\DD4T.Serialization.dll</HintPath>
     </Reference>
     <Reference Include="netrtsn">
-      <HintPath>..\..\..\Visual Studio 2013\Projects\SmartTargetDemo\Tridion 2013 SP1 DLLs\netrtsn.dll</HintPath>
+      <HintPath>..\packages\SDL-Tridion-2013-sp1.1.0.0\lib\netrtsn.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\DD4T-Model.2.0.4-draft\lib\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
@@ -89,16 +95,16 @@
     <Reference Include="System.Web" />
     <Reference Include="System.Data" />
     <Reference Include="Tridion.ContentDelivery">
-      <HintPath>..\..\..\Visual Studio 2013\Projects\SmartTargetDemo\Tridion 2013 SP1 DLLs\Tridion.ContentDelivery.dll</HintPath>
+      <HintPath>..\packages\SDL-Tridion-2013-sp1.1.0.0\lib\Tridion.ContentDelivery.dll</HintPath>
     </Reference>
     <Reference Include="Tridion.ContentDelivery.AmbientData">
-      <HintPath>..\..\..\Visual Studio 2013\Projects\SmartTargetDemo\Tridion 2013 SP1 DLLs\Tridion.ContentDelivery.AmbientData.dll</HintPath>
+      <HintPath>..\packages\SDL-Tridion-2013-sp1.1.0.0\lib\Tridion.ContentDelivery.AmbientData.dll</HintPath>
     </Reference>
     <Reference Include="Tridion.ContentDelivery.Configuration">
-      <HintPath>..\..\..\Visual Studio 2013\Projects\SmartTargetDemo\Tridion 2013 SP1 DLLs\Tridion.ContentDelivery.Configuration.dll</HintPath>
+      <HintPath>..\packages\SDL-Tridion-2013-sp1.1.0.0\lib\Tridion.ContentDelivery.Configuration.dll</HintPath>
     </Reference>
     <Reference Include="Tridion.ContentDelivery.Interop">
-      <HintPath>..\..\..\Visual Studio 2013\Projects\SmartTargetDemo\Tridion 2013 SP1 DLLs\Tridion.ContentDelivery.Interop.dll</HintPath>
+      <HintPath>..\packages\SDL-Tridion-2013-sp1.1.0.0\lib\Tridion.ContentDelivery.Interop.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -110,21 +116,30 @@
     <Compile Include="ITridionQueryWrapper.cs" />
     <Compile Include="Properties\SpecificAssemblyInfo.cs" />
     <Compile Include="TridionBinaryProvider.cs" />
+    <Compile Include="TridionComponentPresentationProvider.cs" />
     <Compile Include="TridionComponentProvider.cs" />
     <Compile Include="TridionLinkProvider.cs" />
     <Compile Include="TridionPageProvider.cs" />
     <Compile Include="TridionTaxonomyProvider.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DD4T.Core.Contracts\DD4T.Core.Contracts.csproj">
+      <Project>{f90a1191-cd6e-4016-9005-b28a96f7964e}</Project>
+      <Name>DD4T.Core.Contracts</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DD4T.Utils\DD4T.Utils.csproj">
-      <Project>{D2CE08BE-7281-4697-ADFE-E7A031CB59EC}</Project>
+      <Project>{d2ce08be-7281-4697-adfe-e7a031cb59ec}</Project>
       <Name>DD4T.Utils</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config">
-      <SubType>Designer</SubType>
-    </None>
+    <Content Include="Newtonsoft.Json.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

@@ -4,6 +4,9 @@ using DD4T.Factories.Caching;
 using DD4T.Utils;
 using DD4T.ContentModel.Contracts.Resolvers;
 using DD4T.Factories.Resolvers;
+using DD4T.ContentModel.Contracts.Serializing;
+using DD4T.ContentModel;
+using DD4T.Serialization;
 
 namespace DD4T.Factories
 {
@@ -93,6 +96,24 @@ namespace DD4T.Factories
         }
         #endregion
 
+        // inner class which acts as a placeholder for the real serializer service (Xml or Json)
+        internal class AutoDetectSerializerService : ISerializerService
+        {
+            public T Deserialize<T>(string input) where T : IModel
+            {
+                return SerializerServiceFactory.FindSerializerServiceForContent(input).Deserialize<T>(input);
+            }
 
+            public bool IsAvailable()
+            {
+                return true;
+            }
+
+            public string Serialize<T>(T input) where T : IModel
+            {
+                // in autodetect mode, no serialization should occur, this is only to consume mixed data formats, not to produce them!
+                throw new NotImplementedException();
+            }
+        }
     }
 }

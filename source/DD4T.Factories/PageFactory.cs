@@ -12,6 +12,8 @@ using DD4T.ContentModel.Logging;
 using DD4T.Factories.Caching;
 using DD4T.Utils;
 using DD4T.ContentModel.Factories;
+using DD4T.Serialization;
+using DD4T.ContentModel.Contracts.Serializing;
 
 namespace DD4T.Factories
 {
@@ -29,6 +31,15 @@ namespace DD4T.Factories
         private static object lock1 = new object();
         private static object lock2 = new object();
         private static object lock3 = new object();
+
+        private string DataFormat
+        {
+            get
+            {
+                return ConfigurationHelper.DataFormat;
+            }
+        }
+
         public IPageProvider PageProvider
         {
             get
@@ -45,7 +56,7 @@ namespace DD4T.Factories
                 }
 				
                 // If using your own DI you can pass the provider PublicationID yourself
-				// However by not doing so, the below will leverage the configuted PublicationResolver - which could still return 0 if you needed.
+				// However by not doing so, the below will leverage the configured PublicationResolver - which could still return 0 if you needed.
                 if (_pageProvider.PublicationId == 0)
                     _pageProvider.PublicationId = this.PublicationId;
 					
@@ -57,58 +68,59 @@ namespace DD4T.Factories
             }
         }
 
-        private IComponentFactory _componentFactory = null;
-        public IComponentFactory ComponentFactory
+        private ISerializerService _serializerService;
+        private ISerializerService SerializerService
         {
             get
             {
-                if (_componentFactory == null)
+                if (_serializerService == null)
+                {
+                    if (DataFormat.ToLower() == "json")
+                    {
+                        _serializerService = new JSONSerializerService();
+                    }
+                    if (DataFormat.ToLower() == "xml")
+                    {
+                        _serializerService = new XmlSerializerService();
+                    }
+                    _serializerService = new AutoDetectSerializerService();
+                }
+                return _serializerService;
+            }
+        }
+
+        private IComponentPresentationFactory _componentPresentationFactory = null;
+        public IComponentPresentationFactory ComponentPresentationFactory
+        {
+            get
+            {
+                if (_componentPresentationFactory == null)
                 {
                     lock (lock2)
                     {
-                        if (_componentFactory == null)  // we must test again, because in the mean time another thread might have created the object!
+                        if (_componentPresentationFactory == null)  // we must test again, because in the mean time another thread might have created the object!
                         {
                             // if there is no component factory set, check if there is one in the current assembly
-                            _componentFactory = (IComponentFactory)ClassLoader.Load<IComponentFactory>(this.GetType().Assembly);
+                            _componentPresentationFactory = (IComponentPresentationFactory)ClassLoader.Load<IComponentPresentationFactory>(this.GetType().Assembly);
 
                             // the ComponentFactory must have a ComponentProvider
                             // if there is a ProviderVersion configured, the ComponentFactory will figure this out by itself
                             // otherwise, try to load a IComponentProvider from the same assembly as the current PageProvider
                             if (ConfigurationHelper.ProviderVersion == ProviderVersion.Undefined && PageProvider != null)
-                                _componentFactory.ComponentProvider = (IComponentProvider)ClassLoader.Load<IComponentProvider>(PageProvider.GetType().Assembly);
+                                _componentPresentationFactory.ComponentPresentationProvider = (IComponentPresentationProvider)ClassLoader.Load<IComponentPresentationProvider>(PageProvider.GetType().Assembly);
                         }
                     }
                 }
-                return _componentFactory;
+                return _componentPresentationFactory;
             }
             set
             {
-                _componentFactory = value;
+                _componentPresentationFactory = value;
             }
         }
         public ILinkFactory LinkFactory { get; set; }
 
-        private static XmlSerializer _pageSerializer = null;
-        private static XmlSerializer PageSerializer
-        {
-            get
-            {
-                if (_pageSerializer == null)
-                {
-                    lock (lock3)
-                    {
-                        if (_pageSerializer == null) // we must test again, because in the mean time another thread might have created the object!
-                        {
-                            LoggerService.Debug("about to create page serializer", LoggingCategory.Performance);
-                            _pageSerializer = new XmlSerializer(typeof(Page));
-                            LoggerService.Debug("finished creating page serializer", LoggingCategory.Performance);
-                        }
-                    }
-                }
-                return _pageSerializer;
-            }
-        }
-
+ 
         #region IPageFactory Members
         public virtual bool TryFindPage(string url, out IPage page)
         {
@@ -293,30 +305,19 @@ namespace DD4T.Factories
         {
             LoggerService.Debug(">>GetIPageObject(string length {0})", LoggingCategory.Performance, Convert.ToString(pageStringContent.Length));
 
-            IPage page;
-            //Create XML Document to hold Xml returned from WCF Client
-            LoggerService.Debug("GetIPageObject: about to load XML into XmlDocument", LoggingCategory.Performance);
-            XmlDocument pageContent = new XmlDocument();
-            pageContent.LoadXml(pageStringContent);
-            LoggerService.Debug("GetIPageObject: finished loading XML into XmlDocument", LoggingCategory.Performance);
+            LoggerService.Debug("GetIPageObject: about to deserialize", LoggingCategory.Performance);
+            IPage page = SerializerService.Deserialize<Page>(pageStringContent);
+            LoggerService.Debug("GetIPageObject: finished deserializing", LoggingCategory.Performance);
 
-            //Load XML into Reader for deserialization
-            using (var reader = new XmlNodeReader(pageContent.DocumentElement))
+            // set order on page for each ComponentPresentation
+            int orderOnPage = 0;
+            foreach (IComponentPresentation cp in page.ComponentPresentations)
             {
-
-                LoggerService.Debug("GetIPageObject: about to deserialize", LoggingCategory.Performance);
-                page = (IPage)PageSerializer.Deserialize(reader);
-                LoggerService.Debug("GetIPageObject: finished deserializing", LoggingCategory.Performance);
-                // set order on page for each ComponentPresentation
-                int orderOnPage = 0;
-                foreach (IComponentPresentation cp in page.ComponentPresentations)
-                {
-                    cp.OrderOnPage = orderOnPage++;
-                }
-                LoggerService.Debug("GetIPageObject: about to load DCPs", LoggingCategory.Performance);
-                LoadComponentModelsFromComponentFactory(page);
-                LoggerService.Debug("GetIPageObject: finished loading DCPs", LoggingCategory.Performance);
+                cp.OrderOnPage = orderOnPage++;
             }
+            LoggerService.Debug("GetIPageObject: about to load DCPs", LoggingCategory.Performance);
+            LoadComponentModelsFromComponentFactory(page);
+            LoggerService.Debug("GetIPageObject: finished loading DCPs", LoggingCategory.Performance);
             LoggerService.Debug("<<GetIPageObject(string length {0})", LoggingCategory.Performance, Convert.ToString(pageStringContent.Length));
             return page;
         }
@@ -416,67 +417,63 @@ namespace DD4T.Factories
                 {
                     try
                     {
-                        Component c = (Component)ComponentFactory.GetComponent(cp.Component.Id);
-                        cp.Component = c;
+                        ComponentPresentation dcp = (ComponentPresentation) ComponentPresentationFactory.GetComponentPresentation(cp.Component.Id, cp.ComponentTemplate.Id);
+                        cp.Component = dcp.Component;
+                        cp.ComponentTemplate = dcp.ComponentTemplate;
+                        cp.Conditions = dcp.Conditions;
                     }
-                    catch (ComponentNotFoundException)
+                    catch (ComponentPresentationNotFoundException)
                     {
+                        LoggerService.Warning("dynamic component presentation {0} / {1} included on page {2} cannot be found; it may have been unpublished", LoggingCategory.Model, cp.Component.Id, cp.ComponentTemplate.Id, page.Id);
                         // DCPs can be unpublished while the page that they are embedded on remain published
                         // in this case, simply ignore the exception (the 'stub' component is still on the page)
                     }
                 }
-
-                LoggerService.Debug("about to resolve links in component {0}", LoggingCategory.Performance, cp.Component.Id);
-                foreach (Field tempField in cp.Component.Fields.Values.Where(item => item.FieldType == FieldType.Xhtml))
-                {
-                    resolveLinks(tempField, new TcmUri(page.Id));
-                }
-                LoggerService.Debug("finished resolving links in DCPs on page {0}", LoggingCategory.Performance, page.Id);
             }
             LoggerService.Debug("<<LoadComponentModelsFromComponentFactory ({0})", LoggingCategory.Performance, page.Id);
         }
 
-        private void resolveLinks(Field richTextField, TcmUri pageUri)
-        {
-            // Find any <a> nodes with xlink:href="tcm attribute
-            string nodeText = richTextField.Value;
-            XmlDocument tempDocument = new XmlDocument();
-            tempDocument.LoadXml("<tempRoot>" + nodeText + "</tempRoot>");
+        //private void resolveLinks(Field richTextField, TcmUri pageUri)
+        //{
+        //    // Find any <a> nodes with xlink:href="tcm attribute
+        //    string nodeText = richTextField.Value;
+        //    XmlDocument tempDocument = new XmlDocument();
+        //    tempDocument.LoadXml("<tempRoot>" + nodeText + "</tempRoot>");
            
 
-            XmlNamespaceManager nsManager = new XmlNamespaceManager(tempDocument.NameTable);
-            nsManager.AddNamespace("xlink", "http://www.w3.org/1999/xlink");
+        //    XmlNamespaceManager nsManager = new XmlNamespaceManager(tempDocument.NameTable);
+        //    nsManager.AddNamespace("xlink", "http://www.w3.org/1999/xlink");
 
-            XmlNodeList linkNodes = tempDocument.SelectNodes("//*[local-name()='a'][@xlink:href[starts-with(string(.),'tcm:')]]", nsManager);
+        //    XmlNodeList linkNodes = tempDocument.SelectNodes("//*[local-name()='a'][@xlink:href[starts-with(string(.),'tcm:')]]", nsManager);
 
-            foreach (XmlNode linkElement in linkNodes)
-            {
-                // TODO test with including the Page Uri, seems to always link with Source Page
-                //string linkText = linkFactory.ResolveLink(pageUri.ToString(), linkElement.Attributes["xlink:href"].Value, "tcm:0-0-0");
-                string linkText = LinkFactory.ResolveLink("tcm:0-0-0", linkElement.Attributes["xlink:href"].Value, "tcm:0-0-0");
-                if (!string.IsNullOrEmpty(linkText))
-                {
-                    XmlAttribute linkUrl = tempDocument.CreateAttribute("href");
-                    linkUrl.Value = linkText;
-                    linkElement.Attributes.Append(linkUrl);
+        //    foreach (XmlNode linkElement in linkNodes)
+        //    {
+        //        // TODO test with including the Page Uri, seems to always link with Source Page
+        //        //string linkText = linkFactory.ResolveLink(pageUri.ToString(), linkElement.Attributes["xlink:href"].Value, "tcm:0-0-0");
+        //        string linkText = LinkFactory.ResolveLink("tcm:0-0-0", linkElement.Attributes["xlink:href"].Value, "tcm:0-0-0");
+        //        if (!string.IsNullOrEmpty(linkText))
+        //        {
+        //            XmlAttribute linkUrl = tempDocument.CreateAttribute("href");
+        //            linkUrl.Value = linkText;
+        //            linkElement.Attributes.Append(linkUrl);
 
-                    // Remove the other xlink attributes from the a element
-                    for (int attribCount = linkElement.Attributes.Count - 1; attribCount >= 0; attribCount--)
-                    {
-                        if (!string.IsNullOrEmpty(linkElement.Attributes[attribCount].NamespaceURI))
-                        {
-                            linkElement.Attributes.RemoveAt(attribCount);
-                        }
-                    }
-                }
-            }
+        //            // Remove the other xlink attributes from the a element
+        //            for (int attribCount = linkElement.Attributes.Count - 1; attribCount >= 0; attribCount--)
+        //            {
+        //                if (!string.IsNullOrEmpty(linkElement.Attributes[attribCount].NamespaceURI))
+        //                {
+        //                    linkElement.Attributes.RemoveAt(attribCount);
+        //                }
+        //            }
+        //        }
+        //    }
 
-            if (linkNodes.Count > 0)
-            {
-                richTextField.Values.Clear();
-                richTextField.Values.Add(tempDocument.DocumentElement.InnerXml);
-            }
-        }
+        //    if (linkNodes.Count > 0)
+        //    {
+        //        richTextField.Values.Clear();
+        //        richTextField.Values.Add(tempDocument.DocumentElement.InnerXml);
+        //    }
+        //}
 
         #endregion
 

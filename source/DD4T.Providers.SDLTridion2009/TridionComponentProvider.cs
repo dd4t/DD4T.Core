@@ -28,11 +28,11 @@ namespace DD4T.Providers.SDLTridion2009
     /// <summary>
     /// 
     /// </summary>
-    public class TridionComponentProvider : BaseProvider, IComponentProvider
+    public class TridionComponentPresentationProvider : BaseProvider, IComponentPresentationProvider
     {
         private string selectByComponentTemplateId;
         private string selectByOutputFormat;
-        public TridionComponentProvider()
+        public TridionComponentPresentationProvider()
         {
             selectByComponentTemplateId = ConfigurationHelper.SelectComponentByComponentTemplateId;
             selectByOutputFormat = ConfigurationHelper.SelectComponentByOutputFormat;

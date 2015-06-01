@@ -97,6 +97,7 @@ namespace DD4T.Factories.Caching
             if (_timer != null)
             {
                 _timer.Stop();
+                _timer.Dispose();
                 _timer = null;
             }
         }
