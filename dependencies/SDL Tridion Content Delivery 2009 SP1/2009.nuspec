@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<package xmlns:nuget="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>sdl-tridion-templating-2009-sp1</id>
+    <version>1.0.3</version>
+    <authors>SDL</authors>
+    <owners>DD4T</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>SDL Tridion Templating 2009 SP1</description>
+    <releaseNotes>First version</releaseNotes>
+    <copyright>Copyright 2015</copyright>
+    <tags>SDLTridion Tridion</tags>
+  </metadata>
+</package>
