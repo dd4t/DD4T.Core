@@ -7,7 +7,9 @@ using DD4T.ContentModel;
 using System.Collections.Generic;
 using DD4T.ContentModel.Contracts.Providers;
 using DD4T.Utils;
-using DD4T.ContentModel.Logging;
+using DD4T.ContentModel.Contracts.Resolvers;
+using DD4T.ContentModel.Contracts.Configuration;
+using DD4T.ContentModel.Contracts.Logging;
 
 namespace DD4T.Providers.SDLTridion2013sp1
 {
@@ -17,8 +19,13 @@ namespace DD4T.Providers.SDLTridion2013sp1
     public class TridionPageProvider : BaseProvider, IPageProvider
     {
 
-		private static IDictionary<string, DateTime> lastPublishedDates = new Dictionary<string, DateTime>();
+        private static IDictionary<string, DateTime> lastPublishedDates = new Dictionary<string, DateTime>();
 
+        public TridionPageProvider(IProvidersFacade providersFacade)
+            : base(providersFacade)
+        {
+
+        }
 
         #region IPageProvider Members
 
@@ -31,7 +38,6 @@ namespace DD4T.Providers.SDLTridion2013sp1
         /// <returns></returns>
         public string[] GetAllPublishedPageUrls(string[] includeExtensions, string[] pathStarts)
         {
-            Query pageQuery = new Query();
             ItemTypeCriteria isPage = new ItemTypeCriteria(64);  // TODO There must be an enum of these somewhere
             PublicationCriteria currentPublication = new PublicationCriteria(PublicationId); //Todo: add logic to determine site on url
 
@@ -93,32 +99,43 @@ namespace DD4T.Providers.SDLTridion2013sp1
             string retVal = string.Empty;
 
             LoggerService.Debug("GetContentByUrl: about to create query", LoggingCategory.Performance);
-            Query pageQuery = new Query();
-            LoggerService.Debug("GetContentByUrl: created query", LoggingCategory.Performance);
-            ItemTypeCriteria isPage = new ItemTypeCriteria(64);  // TODO There must be an enum of these somewhere
-            PageURLCriteria pageUrl = new PageURLCriteria(Url);
-
-            Criteria allCriteria = CriteriaFactory.And(isPage, pageUrl);
-            if (this.PublicationId != 0)
+            using (var pageQuery = new Query())
             {
-                PublicationCriteria correctSite = new PublicationCriteria(this.PublicationId);
-                allCriteria.AddCriteria(correctSite);
+                LoggerService.Debug("GetContentByUrl: created query", LoggingCategory.Performance);
+                using (var isPage = new ItemTypeCriteria(64))
+                {
+                    using (var pageUrl = new PageURLCriteria(Url))
+                    {
+                        using (var allCriteria = CriteriaFactory.And(isPage, pageUrl))
+                        {
+                            if (this.PublicationId != 0)
+                            {
+                                using (var correctSite = new PublicationCriteria(this.PublicationId))
+                                {
+                                    allCriteria.AddCriteria(correctSite);
+                                }
+                            }
+
+                            pageQuery.Criteria = allCriteria;
+                        }
+                    }
+                }
+                LoggerService.Debug("GetContentByUrl: added criteria to query", LoggingCategory.Performance);
+
+                LoggerService.Debug("GetContentByUrl: about to execute query", LoggingCategory.Performance);
+                string[] resultUris = pageQuery.ExecuteQuery();
+                pageQuery.Dispose();
+                LoggerService.Debug("GetContentByUrl: executed query", LoggingCategory.Performance);
+
+
+                if (resultUris.Length > 0)
+                {
+                    retVal = PageContentAssembler.GetContent(resultUris[0]);
+                    LoggerService.Debug("GetContentByUrl: executed PageContentAssembler", LoggingCategory.Performance);
+                }
+                LoggerService.Debug("<<GetContentByUrl({0})", LoggingCategory.Performance, Url);
+                return retVal;
             }
-            pageQuery.Criteria = allCriteria;
-            LoggerService.Debug("GetContentByUrl: added criteria to query", LoggingCategory.Performance);
-
-            LoggerService.Debug("GetContentByUrl: about to execute query", LoggingCategory.Performance);
-            string[] resultUris = pageQuery.ExecuteQuery();
-            LoggerService.Debug("GetContentByUrl: executed query", LoggingCategory.Performance);
-
-
-            if (resultUris.Length > 0)
-            {
-                retVal = PageContentAssembler.GetContent(resultUris[0]);
-                LoggerService.Debug("GetContentByUrl: executed PageContentAssembler", LoggingCategory.Performance);
-            }
-            LoggerService.Debug("<<GetContentByUrl({0})", LoggingCategory.Performance, Url);
-            return retVal;
         }
 
         /// <summary>
@@ -138,8 +155,25 @@ namespace DD4T.Providers.SDLTridion2013sp1
         {
             int pubId = PublicationId;
             LoggerService.Debug("GetLastPublishedDateByUrl found publication id {0}, url = {1}", pubId, url);
-            PageMetaFactory pMetaFactory = new PageMetaFactory(pubId);
-            IPageMeta pageInfo = pMetaFactory.GetMetaByUrl(pubId, url);
+            using (var pMetaFactory = new PageMetaFactory(pubId))
+            {
+                using (IPageMeta pageInfo = pMetaFactory.GetMetaByUrl(pubId, url))
+                {
+                    if (pageInfo == null)
+                    {
+                        return DateTime.Now;
+                    }
+
+                    return pageInfo.LastPublicationDate;
+                }
+            }
+        }
+
+        public DateTime GetLastPublishedDateByUri(string uri)
+        {
+            TcmUri tcmUri = new TcmUri(uri);
+            PageMetaFactory pMetaFactory = GetPageMetaFactory(tcmUri.PublicationId);
+            var pageInfo = pMetaFactory.GetMeta(uri);
 
             if (pageInfo == null)
             {
@@ -151,22 +185,9 @@ namespace DD4T.Providers.SDLTridion2013sp1
             }
         }
 
-		public DateTime GetLastPublishedDateByUri(string uri) 
-        {
-            TcmUri tcmUri = new TcmUri(uri);
-			PageMetaFactory pMetaFactory = GetPageMetaFactory(tcmUri.PublicationId);
-			var pageInfo = pMetaFactory.GetMeta(uri);
-
-			if (pageInfo == null) {
-				return DateTime.Now;
-			} else {
-				return pageInfo.LastPublicationDate;
-			}
-		}
-
 
         private object lock1 = new object();
-        private Dictionary<int, PageMetaFactory> _pmFactoryList = new Dictionary<int,PageMetaFactory>();
+        private Dictionary<int, PageMetaFactory> _pmFactoryList = new Dictionary<int, PageMetaFactory>();
         private PageMetaFactory GetPageMetaFactory(int publicationId)
         {
             if (_pmFactoryList.ContainsKey(publicationId))

@@ -4,6 +4,8 @@ using DD4T.ContentModel;
 using DD4T.ContentModel.Contracts.Providers;
 using DD4T.Utils;
 using DD4T.ContentModel.Factories;
+using DD4T.ContentModel.Contracts.Resolvers;
+using DD4T.ContentModel.Contracts.Configuration;
 
 namespace DD4T.Factories
 {
@@ -18,33 +20,17 @@ namespace DD4T.Factories
 
         //private const string uriPrefix = "tcm:";
         private static TcmUri emptyTcmUri = new TcmUri("tcm:0-0-0");
-        private Dictionary<int,ILinkProvider> _linkProviders = new Dictionary<int,ILinkProvider>();
+        private Dictionary<int, ILinkProvider> _linkProviders = new Dictionary<int, ILinkProvider>();
 
-        private ILinkProvider _linkProvider = null;
-        public ILinkProvider LinkProvider
-        {
-            get
-            {
-                if (_linkProvider == null)
-                {
-                    _linkProvider = (ILinkProvider)ProviderLoader.LoadProvider<ILinkProvider>();
-                }
-				
-				// If using your own DI you can pass the provider PublicationID yourself
-				// However by not doing so, the below will leverage the configuted PublicationResolver - which could still return 0 if you needed.					
-                if (_linkProvider.PublicationId == 0)
-                    _linkProvider.PublicationId = this.PublicationId;
-					
-                return _linkProvider;
-            }
-            set
-            {
-                _linkProvider = value;
-            }
-        }
+        public ILinkProvider LinkProvider { get; set; }
 
-        public LinkFactory()
+        public LinkFactory(ILinkProvider linkProvider, IFactoriesFacade facade)
+            : base(facade)
         {
+            if (linkProvider == null)
+                throw new ArgumentNullException("linkProvier");
+
+            LinkProvider = linkProvider;
         }
 
         private object lock1 = new object();
@@ -73,7 +59,7 @@ namespace DD4T.Factories
         public string ResolveLink(string componentUri)
         {
             string cacheKey = String.Format(CacheKeyFormat, componentUri);
-            string link = (string) CacheAgent.Load(cacheKey);
+            string link = (string)CacheAgent.Load(cacheKey);
             if (link != null)
             {
                 if (link.Equals(CacheValueNull))
@@ -105,7 +91,7 @@ namespace DD4T.Factories
         public string ResolveLink(string sourcePageUri, string componentUri, string excludeComponentTemplateUri)
         {
             string cacheKey = String.Format(CacheKeyFormatExtended, sourcePageUri, componentUri, excludeComponentTemplateUri);
-            string link = (string) CacheAgent.Load(cacheKey);
+            string link = (string)CacheAgent.Load(cacheKey);
             if (link != null)
             {
                 if (link.Equals(CacheValueNull))
@@ -126,7 +112,7 @@ namespace DD4T.Factories
                 {
                     //CacheAgent.Store(cacheKey, CacheRegion, resolvedUrl, new List<string>() { String.Format("ComponentByUri_{0}", componentUri) });
                     CacheAgent.Store(cacheKey, CacheRegion, resolvedUrl);
-                } 
+                }
                 return resolvedUrl;
             }
         }

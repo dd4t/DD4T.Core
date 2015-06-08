@@ -3,10 +3,12 @@ using DD4T.ContentModel.Contracts.Caching;
 using DD4T.Factories.Caching;
 using DD4T.Utils;
 using DD4T.ContentModel.Contracts.Resolvers;
-using DD4T.Factories.Resolvers;
 using DD4T.ContentModel.Contracts.Serializing;
 using DD4T.ContentModel;
 using DD4T.Serialization;
+using DD4T.ContentModel.Contracts.Configuration;
+using DD4T.ContentModel.Contracts.Logging;
+using DD4T.ContentModel.Factories;
 
 namespace DD4T.Factories
 {
@@ -15,6 +17,24 @@ namespace DD4T.Factories
     /// </summary>
     public abstract class FactoryBase
     {
+
+        public IPublicationResolver PublicationResolver { get; set; }
+        //public ICacheAgent CacheAgent { get; private set; }
+
+        protected readonly IDD4TConfiguration Configuration;
+        protected readonly ILogger LoggerService;
+
+        public FactoryBase(IFactoriesFacade facade)
+        {
+            if (facade == null)
+                throw new ArgumentNullException("facade");
+
+            LoggerService = facade.Logger;
+            PublicationResolver = facade.PublicationResolver;
+            Configuration = facade.Configuration;
+
+        }
+
 
         #region publication resolving
         private int? _publicationId = null;
@@ -36,22 +56,21 @@ namespace DD4T.Factories
             }
         }
 
-        private IPublicationResolver _publicationResolver = null;
-        public IPublicationResolver PublicationResolver
-        {
-            get
-            {
-                if (_publicationResolver == null)
-                {
-                    _publicationResolver = new DefaultPublicationResolver();
-                }
-                return _publicationResolver;
-            }
-            set
-            {
-                _publicationResolver = value;
-            }
-        }
+        //public IPublicationResolver PublicationResolver
+        //{
+        //    get
+        //    {
+        //        if (_publicationResolver == null)
+        //        {
+        //            _publicationResolver = new DefaultPublicationResolver();
+        //        }
+        //        return _publicationResolver;
+        //    }
+        //    set
+        //    {
+        //        _publicationResolver = value;
+        //    }
+        //}
 
         #endregion
 
@@ -74,7 +93,7 @@ namespace DD4T.Factories
             {
                 if (_cacheAgent == null)
                 {
-                    _cacheAgent = new DefaultCacheAgent();
+                    _cacheAgent = new NullCacheAgent();
                 }
                 return _cacheAgent;
             }
@@ -91,7 +110,7 @@ namespace DD4T.Factories
         {
             get
             {
-                return ConfigurationHelper.IncludeLastPublishedDate;
+                return Configuration.IncludeLastPublishedDate;
             }
         }
         #endregion

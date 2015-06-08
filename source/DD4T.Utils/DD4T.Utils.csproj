@@ -13,8 +13,8 @@
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
-    <RestorePackages>true</RestorePackages>
     <TargetFrameworkProfile />
+    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -70,22 +70,6 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DD4T.ContentModel, Version=2.0.0.0, Culture=neutral, PublicKeyToken=4450e3c7f68bf872, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\DD4T-Model.2.0.4-draft\lib\DD4T.ContentModel.dll</HintPath>
-    </Reference>
-    <Reference Include="DD4T.ContentModel.Contracts, Version=2.0.0.0, Culture=neutral, PublicKeyToken=4450e3c7f68bf872, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\DD4T-Model.2.0.4-draft\lib\DD4T.ContentModel.Contracts.dll</HintPath>
-    </Reference>
-    <Reference Include="DD4T.ContentModel.XmlSerializers, Version=2.0.0.0, Culture=neutral, PublicKeyToken=4450e3c7f68bf872, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\DD4T-Model.2.0.4-draft\lib\DD4T.ContentModel.XmlSerializers.dll</HintPath>
-    </Reference>
-    <Reference Include="DD4T.Serialization, Version=2.0.0.0, Culture=neutral, PublicKeyToken=4450e3c7f68bf872, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\DD4T-Model.2.0.4-draft\lib\DD4T.Serialization.dll</HintPath>
-    </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\DD4T-Model.2.0.4-draft\lib\Newtonsoft.Json.dll</HintPath>
@@ -100,6 +84,10 @@
     </Compile>
     <Compile Include="ClassLoader.cs" />
     <Compile Include="ConfigurationHelper.cs" />
+    <Compile Include="DD4TConfiguration.cs" />
+    <Compile Include="Defaults\DefaultPublicationResolver.cs" />
+    <Compile Include="Defaults\NullLogger.cs" />
+    <Compile Include="ExtensionMethods\DD4TConfigurationExtensions.cs" />
     <Compile Include="LoggerService.cs" />
     <Compile Include="Properties\SpecificAssemblyInfo.cs" />
     <Compile Include="ProviderLoader.cs" />
@@ -107,6 +95,10 @@
     <Compile Include="TridionHelper.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\dd4t-2-model\source\DD4T.Serialization\DD4T.Serialization.csproj">
+      <Project>{849a21d3-5863-4c43-98d3-6b8b83b9300f}</Project>
+      <Name>DD4T.Serialization</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DD4T.Core.Contracts\DD4T.Core.Contracts.csproj">
       <Project>{f90a1191-cd6e-4016-9005-b28a96f7964e}</Project>
       <Name>DD4T.Core.Contracts</Name>

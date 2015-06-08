@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace DD4T.ContentModel.Logging
+namespace DD4T.ContentModel.Contracts.Logging
 {
     public enum LoggingCategory { General, Controller, View, Model, System, Integration, Performance }
-    public interface ILogWrapper
+    public interface ILogger
     {
         void Debug(string message, params object[] parameters);
         void Debug(string message, LoggingCategory category, params object[] parameters);

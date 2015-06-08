@@ -5,13 +5,13 @@ using DD4T.ContentModel;
 using DD4T.ContentModel.Contracts.Caching;
 using DD4T.ContentModel.Contracts.Providers;
 using DD4T.ContentModel.Exceptions;
-using DD4T.ContentModel.Logging;
 using DD4T.ContentModel.Querying;
 using DD4T.Factories.Caching;
 using DD4T.Utils;
 using DD4T.ContentModel.Factories;
 using DD4T.ContentModel.Contracts.Serializing;
 using DD4T.Serialization;
+using DD4T.ContentModel.Contracts.Logging;
 
 namespace DD4T.Factories
 {
@@ -20,15 +20,27 @@ namespace DD4T.Factories
     /// </summary>
     public class ComponentPresentationFactory : FactoryBase, IComponentPresentationFactory
     {
-        public const string CacheKeyFormatByUri = "ComponentByUri_{0}_{1}";
-        public const string CacheRegion = "Component";
+        public const string CacheKeyFormatByUri = "ComponentPresentationByUri_{0}_{1}";
+        public const string CacheRegion = "ComponentPresentation";
+        public IComponentPresentationProvider ComponentPresentationProvider { get; set; }
+
         private ICacheAgent _cacheAgent = null;
+
+        public ComponentPresentationFactory(IComponentPresentationProvider componentPresentationProvider, IFactoriesFacade facade)
+            : base(facade)
+        {
+            if (componentPresentationProvider == null)
+                throw new ArgumentNullException("componentPresentationProvider");
+
+            ComponentPresentationProvider = componentPresentationProvider;
+
+        }
 
         private string DataFormat
         {
             get
             {
-                return ConfigurationHelper.DataFormat;
+                return Configuration.DataFormat;
             }
         }
 
@@ -53,30 +65,7 @@ namespace DD4T.Factories
             }
         }
 
-        private IComponentPresentationProvider _componentPresentationProvider = null;
-        public IComponentPresentationProvider ComponentPresentationProvider
-        {
-            get
-            {
-                if (_componentPresentationProvider == null)
-                {
-                    _componentPresentationProvider = (IComponentPresentationProvider)ProviderLoader.LoadProvider<IComponentPresentationProvider>(this.PublicationId);
-                }
-				
-				// If using your own DI you can pass the provider PublicationID yourself
-				// However by not doing so, the below will leverage the configured PublicationResolver - which could still return 0 if you needed.					
-                if (_componentPresentationProvider.PublicationId == 0)
-                    _componentPresentationProvider.PublicationId = this.PublicationId;
-					
-                return _componentPresentationProvider;
-            }
-            set
-            {
-                _componentPresentationProvider = value;
-            }
-        }
 
-      
 
         #region IComponentPresentationFactory members
 
@@ -91,7 +80,7 @@ namespace DD4T.Factories
         }
 
 
-     
+
         public IComponentPresentation GetComponentPresentation(string componentUri, string templateUri = "")
         {
             LoggerService.Debug(">>GetComponentPresentation ({0})", LoggingCategory.Performance, componentUri);
@@ -114,10 +103,10 @@ namespace DD4T.Factories
             totalCount = results.Count;
 
             var pagedResults = results
-                .Skip(pageIndex*pageSize)
+                .Skip(pageIndex * pageSize)
                 .Take(pageSize)
                 .Select(c => { IComponentPresentation cp = null; TryGetComponentPresentation(out cp, c); return cp; })
-                .Where(cp => cp!= null)
+                .Where(cp => cp != null)
                 .ToList();
 
             LoggerService.Debug("<<FindComponentPresentations ({0},{1})", LoggingCategory.Performance, queryParameters.ToString(), Convert.ToString(pageIndex));
@@ -162,7 +151,7 @@ namespace DD4T.Factories
             {
                 if (_cacheAgent == null)
                 {
-                    _cacheAgent = new DefaultCacheAgent();
+                    _cacheAgent = new NullCacheAgent();
                     // the next line is the only reason we are overriding this property: to set a callback
                     _cacheAgent.GetLastPublishDateCallBack = GetLastPublishedDateCallBack;
                 }
@@ -175,7 +164,7 @@ namespace DD4T.Factories
             }
         }
 
-  
+
 
         public bool TryGetComponentPresentation(out IComponentPresentation cp, string componentUri, string templateUri = "")
         {

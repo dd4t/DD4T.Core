@@ -3,6 +3,8 @@ using System.Runtime.Caching;
 using System.Timers;
 using DD4T.ContentModel.Contracts.Caching;
 using DD4T.Utils;
+using DD4T.ContentModel.Contracts.Configuration;
+using DD4T.ContentModel.Contracts.Logging;
 
 namespace DD4T.Factories.Caching
 {
@@ -19,6 +21,20 @@ namespace DD4T.Factories.Caching
         private DateTime _lastPublished;
         private Timer _timer;
         private GetLastPublishDate _getLastPublishDateCallBack;
+        private readonly IDD4TConfiguration _configuration;
+        private readonly ILogger LoggerService;
+
+        public LastPublishDateChangeMonitor(IDD4TConfiguration configuration, ILogger logger)
+        {
+            if (configuration == null)
+                throw new ArgumentNullException("configuration");
+
+            if (logger == null)
+                throw new ArgumentNullException("logger");
+
+            LoggerService = logger;
+            _configuration = configuration;
+        }
 
         public LastPublishDateChangeMonitor(string key, object cachedItem, GetLastPublishDate getLastPublishDateCallBack)
         {
@@ -36,17 +52,10 @@ namespace DD4T.Factories.Caching
                 _timer = new Timer();
 
                 int interval = DefaultCallBackInterval;
-                string configuredInterval = ConfigurationHelper.GetSetting("CacheSettings_CallBackInterval");
-                if (! string.IsNullOrEmpty(configuredInterval))
+                int configuredInterval = _configuration.CacheCallBackInterval;
+                if (configuredInterval != int.MinValue)
                 {
-                    try
-                    {
-                        interval = Convert.ToInt32(configuredInterval);
-                    }
-                    catch
-                    {
-                        // fall back to default setting
-                    }
+                    interval = Convert.ToInt32(configuredInterval);
                 }
 
                 _timer.Interval = interval * 1000; // interval is configured in seconds but must be set in milliseconds!
@@ -97,7 +106,6 @@ namespace DD4T.Factories.Caching
             if (_timer != null)
             {
                 _timer.Stop();
-                _timer.Dispose();
                 _timer = null;
             }
         }

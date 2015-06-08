@@ -7,35 +7,30 @@ namespace DD4T.Providers.SDLTridion2013sp1
     using Tridion.ContentDelivery.Web.Linking;
     using DD4T.ContentModel.Contracts.Providers;
     using DD4T.Utils;
+    using DD4T.Utils.ExtensionMethods;
+    using DD4T.ContentModel.Contracts.Configuration;
+    using DD4T.ContentModel.Contracts.Resolvers;
+
 
     public class TridionLinkProvider : BaseProvider, ILinkProvider, IDisposable
     {
+
+        public TridionLinkProvider(IProvidersFacade providersFacade)
+            : base(providersFacade)
+        {
+
+        }
 
         private ComponentLink componentLink = null;
         //private const string uriPrefix = "tcm:";
         private static TcmUri emptyTcmUri = new TcmUri("tcm:0-0-0");
 
-        protected static bool LinkToAnchor
-        {
-            get
-            {
-                return ConfigurationHelper.LinkToAnchor;
-            }
-        }
-
-        protected static bool UseUriAsAnchor
-        {
-            get
-            {
-                return ConfigurationHelper.UseUriAsAnchor;
-            }
-        }
 
         public ComponentLink ComponentLink
         {
             get
             {
-                if (componentLink == null) 
+                if (componentLink == null)
                     componentLink = new ComponentLink(PublicationId);
                 return componentLink;
             }
@@ -62,7 +57,6 @@ namespace DD4T.Providers.SDLTridion2013sp1
         public string ResolveLink(string componentUri)
         {
             return ResolveLink(TcmUri.NullUri.ToString(), componentUri, TcmUri.NullUri.ToString());
-
         }
 
         public virtual string ResolveLink(string sourcePageUri, string componentUri, string excludeComponentTemplateUri)
@@ -70,15 +64,17 @@ namespace DD4T.Providers.SDLTridion2013sp1
             TcmUri componentUriToLinkTo = new TcmUri(componentUri);
             TcmUri pageUri = new TcmUri(sourcePageUri);
             TcmUri componentTemplateUri = new TcmUri(excludeComponentTemplateUri);
+            var linkToAnchor = Configuration.LinkToAnchor;
 
             if (!componentUriToLinkTo.Equals(emptyTcmUri))
             {
-                Link link = GetComponentLink(componentUriToLinkTo).GetLink(pageUri.ToString(), componentUriToLinkTo.ToString(), componentTemplateUri.ToString(), String.Empty, String.Empty, false, LinkToAnchor);
+                Link link = GetComponentLink(componentUriToLinkTo).GetLink(pageUri.ToString(), componentUriToLinkTo.ToString(), componentTemplateUri.ToString(), String.Empty, String.Empty, false, linkToAnchor);
                 if (!link.IsResolved)
                 {
                     return null;
                 }
-                return LinkToAnchor && link.Anchor != "0" ? string.Format("{0}#{1}", link.Url, TridionHelper.GetLocalAnchorTag(pageUri, componentUriToLinkTo, componentTemplateUri, link.Anchor)) : link.Url;
+
+                return linkToAnchor && link.Anchor != "0" ? string.Format("{0}#{1}", link.Url, Configuration.UseUriAsAnchor.GetLocalAnchorTag(componentUriToLinkTo, link.Anchor)) : link.Url;
             }
 
             return null;

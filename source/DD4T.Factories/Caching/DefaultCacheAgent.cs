@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using DD4T.ContentModel.Contracts.Caching;
 using System.Runtime.Caching;
 using DD4T.Utils;
+using DD4T.ContentModel.Contracts.Configuration;
 
 
 namespace DD4T.Factories.Caching
@@ -14,6 +15,16 @@ namespace DD4T.Factories.Caching
     public class DefaultCacheAgent : ICacheAgent
     {
         public const int DefaultExpirationInSeconds = 60;
+
+        private readonly IDD4TConfiguration _configuration;
+
+        public DefaultCacheAgent(IDD4TConfiguration configuration)
+        {
+            if (configuration == null)
+                throw new ArgumentNullException("configuration");
+
+            _configuration = configuration;
+        }
 
         #region properties
         private static ObjectCache Cache
@@ -108,20 +119,21 @@ namespace DD4T.Factories.Caching
                 policy.ChangeMonitors.Add(Cache.CreateCacheEntryChangeMonitor(dependOnItems));
             }
 
-            string expirationSetting = null;
+            int expirationSetting = 0;
             if (!string.IsNullOrEmpty(region))
             {
-                expirationSetting = ConfigurationHelper.GetSetting("DD4T.CacheSettings." + region, "CacheSettings_" + region);
+                //Todo: introduce regions in the IDD4TConfiguration interface
+                //expirationSetting = ConfigurationHelper.GetSetting("DD4T.CacheSettings." + region, "CacheSettings_" + region);
             }
-            if (string.IsNullOrEmpty(expirationSetting))
+            if (expirationSetting == 0)
             {
-                expirationSetting = ConfigurationHelper.GetSetting("DD4T.CacheSettings.Default", "CacheSettings_Default");
+                expirationSetting = _configuration.DefaultCacheSettings;
             }
             int expirationInSeconds = -1;
 
             try
             {
-                expirationInSeconds = string.IsNullOrEmpty(expirationSetting) ? DefaultExpirationInSeconds : Convert.ToInt32(expirationSetting);
+                expirationInSeconds = expirationSetting == 0 ? DefaultExpirationInSeconds : expirationSetting;
             }
             catch
             {

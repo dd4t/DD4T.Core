@@ -5,7 +5,7 @@ using DD4T.ContentModel;
 using DD4T.ContentModel.Contracts.Caching;
 using DD4T.ContentModel.Contracts.Providers;
 using DD4T.ContentModel.Exceptions;
-using DD4T.ContentModel.Logging;
+using DD4T.ContentModel.Contracts.Logging;
 using DD4T.ContentModel.Querying;
 using DD4T.Factories.Caching;
 using DD4T.Utils;
@@ -23,6 +23,17 @@ namespace DD4T.Factories
         {
             get;
             set;
+        }
+
+        public ComponentFactory( IComponentPresentationFactory componentPresentationFactory,
+                            IFactoriesFacade facade)
+            : base(facade)
+        {
+
+            if (componentPresentationFactory == null)
+                throw new ArgumentNullException("componentPresentationFactory");
+
+            ComponentPresentationFactory = componentPresentationFactory;
         }
 
         #region IComponentFactory members

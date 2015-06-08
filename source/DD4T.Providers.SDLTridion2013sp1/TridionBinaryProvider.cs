@@ -21,6 +21,12 @@ namespace DD4T.Providers.SDLTridion2013sp1
     public class TridionBinaryProvider : BaseProvider, IBinaryProvider
     {
 
+        public TridionBinaryProvider(IProvidersFacade providersFacade)
+            : base(providersFacade)
+        {
+
+        }
+
         #region public static
 
         public static string SqlQuery = "SELECT BC.CONTENT FROM BINARY_CONTENT BC, BINARYVARIANTS BV WHERE BV.URL = @url AND BC.BINARY_ID = BV.BINARY_ID AND BC.PUBLICATION_ID = BV.PUBLICATION_ID AND BC.VARIANT_ID = BV.VARIANT_ID"; 

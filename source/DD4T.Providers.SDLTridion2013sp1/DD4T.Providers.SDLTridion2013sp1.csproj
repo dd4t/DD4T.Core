@@ -13,8 +13,8 @@
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
-    <RestorePackages>true</RestorePackages>
     <TargetFrameworkProfile />
+    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -66,25 +66,6 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DD4T.ContentModel, Version=2.0.0.0, Culture=neutral, PublicKeyToken=4450e3c7f68bf872, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\DD4T-Model.2.0.4-draft\lib\DD4T.ContentModel.dll</HintPath>
-    </Reference>
-    <Reference Include="DD4T.ContentModel.Contracts, Version=2.0.0.0, Culture=neutral, PublicKeyToken=4450e3c7f68bf872, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\DD4T-Model.2.0.4-draft\lib\DD4T.ContentModel.Contracts.dll</HintPath>
-    </Reference>
-    <Reference Include="DD4T.ContentModel.XmlSerializers, Version=2.0.0.0, Culture=neutral, PublicKeyToken=4450e3c7f68bf872, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\DD4T-Model.2.0.4-draft\lib\DD4T.ContentModel.XmlSerializers.dll</HintPath>
-    </Reference>
-    <Reference Include="DD4T.Serialization, Version=2.0.0.0, Culture=neutral, PublicKeyToken=4450e3c7f68bf872, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\DD4T-Model.2.0.4-draft\lib\DD4T.Serialization.dll</HintPath>
-    </Reference>
-    <Reference Include="netrtsn">
-      <HintPath>..\packages\SDL-Tridion-2013-sp1.1.0.0\lib\netrtsn.dll</HintPath>
-    </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\DD4T-Model.2.0.4-draft\lib\Newtonsoft.Json.dll</HintPath>
@@ -95,16 +76,16 @@
     <Reference Include="System.Web" />
     <Reference Include="System.Data" />
     <Reference Include="Tridion.ContentDelivery">
-      <HintPath>..\packages\SDL-Tridion-2013-sp1.1.0.0\lib\Tridion.ContentDelivery.dll</HintPath>
+      <HintPath>..\..\..\dd4t-2-test-web\DD4T.WebApplication\DD4T.WebApplication\bin\Tridion.ContentDelivery.dll</HintPath>
     </Reference>
     <Reference Include="Tridion.ContentDelivery.AmbientData">
-      <HintPath>..\packages\SDL-Tridion-2013-sp1.1.0.0\lib\Tridion.ContentDelivery.AmbientData.dll</HintPath>
+      <HintPath>..\..\..\dd4t-2-test-web\DD4T.WebApplication\DD4T.WebApplication\bin\Tridion.ContentDelivery.AmbientData.dll</HintPath>
     </Reference>
     <Reference Include="Tridion.ContentDelivery.Configuration">
-      <HintPath>..\packages\SDL-Tridion-2013-sp1.1.0.0\lib\Tridion.ContentDelivery.Configuration.dll</HintPath>
+      <HintPath>..\..\..\dd4t-2-test-web\DD4T.WebApplication\DD4T.WebApplication\bin\Tridion.ContentDelivery.Configuration.dll</HintPath>
     </Reference>
     <Reference Include="Tridion.ContentDelivery.Interop">
-      <HintPath>..\packages\SDL-Tridion-2013-sp1.1.0.0\lib\Tridion.ContentDelivery.Interop.dll</HintPath>
+      <HintPath>..\..\..\dd4t-2-test-web\DD4T.WebApplication\DD4T.WebApplication\bin\Tridion.ContentDelivery.Interop.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -115,6 +96,7 @@
     <Compile Include="ExtendedQueryParameters.cs" />
     <Compile Include="ITridionQueryWrapper.cs" />
     <Compile Include="Properties\SpecificAssemblyInfo.cs" />
+    <Compile Include="ProvidersFacade.cs" />
     <Compile Include="TridionBinaryProvider.cs" />
     <Compile Include="TridionComponentPresentationProvider.cs" />
     <Compile Include="TridionComponentProvider.cs" />
@@ -129,6 +111,18 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\dd4t-2-model\source\DD4T.ContentModel.Contracts\DD4T.ContentModel.Contracts.csproj">
+      <Project>{c21f66f0-01ce-4af3-b76c-cd262b7ea1c0}</Project>
+      <Name>DD4T.ContentModel.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\dd4t-2-model\source\DD4T.ContentModel\DD4T.ContentModel.csproj">
+      <Project>{83f5cfc2-14d5-4190-b51d-7af7a69b67e9}</Project>
+      <Name>DD4T.ContentModel</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\dd4t-2-model\source\DD4T.Serialization\DD4T.Serialization.csproj">
+      <Project>{849a21d3-5863-4c43-98d3-6b8b83b9300f}</Project>
+      <Name>DD4T.Serialization</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DD4T.Core.Contracts\DD4T.Core.Contracts.csproj">
       <Project>{f90a1191-cd6e-4016-9005-b28a96f7964e}</Project>
       <Name>DD4T.Core.Contracts</Name>

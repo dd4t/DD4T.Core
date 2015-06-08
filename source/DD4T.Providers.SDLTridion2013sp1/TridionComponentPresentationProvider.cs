@@ -9,7 +9,7 @@ using DD4T.ContentModel.Contracts.Providers;
 using System.Collections;
 using DD4T.ContentModel.Querying;
 using DD4T.Utils;
-using DD4T.ContentModel.Logging;
+using DD4T.ContentModel.Contracts.Logging;
 
 namespace DD4T.Providers.SDLTridion2013sp1
 {
@@ -25,10 +25,11 @@ namespace DD4T.Providers.SDLTridion2013sp1
         private string selectByComponentTemplateId;
         private string selectByOutputFormat;
 
-        public TridionComponentPresentationProvider()
+        public TridionComponentPresentationProvider(IProvidersFacade providersFacade)
+            : base(providersFacade)
         {
-            selectByComponentTemplateId = ConfigurationHelper.SelectComponentByComponentTemplateId;
-            selectByOutputFormat = ConfigurationHelper.SelectComponentByOutputFormat;
+            selectByComponentTemplateId = Configuration.SelectComponentByComponentTemplateId;
+            selectByOutputFormat = Configuration.SelectComponentByOutputFormat;
             _cpFactoryList = new Dictionary<int, T.ComponentPresentationFactory>();
             _cmFactoryList = new Dictionary<int,TMeta.ComponentMetaFactory>();
         }
