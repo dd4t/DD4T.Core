@@ -10,6 +10,7 @@ namespace DD4T.Mvc.Html
 {
     public class DefaultComponentPresentationRenderer : IComponentPresentationRenderer
     {
+
         public static IComponentPresentationRenderer Create()
         {
             return new DefaultComponentPresentationRenderer();

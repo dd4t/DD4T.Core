@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DD4T.Factories
+namespace DD4T.Provider.SDLTridion2013sp1
 {
     public class ProvidersFacade : IProvidersFacade
     {
