@@ -114,6 +114,15 @@ namespace DD4T.Utils
             }
         }
 
+        public string ContentProviderEndPoint
+        {
+            get
+            {
+              return SafeGetConfigSettingAsString(ConfigurationKeys.ContentProviderEndPoint);
+                
+            }
+        }
+
         public string SiteMapPath
         {
             get { throw new NotImplementedException(); }
@@ -223,6 +232,9 @@ namespace DD4T.Utils
             return b;
         }
         #endregion
+
+
+
 
         
     }

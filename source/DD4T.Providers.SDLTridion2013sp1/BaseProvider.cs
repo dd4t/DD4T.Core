@@ -12,6 +12,7 @@ namespace DD4T.Providers.SDLTridion2013sp1
         private readonly IPublicationResolver PublicationResolver;
         protected readonly ILogger LoggerService;
         protected readonly IDD4TConfiguration Configuration;
+         
 
         public BaseProvider(IProvidersFacade providersFacade)
         {

@@ -28,5 +28,6 @@ namespace DD4T.ContentModel.Contracts.Configuration
         int DefaultCacheSettings { get; }
         int CacheCallBackInterval { get; }
         string DataFormat { get; }
+        string ContentProviderEndPoint { get; }
     }
 }
