@@ -12,6 +12,11 @@ using DD4T.Factories.Caching;
 using DD4T.ContentModel;
 using DD4T.ContentModel.Contracts.Serializing;
 using DD4T.Serialization;
+using DD4T.ContentModel.Contracts.Configuration;
+using DD4T.ContentModel.Contracts.Resolvers;
+using DD4T.ContentModel.Contracts.Logging;
+using DD4T.Utils;
+using DD4T.Utils.Defaults;
 
 namespace DD4T.Core.Test
 {
@@ -48,9 +53,15 @@ namespace DD4T.Core.Test
         {
             public override void Load()
             {
+                Bind<IDD4TConfiguration>().To<DD4TConfiguration>().InSingletonScope();
+                Bind<IPublicationResolver>().To<DefaultPublicationResolver>().InSingletonScope();
+
+                Bind<ILogger>().To<NullLogger>().InSingletonScope();
+                Bind<IFactoriesFacade>().To<FactoriesFacade>().InSingletonScope();
                 Bind<IPageFactory>().To<PageFactory>().InSingletonScope();
                 Bind<IComponentPresentationFactory>().To<ComponentPresentationFactory>().InSingletonScope();
                 Bind<IComponentFactory>().To<ComponentFactory>().InSingletonScope();
+                Bind<IProvidersFacade>().To<ProvidersFacade>().InSingletonScope();
                 Bind<IPageProvider>().To<TridionPageProvider>().InSingletonScope();
                 Bind<IComponentPresentationProvider>().To<TridionComponentPresentationProvider>().InSingletonScope();
                 Bind<ICacheAgent>().To<NullCacheAgent>().InSingletonScope();

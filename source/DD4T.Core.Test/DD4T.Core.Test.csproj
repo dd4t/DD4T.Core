@@ -37,14 +37,21 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DD4T.ContentModel">
+    <Reference Include="DD4T.ContentModel, Version=2.0.0.0, Culture=neutral, PublicKeyToken=4450e3c7f68bf872, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\DD4T-Model.0.0.0-alpha\lib\DD4T.ContentModel.dll</HintPath>
     </Reference>
-    <Reference Include="DD4T.ContentModel.Contracts">
+    <Reference Include="DD4T.ContentModel.Contracts, Version=2.0.0.0, Culture=neutral, PublicKeyToken=4450e3c7f68bf872, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\DD4T-Model.0.0.0-alpha\lib\DD4T.ContentModel.Contracts.dll</HintPath>
     </Reference>
-    <Reference Include="DD4T.Serialization">
+    <Reference Include="DD4T.Serialization, Version=2.0.0.0, Culture=neutral, PublicKeyToken=4450e3c7f68bf872, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\DD4T-Model.0.0.0-alpha\lib\DD4T.Serialization.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="Ninject">
       <HintPath>..\packages\Ninject.3.2.2.0\lib\net45-full\Ninject.dll</HintPath>
@@ -82,6 +89,10 @@
     <ProjectReference Include="..\DD4T.Providers.Test\DD4T.Providers.Test.csproj">
       <Project>{899cc432-25d8-4d65-9d98-95d109300127}</Project>
       <Name>DD4T.Providers.Test</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DD4T.Utils\DD4T.Utils.csproj">
+      <Project>{d2ce08be-7281-4697-adfe-e7a031cb59ec}</Project>
+      <Name>DD4T.Utils</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

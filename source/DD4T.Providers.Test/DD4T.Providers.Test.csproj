@@ -95,6 +95,7 @@
     </Compile>
     <Compile Include="BaseProvider.cs" />
     <Compile Include="Properties\SpecificAssemblyInfo.cs" />
+    <Compile Include="ProvidersFacade.cs" />
     <Compile Include="Randomizer.cs" />
     <Compile Include="TridionBinaryProvider.cs" />
     <Compile Include="TridionComponentPresentationProvider.cs" />
