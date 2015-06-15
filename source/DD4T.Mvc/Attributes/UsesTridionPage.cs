@@ -5,6 +5,8 @@ using DD4T.Utils;
 using DD4T.ContentModel.Exceptions;
 using System.Text.RegularExpressions;
 using System.Web.Routing;
+using DD4T.ContentModel.Contracts.Logging;
+using System;
 
 namespace DD4T.Mvc.Attributes
 {
@@ -13,7 +15,14 @@ namespace DD4T.Mvc.Attributes
     /// </summary>
     public class UsesTridionPage : ActionFilterAttribute
     {
+        private readonly ILogger LoggerService;
+        public UsesTridionPage(ILogger logger)
+        {
+            if (logger == null)
+                throw new ArgumentNullException("logger");
 
+            LoggerService = logger;
+        }
         /// <summary>
         /// Determines what to do if the page is not found. If the view relies on the page being there, this value should be true, otherwise it can be false.
         /// Defaults to true.

@@ -4,29 +4,44 @@ using System.Web.Mvc;
 using System.Web.Mvc.Html;
 using DD4T.ContentModel;
 using DD4T.Utils;
-using DD4T.ContentModel.Logging;
+using DD4T.ContentModel.Contracts.Logging;
+using System;
+using DD4T.ContentModel.Contracts.Configuration;
 
 namespace DD4T.Mvc.Html
 {
     public class DefaultComponentPresentationRenderer : IComponentPresentationRenderer
     {
 
-        public static IComponentPresentationRenderer Create()
+        //public static IComponentPresentationRenderer Create()
+        //{
+        //    return new DefaultComponentPresentationRenderer();
+        //}
+        private readonly ILogger LoggerService;
+        private readonly IDD4TConfiguration Configuration;
+        public DefaultComponentPresentationRenderer(ILogger logger, IDD4TConfiguration configuration)
         {
-            return new DefaultComponentPresentationRenderer();
+            if (logger == null)
+                throw new ArgumentNullException("logger");
+
+            if (configuration == null)
+                throw new ArgumentNullException("configuration");
+
+            LoggerService = logger;
+            Configuration = configuration;
         }
         private static bool ShowAnchors
         {
             get
             {
-                return ConfigurationHelper.ShowAnchors;
+                return Configuration.ShowAnchors;
             }
         }
         private static bool UseUriAsAnchor
         {
             get
             {
-                return ConfigurationHelper.UseUriAsAnchor;
+                return Configuration.UseUriAsAnchor;
             }
         }
 

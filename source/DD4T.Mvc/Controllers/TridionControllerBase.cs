@@ -6,18 +6,41 @@ using System.Web;
 using System.IO;
 using System.Security;
 using DD4T.Utils;
-using DD4T.ContentModel.Logging;
+using DD4T.ContentModel.Contracts.Logging;
 using DD4T.ContentModel.Factories;
+using System;
 
 namespace DD4T.Mvc.Controllers
 {
     public abstract class TridionControllerBase : Controller, IPageController, IComponentController
     {
-        public IComponentPresentationRenderer componentPresentationRenderer { get; set; }
 
         public virtual IPageFactory PageFactory { get; set; }
         public virtual IComponentFactory ComponentFactory { get; set; }
         public IComponentPresentationRenderer ComponentPresentationRenderer { get; set; }
+
+        private readonly ILogger LoggerService;
+
+        public TridionControllerBase(IPageFactory pageFactory, IComponentFactory componentFactory, 
+            IComponentPresentationRenderer componentPresentationRenderer, ILogger logger)
+        {
+            if (pageFactory == null)
+                throw new ArgumentNullException("pageFactory");
+
+            if (componentFactory == null)
+                throw new ArgumentNullException("componentFactory");
+
+            if (componentPresentationRenderer == null)
+                throw new ArgumentNullException("componentPresentationRenderer");
+
+            if (logger == null)
+                throw new ArgumentNullException("logger");
+
+            LoggerService = logger;
+            PageFactory = pageFactory;
+            ComponentFactory = componentFactory;
+            ComponentPresentationRenderer = ComponentPresentationRenderer;
+        }
 
         protected IPage GetModelForPage(string PageId)
         {

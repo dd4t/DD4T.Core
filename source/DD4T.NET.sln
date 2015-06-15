@@ -24,8 +24,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DD4T.Core.Contracts", "DD4T
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DD4T.Core.Test", "DD4T.Core.Test\DD4T.Core.Test.csproj", "{003C6126-7BD3-436D-9C72-3D6325D97019}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DD4T.Providers.Rest", "DD4T.Providers.Rest\DD4T.Providers.Rest.csproj", "{A64408C0-5AB6-4B20-B9ED-1B9F0E389A2A}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -146,22 +144,6 @@ Global
 		{003C6126-7BD3-436D-9C72-3D6325D97019}.Release2013|Any CPU.Build.0 = Release|Any CPU
 		{003C6126-7BD3-436D-9C72-3D6325D97019}.TridionDebug|Any CPU.ActiveCfg = Debug|Any CPU
 		{003C6126-7BD3-436D-9C72-3D6325D97019}.TridionDebug|Any CPU.Build.0 = Debug|Any CPU
-		{A64408C0-5AB6-4B20-B9ED-1B9F0E389A2A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A64408C0-5AB6-4B20-B9ED-1B9F0E389A2A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A64408C0-5AB6-4B20-B9ED-1B9F0E389A2A}.DebugTridion2011|Any CPU.ActiveCfg = Debug|Any CPU
-		{A64408C0-5AB6-4B20-B9ED-1B9F0E389A2A}.DebugTridion2011|Any CPU.Build.0 = Debug|Any CPU
-		{A64408C0-5AB6-4B20-B9ED-1B9F0E389A2A}.MVC3|Any CPU.ActiveCfg = Release|Any CPU
-		{A64408C0-5AB6-4B20-B9ED-1B9F0E389A2A}.MVC3|Any CPU.Build.0 = Release|Any CPU
-		{A64408C0-5AB6-4B20-B9ED-1B9F0E389A2A}.MVC4|Any CPU.ActiveCfg = Release|Any CPU
-		{A64408C0-5AB6-4B20-B9ED-1B9F0E389A2A}.MVC4|Any CPU.Build.0 = Release|Any CPU
-		{A64408C0-5AB6-4B20-B9ED-1B9F0E389A2A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A64408C0-5AB6-4B20-B9ED-1B9F0E389A2A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A64408C0-5AB6-4B20-B9ED-1B9F0E389A2A}.Release2011SP1|Any CPU.ActiveCfg = Release|Any CPU
-		{A64408C0-5AB6-4B20-B9ED-1B9F0E389A2A}.Release2011SP1|Any CPU.Build.0 = Release|Any CPU
-		{A64408C0-5AB6-4B20-B9ED-1B9F0E389A2A}.Release2013|Any CPU.ActiveCfg = Release|Any CPU
-		{A64408C0-5AB6-4B20-B9ED-1B9F0E389A2A}.Release2013|Any CPU.Build.0 = Release|Any CPU
-		{A64408C0-5AB6-4B20-B9ED-1B9F0E389A2A}.TridionDebug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A64408C0-5AB6-4B20-B9ED-1B9F0E389A2A}.TridionDebug|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

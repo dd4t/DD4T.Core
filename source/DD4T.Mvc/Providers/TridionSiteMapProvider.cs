@@ -11,7 +11,7 @@
     using DD4T.Utils;
     using DD4T.ContentModel.Contracts.Caching;
     using DD4T.Factories.Caching;
-    using DD4T.ContentModel.Logging;
+    using DD4T.ContentModel.Contracts.Logging;
     using DD4T.ContentModel.Factories;
 
     public class TridionSiteMapProvider : StaticSiteMapProvider
@@ -30,19 +30,18 @@
 
         private bool ShouldResolveComponentLinks { get; set; }
 
-        private IPageFactory _pageFactory = null;
-        public virtual IPageFactory PageFactory
+        private readonly IPageFactory _pageFactory;
+        private readonly ILogger LoggerService;
+
+        public TridionSiteMapProvider(IPageFactory pageFactory, ILogger logger)
         {
-            get
-            {
-                if (_pageFactory == null)
-                    _pageFactory = new PageFactory();
-                return _pageFactory;
-            }
-            set
-            {
-                _pageFactory = value;
-            }
+            if (pageFactory == null)
+                throw new ArgumentNullException("pageFactory");
+            if (logger == null)
+                throw new ArgumentNullException("logger");
+
+            _pageFactory = pageFactory;
+            LoggerService = logger;
         }
 
         private ICacheAgent _cacheAgent = null;
