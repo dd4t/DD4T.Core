@@ -12,23 +12,25 @@ using System;
 
 namespace DD4T.Mvc.Controllers
 {
-    public abstract class TridionControllerBase : Controller, IPageController, IComponentController
+    public abstract class TridionControllerBase : Controller, IPageController, IComponentPresentationController
     {
 
         public virtual IPageFactory PageFactory { get; set; }
-        public virtual IComponentFactory ComponentFactory { get; set; }
+
+        //public virtual IComponentFactory ComponentFactory { get; set; }
+        public virtual IComponentPresentationFactory ComponentPresentationFactory { get; set; }
         public IComponentPresentationRenderer ComponentPresentationRenderer { get; set; }
 
         private readonly ILogger LoggerService;
 
-        public TridionControllerBase(IPageFactory pageFactory, IComponentFactory componentFactory, 
+        public TridionControllerBase(IPageFactory pageFactory, IComponentPresentationFactory componentPresentationFactory, 
             IComponentPresentationRenderer componentPresentationRenderer, ILogger logger)
         {
             if (pageFactory == null)
                 throw new ArgumentNullException("pageFactory");
 
-            if (componentFactory == null)
-                throw new ArgumentNullException("componentFactory");
+            if (componentPresentationFactory == null)
+                throw new ArgumentNullException("componentPresentationFactory");
 
             if (componentPresentationRenderer == null)
                 throw new ArgumentNullException("componentPresentationRenderer");
@@ -38,7 +40,7 @@ namespace DD4T.Mvc.Controllers
 
             LoggerService = logger;
             PageFactory = pageFactory;
-            ComponentFactory = componentFactory;
+            ComponentPresentationFactory = componentPresentationFactory;
             ComponentPresentationRenderer = ComponentPresentationRenderer;
         }
 

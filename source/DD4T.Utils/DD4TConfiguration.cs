@@ -1,4 +1,5 @@
 ﻿using DD4T.ContentModel.Contracts.Configuration;
+using DD4T.ContentModel.Contracts.Providers;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -191,12 +192,16 @@ namespace DD4T.Utils
             }
         }
 
+        public string ResourcePath
+        {
+            get { throw new NotImplementedException(); }
+        }
         public bool UseUriAsAnchor
         {
             get { throw new NotImplementedException(); }
         }
 
-        public ContentModel.Contracts.Providers.ProviderVersion ProviderVersion
+        public ProviderVersion ProviderVersion
         {
             get { throw new NotImplementedException(); }
         }
@@ -236,6 +241,8 @@ namespace DD4T.Utils
 
 
 
-        
+
+
+
     }
 }

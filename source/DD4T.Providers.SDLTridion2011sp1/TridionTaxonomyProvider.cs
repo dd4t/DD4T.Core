@@ -21,6 +21,11 @@ namespace DD4T.Providers.SDLTridion2011sp1
                 return _taxonomyFactory;
             }
         }
+        public TridionTaxonomyProvider(IProvidersFacade providersFacade)
+            : base(providersFacade)
+        {
+
+        }
 
         #region ITaxonomyProvider
         public Dynamic.IKeyword GetKeyword(string categoryUriToLookIn, string keywordName)

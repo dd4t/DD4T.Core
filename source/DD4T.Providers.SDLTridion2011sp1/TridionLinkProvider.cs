@@ -1,4 +1,5 @@
 ﻿using DD4T.ContentModel;
+using DD4T.Utils.ExtensionMethods;
 
 namespace DD4T.Providers.SDLTridion2011sp1
 {
@@ -10,26 +11,16 @@ namespace DD4T.Providers.SDLTridion2011sp1
 
     public class TridionLinkProvider : BaseProvider, ILinkProvider, IDisposable
     {
+        public TridionLinkProvider(IProvidersFacade providersFacade)
+            : base(providersFacade)
+        {
 
+        }
         private ComponentLink componentLink = null;
         //private const string uriPrefix = "tcm:";
         private static TcmUri emptyTcmUri = new TcmUri("tcm:0-0-0");
 
-        protected static bool LinkToAnchor
-        {
-            get
-            {
-                return ConfigurationHelper.LinkToAnchor;
-            }
-        }
-
-        protected static bool UseUriAsAnchor
-        {
-            get
-            {
-                return ConfigurationHelper.UseUriAsAnchor;
-            }
-        }
+      
 
         public ComponentLink ComponentLink
         {
@@ -70,20 +61,21 @@ namespace DD4T.Providers.SDLTridion2011sp1
             TcmUri componentUriToLinkTo = new TcmUri(componentUri);
             TcmUri pageUri = new TcmUri(sourcePageUri);
             TcmUri componentTemplateUri = new TcmUri(excludeComponentTemplateUri);
+            var linkToAnchor = Configuration.LinkToAnchor;
 
             if (!componentUriToLinkTo.Equals(emptyTcmUri))
             {
-                Link link = GetComponentLink(componentUriToLinkTo).GetLink(pageUri.ToString(), componentUriToLinkTo.ToString(), componentTemplateUri.ToString(), String.Empty, String.Empty, false, LinkToAnchor);
+                Link link = GetComponentLink(componentUriToLinkTo).GetLink(pageUri.ToString(), componentUriToLinkTo.ToString(), componentTemplateUri.ToString(), String.Empty, String.Empty, false, linkToAnchor);
                 if (!link.IsResolved)
                 {
                     return null;
                 }
-                return LinkToAnchor && link.Anchor != "0" ? string.Format("{0}#{1}", link.Url, TridionHelper.GetLocalAnchorTag(pageUri, componentUriToLinkTo, componentTemplateUri, link.Anchor)) : link.Url;
+
+                return linkToAnchor && link.Anchor != "0" ? string.Format("{0}#{1}", link.Url, Configuration.UseUriAsAnchor.GetLocalAnchorTag(componentUriToLinkTo, link.Anchor)) : link.Url;
             }
 
             return null;
         }
-
 
         #region IDisposable
         protected virtual void Dispose(bool isDisposed)

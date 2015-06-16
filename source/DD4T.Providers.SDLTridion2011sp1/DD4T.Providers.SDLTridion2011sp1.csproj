@@ -69,6 +69,22 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DD4T.ContentModel, Version=2.0.0.0, Culture=neutral, PublicKeyToken=4450e3c7f68bf872, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\DD4T-Model.0.0.0-alpha\lib\DD4T.ContentModel.dll</HintPath>
+    </Reference>
+    <Reference Include="DD4T.ContentModel.Contracts, Version=2.0.0.0, Culture=neutral, PublicKeyToken=4450e3c7f68bf872, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\DD4T-Model.0.0.0-alpha\lib\DD4T.ContentModel.Contracts.dll</HintPath>
+    </Reference>
+    <Reference Include="DD4T.Serialization, Version=2.0.0.0, Culture=neutral, PublicKeyToken=4450e3c7f68bf872, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\DD4T-Model.0.0.0-alpha\lib\DD4T.Serialization.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
@@ -99,7 +115,9 @@
     <Compile Include="ExtendedQueryParameters.cs" />
     <Compile Include="ITridionQueryWrapper.cs" />
     <Compile Include="Properties\SpecificAssemblyInfo.cs" />
+    <Compile Include="ProvidersFacade.cs" />
     <Compile Include="TridionBinaryProvider.cs" />
+    <Compile Include="TridionComponentPresentationProvider.cs" />
     <Compile Include="TridionComponentProvider.cs" />
     <Compile Include="TridionLinkProvider.cs" />
     <Compile Include="TridionPageProvider.cs" />
@@ -131,4 +149,3 @@ copy "$(TargetPath)" "$(OutDir)\nuget"</PostBuildEvent>
   </Target>
   -->
 </Project>
-

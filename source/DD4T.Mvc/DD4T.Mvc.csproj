@@ -27,7 +27,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\build\</OutputPath>
+    <OutputPath>..\build\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -170,6 +170,7 @@
     <Compile Include="Caching\SitemapCacheDependency.cs" />
     <Compile Include="Caching\WebCacheAgent.cs" />
     <Compile Include="Controllers\IComponentController.cs" />
+    <Compile Include="Controllers\IComponentPresentationController.cs" />
     <Compile Include="Controllers\IPageController.cs" />
     <Compile Include="Controllers\TridionControllerBase.cs" />
     <Compile Include="FactoryService.cs" />

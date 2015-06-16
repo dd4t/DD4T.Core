@@ -17,18 +17,19 @@ namespace DD4T.Mvc.Html
         /// </summary>
         private const string XlinkNamespaceUri = "http://www.w3.org/1999/xlink";
 
-        private static ILinkFactory _linkFactory = null;
-        private static ILinkFactory LinkFactory
-        {
-            get
-            {
-                if (_linkFactory == null)
-                {
-                    _linkFactory = new LinkFactory(); 
-                }
-                return _linkFactory;
-            }
-        }
+        public static ILinkFactory LinkFactory {get;set;}
+
+        //private static ILinkFactory LinkFactory
+        //{
+        //    get
+        //    {
+        //        if (_linkFactory == null)
+        //        {
+        //            _linkFactory = new LinkFactory(); 
+        //        }
+        //        return _linkFactory;
+        //    }
+        //}
 
         public static MvcHtmlString ResolveRichText(this string value)
         {

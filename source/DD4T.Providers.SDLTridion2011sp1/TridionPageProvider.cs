@@ -7,7 +7,7 @@ using DD4T.ContentModel;
 using System.Collections.Generic;
 using DD4T.ContentModel.Contracts.Providers;
 using DD4T.Utils;
-using DD4T.ContentModel.Logging;
+using DD4T.ContentModel.Contracts.Logging;
 
 namespace DD4T.Providers.SDLTridion2011sp1
 {
@@ -19,6 +19,11 @@ namespace DD4T.Providers.SDLTridion2011sp1
 
 		private static IDictionary<string, DateTime> lastPublishedDates = new Dictionary<string, DateTime>();
 
+        public TridionPageProvider(IProvidersFacade providersFacade)
+            : base(providersFacade)
+        {
+
+        }
 
         #region IPageProvider Members
 
