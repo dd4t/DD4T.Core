@@ -32,6 +32,7 @@ namespace DD4T.Providers.SDLTridion2013sp1
             selectByOutputFormat = Configuration.SelectComponentByOutputFormat;
             _cpFactoryList = new Dictionary<int, T.ComponentPresentationFactory>();
             _cmFactoryList = new Dictionary<int,TMeta.ComponentMetaFactory>();
+
         }
 
         #region IComponentProvider

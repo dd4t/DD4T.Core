@@ -23,6 +23,8 @@ namespace DD4T.Factories
                 throw new ArgumentNullException("binaryProvider");
 
             BinaryProvider = binaryProvider;
+            //overriding cacheAgent GetLastPublished property
+            //CacheAgent.GetLastPublishDateCallBack = GetLastPublishedDateCallBack;
         }
 
         #region IBinaryFactory members

@@ -32,7 +32,8 @@ namespace DD4T.Factories
                 throw new ArgumentNullException("componentPresentationProvider");
 
             ComponentPresentationProvider = componentPresentationProvider;
-
+            //overriding cacheAgent GetLastPublished property
+            //CacheAgent.GetLastPublishDateCallBack = GetLastPublishedDateCallBack;
         }
 
         private string DataFormat
@@ -64,8 +65,6 @@ namespace DD4T.Factories
             }
         }
 
-
-
         #region IComponentPresentationFactory members
 
         /// <summary>
@@ -77,8 +76,6 @@ namespace DD4T.Factories
         {
             return SerializerService.Deserialize<ComponentPresentation>(componentPresentationStringContent);
         }
-
-
 
         public IComponentPresentation GetComponentPresentation(string componentUri, string templateUri = "")
         {
@@ -168,16 +165,27 @@ namespace DD4T.Factories
         public bool TryGetComponentPresentation(out IComponentPresentation cp, string componentUri, string templateUri = "")
         {
             cp = null;
+            string cacheKey = String.Format(CacheKeyFormatByUri, componentUri, templateUri);
+            cp = (IComponentPresentation)CacheAgent.Load(cacheKey);
 
-            string content = !String.IsNullOrEmpty(templateUri) ? ComponentPresentationProvider.GetContent(componentUri, templateUri) : ComponentPresentationProvider.GetContent(componentUri);
+            if (cp != null)
+            {
+                LoggerService.Debug("<<TryGetComponentPresentation ({0}) - from cache", LoggingCategory.Performance, componentUri);
+                return true;
+            }
+
+            string content = !String.IsNullOrEmpty(templateUri) ? 
+                                        ComponentPresentationProvider.GetContent(componentUri, templateUri) : 
+                                        ComponentPresentationProvider.GetContent(componentUri);
 
             if (string.IsNullOrEmpty(content))
             {
                 LoggerService.Debug("<<TryGetComponentPresentationOrComponent - no content found by provider for uris {0} and {1}", LoggingCategory.Performance, componentUri, templateUri);
                 return false;
             }
-
+            LoggerService.Debug("about to create IComponentPresentation from content ({0})", LoggingCategory.Performance, componentUri);
             cp = GetIComponentPresentationObject(content);
+            LoggerService.Debug("finished creating IComponentPresentation from content ({0})", LoggingCategory.Performance, componentUri);
 
             // if there is no ComponentTemplate, the content of this CP probably represents a component instead of a component PRESENTATION
             // in that case, we should at least add the template uri method parameter (if there is one) to the object  
@@ -189,6 +197,12 @@ namespace DD4T.Factories
             {
                 ((ComponentPresentation)cp).ComponentTemplate.Id = templateUri;
             }
+
+            LoggerService.Debug("about to store IComponentPresentation in cache ({0})", LoggingCategory.Performance, componentUri);
+            CacheAgent.Store(cacheKey, CacheRegion, cp);
+            LoggerService.Debug("finished storing IComponentPresentation in cache ({0})", LoggingCategory.Performance, componentUri);
+            LoggerService.Debug("<<TryGetComponentPresentation ({0})", LoggingCategory.Performance, componentUri);
+
             return cp != null;
         }
 

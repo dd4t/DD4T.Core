@@ -49,7 +49,7 @@ namespace DD4T.Factories
             PageProvider = pageProvider;
 
             //overriding cacheAgent GetLastPublished property
-            CacheAgent.GetLastPublishDateCallBack = GetLastPublishedDateCallBack;
+            //CacheAgent.GetLastPublishDateCallBack = GetLastPublishedDateCallBack;
         }
 
 
@@ -113,9 +113,7 @@ namespace DD4T.Factories
             LoggerService.Debug(">>TryFindPage ({0}", LoggingCategory.Performance, url);
             page = null;
 
-
             string cacheKey = String.Format("Page_{0}_{1}", url, PublicationId);
-
 
             LoggerService.Debug("about to load page from cache with key {0}", LoggingCategory.Performance, cacheKey);
             page = (IPage)CacheAgent.Load(cacheKey);

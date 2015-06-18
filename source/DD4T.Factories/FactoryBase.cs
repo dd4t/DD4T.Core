@@ -32,7 +32,8 @@ namespace DD4T.Factories
             PublicationResolver = facade.PublicationResolver;
             Configuration = facade.Configuration;
             CacheAgent = facade.CacheAgent;
-
+            CacheAgent.GetLastPublishDateCallBack = GetLastPublishedDateCallBack;
+           
         }
 
         /// <summary>
