@@ -34,7 +34,7 @@ namespace DD4T.Utils
         string defaulPage = "default.html";
         public string DefaultPage
         {
-           get
+            get
             {
                 var configurationValue = SafeGetConfigSettingAsString(ConfigurationKeys.WelcomeFile, ConfigurationKeys.WelcomeFileAlt1);
                 if (!string.IsNullOrEmpty(configurationValue))
@@ -49,9 +49,6 @@ namespace DD4T.Utils
         {
             get
             {
-                if (!string.IsNullOrEmpty(componentPresentationController))
-                    return componentPresentationController;
-
                 var configurationValue = SafeGetConfigSettingAsString(ConfigurationKeys.ComponentPresentationController);
                 if (!string.IsNullOrEmpty(configurationValue))
                     componentPresentationController = configurationValue;
@@ -78,7 +75,7 @@ namespace DD4T.Utils
                 if (!string.IsNullOrEmpty(selectComponentByComponentTemplateId))
                     return selectComponentByComponentTemplateId;
 
-                var configurationValue =  SafeGetConfigSettingAsString(ConfigurationKeys.SelectComponentByComponentTemplateId, ConfigurationKeys.SelectComponentByComponentTemplateIdAlt1);
+                var configurationValue = SafeGetConfigSettingAsString(ConfigurationKeys.SelectComponentByComponentTemplateId, ConfigurationKeys.SelectComponentByComponentTemplateIdAlt1);
                 if (!string.IsNullOrEmpty(configurationValue))
                     selectComponentByComponentTemplateId = configurationValue;
 
@@ -105,9 +102,10 @@ namespace DD4T.Utils
         private string _dataFormat = "json";
         public string DataFormat
         {
-            get {
+            get
+            {
 
-                var configurationValue = SafeGetConfigSettingAsString(ConfigurationKeys.DataFormat );
+                var configurationValue = SafeGetConfigSettingAsString(ConfigurationKeys.DataFormat);
                 if (!string.IsNullOrEmpty(configurationValue))
                     _dataFormat = configurationValue;
 
@@ -119,35 +117,62 @@ namespace DD4T.Utils
         {
             get
             {
-              return SafeGetConfigSettingAsString(ConfigurationKeys.ContentProviderEndPoint);
-                
+               var configurationvalue = SafeGetConfigSettingAsString(ConfigurationKeys.ContentProviderEndPoint);
+                if(string.IsNullOrEmpty(configurationvalue))
+                    throw new ConfigurationException("Content Provider endpoint not defined. Configure 'DD4T.ContentProviderEndPoint'.");
+
+              return configurationvalue
             }
         }
 
         public string SiteMapPath
         {
-            get { throw new NotImplementedException(); }
+            get
+            {
+               var configurationvalue = SafeGetConfigSettingAsString(ConfigurationKeys.SitemapPath, ConfigurationKeys.SitemapPathAlt1);
+                if(string.IsNullOrEmpty(configurationvalue))
+                    throw new ConfigurationException("SiteMapPath not defined. Configure 'DD4T.SitemapPath'.");
+
+              return configurationvalue
+            }
         }
 
         public int BinaryHandlerCacheExpiration
         {
-            get { throw new NotImplementedException(); }
+            get
+            {
+               var configurationvalue = SafeGetConfigSettingAsString(ConfigurationKeys.BinaryHandlerCacheExpiration,ConfigurationKeys.BinaryHandlerCacheExpirationAlt1 );
+                if(string.IsNullOrEmpty(configurationvalue))
+                    throw new ConfigurationException("BinaryHandlerCacheExpiration not defined. Configure 'DD4T.BinaryHandlerCacheExpiration'.");
+
+              return configurationvalue
+            }
         }
 
         public string BinaryFileExtensions
         {
-            get { throw new NotImplementedException(); }
+            get
+            {
+               var configurationvalue = SafeGetConfigSettingAsString(ConfigurationKeys.BinaryFileExtensions ,ConfigurationKeys.BinaryFileExtensionsAlt1 );
+                if(string.IsNullOrEmpty(configurationvalue))
+                    throw new ConfigurationException("BinaryFileExtensions not defined. Configure 'DD4T.BinaryFileExtensions'.");
+
+              return configurationvalue
+            }
         }
 
         public string BinaryUrlPattern
         {
-            get { throw new NotImplementedException(); }
+            get
+            {
+               var configurationvalue = SafeGetConfigSettingAsString(ConfigurationKeys.BinaryUrlPattern );
+                if(string.IsNullOrEmpty(configurationvalue))
+                    throw new ConfigurationException("BinaryUrlPattern not defined. Configure 'DD4T.BinaryUrlPattern'.");
+
+              return configurationvalue
+            }
         }
 
-        public string LoggerClass
-        {
-            get { throw new NotImplementedException(); }
-        }
 
         public bool IncludeLastPublishedDate
         {
@@ -160,7 +185,11 @@ namespace DD4T.Utils
 
         public bool ShowAnchors
         {
-            get { throw new NotImplementedException(); }
+            get
+            {
+                var configurationValue = SafeGetConfigSettingAsBoolean(ConfigurationKeys.ShowAnchors);
+                return configurationValue;
+            }
         }
 
 
@@ -198,7 +227,15 @@ namespace DD4T.Utils
         }
         public bool UseUriAsAnchor
         {
-            get { throw new NotImplementedException(); }
+
+            get
+            {
+               var configurationvalue = SafeGetConfigSettingAsString(ConfigurationKeys.UseUriAsAnchor );
+                if(string.IsNullOrEmpty(configurationvalue))
+                    throw new ConfigurationException("UseUriAsAnchor not defined. Configure 'DD4T.UseUriAsAnchor'.");
+
+              return configurationvalue
+            }
         }
 
         public ProviderVersion ProviderVersion
@@ -237,12 +274,6 @@ namespace DD4T.Utils
             return b;
         }
         #endregion
-
-
-
-
-
-
 
     }
 }

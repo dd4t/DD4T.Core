@@ -19,7 +19,6 @@ namespace DD4T.ContentModel.Contracts.Configuration
         int BinaryHandlerCacheExpiration { get; }
         string BinaryFileExtensions { get; }
         string BinaryUrlPattern { get; }
-        string LoggerClass { get; }
         bool IncludeLastPublishedDate { get; }
         bool ShowAnchors { get; }
         bool LinkToAnchor { get; }
