@@ -16,7 +16,6 @@
     <files>
         <file src="..\build\nuget\DD4T.Core.Contracts.dll" target="lib\DD4T.Core.Contracts.dll" />
         <file src="..\build\nuget\DD4T.Factories.dll" target="lib\DD4T.Factories.dll" />
-        <file src="..\build\nuget\DD4T.Providers.SDLTridion2013sp1.dll" target="lib\DD4T.Providers.SDLTridion2013sp1.dll" />
 		<file src="..\build\nuget\DD4T.Mvc.dll" target="lib\DD4T.Mvc.dll" />
         <file src="..\build\nuget\DD4T.Utils.dll" target="lib\DD4T.Utils.dll" />
     </files>

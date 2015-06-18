@@ -121,7 +121,7 @@ namespace DD4T.Utils
                 if(string.IsNullOrEmpty(configurationvalue))
                     throw new ConfigurationException("Content Provider endpoint not defined. Configure 'DD4T.ContentProviderEndPoint'.");
 
-              return configurationvalue
+                return configurationvalue;
             }
         }
 
@@ -133,7 +133,7 @@ namespace DD4T.Utils
                 if(string.IsNullOrEmpty(configurationvalue))
                     throw new ConfigurationException("SiteMapPath not defined. Configure 'DD4T.SitemapPath'.");
 
-              return configurationvalue
+                return configurationvalue;
             }
         }
 
@@ -141,11 +141,8 @@ namespace DD4T.Utils
         {
             get
             {
-               var configurationvalue = SafeGetConfigSettingAsString(ConfigurationKeys.BinaryHandlerCacheExpiration,ConfigurationKeys.BinaryHandlerCacheExpirationAlt1 );
-                if(string.IsNullOrEmpty(configurationvalue))
-                    throw new ConfigurationException("BinaryHandlerCacheExpiration not defined. Configure 'DD4T.BinaryHandlerCacheExpiration'.");
-
-              return configurationvalue
+                var configurationvalue = SafeGetConfigSettingAsInt(ConfigurationKeys.BinaryHandlerCacheExpiration, ConfigurationKeys.BinaryHandlerCacheExpirationAlt1);
+                return configurationvalue;
             }
         }
 
@@ -157,7 +154,7 @@ namespace DD4T.Utils
                 if(string.IsNullOrEmpty(configurationvalue))
                     throw new ConfigurationException("BinaryFileExtensions not defined. Configure 'DD4T.BinaryFileExtensions'.");
 
-              return configurationvalue
+                return configurationvalue;
             }
         }
 
@@ -169,7 +166,7 @@ namespace DD4T.Utils
                 if(string.IsNullOrEmpty(configurationvalue))
                     throw new ConfigurationException("BinaryUrlPattern not defined. Configure 'DD4T.BinaryUrlPattern'.");
 
-              return configurationvalue
+                return configurationvalue;
             }
         }
 
@@ -230,11 +227,9 @@ namespace DD4T.Utils
 
             get
             {
-               var configurationvalue = SafeGetConfigSettingAsString(ConfigurationKeys.UseUriAsAnchor );
-                if(string.IsNullOrEmpty(configurationvalue))
-                    throw new ConfigurationException("UseUriAsAnchor not defined. Configure 'DD4T.UseUriAsAnchor'.");
-
-              return configurationvalue
+               var configurationvalue = SafeGetConfigSettingAsBoolean(ConfigurationKeys.UseUriAsAnchor );
+              
+                return configurationvalue;
             }
         }
 
