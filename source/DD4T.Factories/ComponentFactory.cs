@@ -7,7 +7,6 @@ using DD4T.ContentModel.Contracts.Providers;
 using DD4T.ContentModel.Exceptions;
 using DD4T.ContentModel.Contracts.Logging;
 using DD4T.ContentModel.Querying;
-using DD4T.Factories.Caching;
 using DD4T.Utils;
 using DD4T.ContentModel.Factories;
 

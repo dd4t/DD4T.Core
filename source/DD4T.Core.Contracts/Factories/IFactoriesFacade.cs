@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DD4T.ContentModel.Contracts.Caching;
 
 namespace DD4T.ContentModel.Factories
 {
@@ -16,5 +17,6 @@ namespace DD4T.ContentModel.Factories
         IPublicationResolver PublicationResolver { get; }
         ILogger Logger { get; }
         IDD4TConfiguration Configuration { get; }
+        ICacheAgent CacheAgent { get; }
     }
 }

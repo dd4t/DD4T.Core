@@ -4,9 +4,10 @@ using DD4T.ContentModel.Contracts.Caching;
 using System.Runtime.Caching;
 using DD4T.Utils;
 using DD4T.ContentModel.Contracts.Configuration;
+using DD4T.ContentModel.Contracts.Logging;
 
 
-namespace DD4T.Factories.Caching
+namespace DD4T.Utils.Caching
 {
     /// <summary>
     /// Default implementation of ICacheAgent, as used by the factories in DD4T.Factories. It uses the System.Runtime.Caching API introduced in .NET 4. This will run in a web environment as well as a windows service, console application or any other type of environment.
@@ -17,12 +18,17 @@ namespace DD4T.Factories.Caching
         public const int DefaultExpirationInSeconds = 60;
 
         private readonly IDD4TConfiguration _configuration;
+        private readonly ILogger _logger;
 
-        public DefaultCacheAgent(IDD4TConfiguration configuration)
+        public DefaultCacheAgent(IDD4TConfiguration configuration, ILogger logger)
         {
             if (configuration == null)
                 throw new ArgumentNullException("configuration");
 
+            if (logger == null)
+                throw new ArgumentNullException("logger");
+
+            _logger = logger;
             _configuration = configuration;
         }
 
@@ -112,7 +118,7 @@ namespace DD4T.Factories.Caching
             policy.Priority = CacheItemPriority.Default;
 
             if (GetLastPublishDateCallBack != null)
-                policy.ChangeMonitors.Add(new LastPublishDateChangeMonitor(key, item, GetLastPublishDateCallBack));
+                policy.ChangeMonitors.Add(new LastPublishDateChangeMonitor(_configuration, _logger, key, item, GetLastPublishDateCallBack));
 
             if (dependOnItems != null && dependOnItems.Count > 0)
             {

@@ -6,7 +6,7 @@ using DD4T.Utils;
 using DD4T.ContentModel.Contracts.Configuration;
 using DD4T.ContentModel.Contracts.Logging;
 
-namespace DD4T.Factories.Caching
+namespace DD4T.Utils.Caching
 {
     /// <summary>
     /// Implementation of ChangeMonitor (part of System.Runtime.Caching API introduced in .NET 4).
@@ -24,20 +24,22 @@ namespace DD4T.Factories.Caching
         private readonly IDD4TConfiguration _configuration;
         private readonly ILogger LoggerService;
 
-        public LastPublishDateChangeMonitor(IDD4TConfiguration configuration, ILogger logger)
+        //public LastPublishDateChangeMonitor(IDD4TConfiguration configuration, ILogger logger)
+        //{
+        //    if (configuration == null)
+        //        throw new ArgumentNullException("configuration");
+
+        //    if (logger == null)
+        //        throw new ArgumentNullException("logger");
+
+        //    LoggerService = logger;
+        //    _configuration = configuration;
+        //}
+
+        public LastPublishDateChangeMonitor(IDD4TConfiguration configuration, ILogger logger, string key, object cachedItem, GetLastPublishDate getLastPublishDateCallBack)
         {
-            if (configuration == null)
-                throw new ArgumentNullException("configuration");
-
-            if (logger == null)
-                throw new ArgumentNullException("logger");
-
             LoggerService = logger;
             _configuration = configuration;
-        }
-
-        public LastPublishDateChangeMonitor(string key, object cachedItem, GetLastPublishDate getLastPublishDateCallBack)
-        {
             LoggerService.Debug(">>LastPublishDateChangeMonitor({0}, {1})", key, cachedItem.ToString());
 
             this._key = key;

@@ -2,7 +2,7 @@
 using DD4T.ContentModel.Contracts.Caching;
 
 
-namespace DD4T.Factories.Caching
+namespace DD4T.Utils.Defaults
 {
     /// <summary>
     /// Implementation of ICacheAgent that does not cache at all. Use this to turn off all caching.

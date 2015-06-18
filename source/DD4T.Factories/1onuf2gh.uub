@@ -1,5 +1,6 @@
 ﻿using System;
 using DD4T.ContentModel.Contracts.Caching;
+using DD4T.Factories.Caching;
 using DD4T.Utils;
 using DD4T.ContentModel.Contracts.Resolvers;
 using DD4T.ContentModel.Contracts.Serializing;
@@ -18,7 +19,7 @@ namespace DD4T.Factories
     {
 
         public IPublicationResolver PublicationResolver { get; set; }
-        public ICacheAgent CacheAgent { get; set; }
+        public ICacheAgent CacheAgent { get; protected set; }
 
         protected readonly IDD4TConfiguration Configuration;
         protected readonly ILogger LoggerService;

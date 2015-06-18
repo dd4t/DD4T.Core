@@ -130,9 +130,6 @@
     <Compile Include="..\Dynamic Delivery Presentation Solution Items\AssemblyInfo.cs">
       <Link>Properties\AssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="Caching\NullCacheAgent.cs" />
-    <Compile Include="Caching\DefaultCacheAgent.cs" />
-    <Compile Include="Caching\LastPublishDateChangeMonitor.cs" />
     <Compile Include="ComponentPresentationFactory.cs" />
     <Compile Include="ComponentFactory.cs" />
     <Compile Include="BinaryFactory.cs" />

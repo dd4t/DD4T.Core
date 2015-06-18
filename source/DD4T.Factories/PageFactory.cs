@@ -9,7 +9,6 @@ using DD4T.ContentModel.Contracts.Caching;
 using DD4T.ContentModel.Contracts.Providers;
 using DD4T.ContentModel.Exceptions;
 using DD4T.ContentModel.Contracts.Logging;
-using DD4T.Factories.Caching;
 using DD4T.Utils;
 using DD4T.ContentModel.Factories;
 using DD4T.Serialization;
@@ -25,16 +24,16 @@ namespace DD4T.Factories
 
         private static IDictionary<string, DateTime> lastPublishedDates = new Dictionary<string, DateTime>();
         private static Regex rePageContentByUrl = new Regex("PageContent_([0-9\\-]+)_(.*)");
-        private ICacheAgent _cacheAgent = null;
+        //private ICacheAgent _cacheAgent = null;
         public const string CacheRegion = "Page";
         public IPageProvider PageProvider { get; set; }
         public ILinkFactory LinkFactory { get; set; }
         public IComponentPresentationFactory ComponentPresentationFactory { get; set; }
 
 
-        private static object lock1 = new object();
-        private static object lock2 = new object();
-        private static object lock3 = new object();
+        //private static object lock1 = new object();
+        //private static object lock2 = new object();
+        //private static object lock3 = new object();
 
         public PageFactory(IPageProvider pageProvider, IComponentPresentationFactory componentPresentationFactory,
                             IFactoriesFacade facade)
@@ -48,6 +47,9 @@ namespace DD4T.Factories
 
             ComponentPresentationFactory = componentPresentationFactory;
             PageProvider = pageProvider;
+
+            //overriding cacheAgent GetLastPublished property
+            CacheAgent.GetLastPublishDateCallBack = GetLastPublishedDateCallBack;
         }
 
 
@@ -83,7 +85,27 @@ namespace DD4T.Factories
         }
 
 
-
+        /// <summary>
+        /// Get or set the CacheAgent
+        /// </summary>  
+        //public override ICacheAgent CacheAgent
+        //{
+        //    get
+        //    {
+        //        if (_cacheAgent == null)
+        //        {
+        //            _cacheAgent = new NullCacheAgent();
+        //            // the next line is the only reason we are overriding this property: to set a callback
+        //            _cacheAgent.GetLastPublishDateCallBack = GetLastPublishedDateCallBack;
+        //        }
+        //        return _cacheAgent;
+        //    }
+        //    set
+        //    {
+        //        _cacheAgent = value;
+        //        _cacheAgent.GetLastPublishDateCallBack = GetLastPublishedDateCallBack;
+        //    }
+        //}
 
         #region IPageFactory Members
         public virtual bool TryFindPage(string url, out IPage page)
@@ -346,28 +368,6 @@ namespace DD4T.Factories
             return PageProvider.GetAllPublishedPageUrls(includeExtensions, pathStarts);
         }
 
-
-        /// <summary>
-        /// Get or set the CacheAgent
-        /// </summary>  
-        public override ICacheAgent CacheAgent
-        {
-            get
-            {
-                if (_cacheAgent == null)
-                {
-                    _cacheAgent = new NullCacheAgent();
-                    // the next line is the only reason we are overriding this property: to set a callback
-                    _cacheAgent.GetLastPublishDateCallBack = GetLastPublishedDateCallBack;
-                }
-                return _cacheAgent;
-            }
-            set
-            {
-                _cacheAgent = value;
-                _cacheAgent.GetLastPublishDateCallBack = GetLastPublishedDateCallBack;
-            }
-        }
         #endregion
 
 

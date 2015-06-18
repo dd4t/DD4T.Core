@@ -6,7 +6,6 @@ using DD4T.ContentModel.Contracts.Caching;
 using DD4T.ContentModel.Contracts.Providers;
 using DD4T.ContentModel.Exceptions;
 using DD4T.ContentModel.Querying;
-using DD4T.Factories.Caching;
 using DD4T.Utils;
 using DD4T.ContentModel.Factories;
 using DD4T.ContentModel.Contracts.Serializing;
@@ -142,27 +141,27 @@ namespace DD4T.Factories
             }
             throw new Exception(string.Format("GetLastPublishedDateCallBack called for unexpected object type '{0}' or with unexpected key '{1}'", cachedItem.GetType(), key));
         }
-        /// <summary>
-        /// Get or set the CacheAgent
-        /// </summary>  
-        public override ICacheAgent CacheAgent
-        {
-            get
-            {
-                if (_cacheAgent == null)
-                {
-                    _cacheAgent = new NullCacheAgent();
-                    // the next line is the only reason we are overriding this property: to set a callback
-                    _cacheAgent.GetLastPublishDateCallBack = GetLastPublishedDateCallBack;
-                }
-                return _cacheAgent;
-            }
-            set
-            {
-                _cacheAgent = value;
-                _cacheAgent.GetLastPublishDateCallBack = GetLastPublishedDateCallBack;
-            }
-        }
+        ///// <summary>
+        ///// Get or set the CacheAgent
+        ///// </summary>  
+        //public override ICacheAgent CacheAgent
+        //{
+        //    get
+        //    {
+        //        if (_cacheAgent == null)
+        //        {
+        //            _cacheAgent = new NullCacheAgent();
+        //            // the next line is the only reason we are overriding this property: to set a callback
+        //            _cacheAgent.GetLastPublishDateCallBack = GetLastPublishedDateCallBack;
+        //        }
+        //        return _cacheAgent;
+        //    }
+        //    set
+        //    {
+        //        _cacheAgent = value;
+        //        _cacheAgent.GetLastPublishDateCallBack = GetLastPublishedDateCallBack;
+        //    }
+        //}
 
 
 
