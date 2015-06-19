@@ -6,27 +6,12 @@ using System.Text.RegularExpressions;
 using DD4T.Factories;
 using DD4T.ContentModel.Factories;
 using DD4T.ContentModel.Contracts.Configuration;
+using System;
 
 namespace DD4T.Mvc.Html
 {
     public static class TridionHelper
     {
-        //private static ILinkFactory _linkFactory = null;
-        //private static ILinkFactory LinkFactory
-        //{
-        //    get
-        //    {
-        //        if (_linkFactory == null)
-        //        {
-        //            _linkFactory = new LinkFactory();
-        //        }
-        //        return _linkFactory;
-        //    }
-        //}
-
-        public static ILinkFactory LinkFactory { get; set; }
-        public static IDD4TConfiguration Configuration { get; set; }
-
         public static MvcHtmlString RenderComponentPresentations(this HtmlHelper helper)
         {
             return RenderComponentPresentations(helper, null, null, null);
@@ -75,49 +60,18 @@ namespace DD4T.Mvc.Html
 
         public static MvcHtmlString RenderComponentPresentations(this HtmlHelper helper, string[] byComponentTemplate, string bySchema, IComponentPresentationRenderer renderer)
         {
-            //LoggerService.Information(">>RenderComponentPresentations", LoggingCategory.Performance);
-            //IComponentPresentationRenderer cpr = renderer;
-            //IPage page = null;
-            //if (helper.ViewData.Model is IPage)
-            //{
-            //    page = helper.ViewData.Model as IPage;
-            //}
-            //else
-            //{
-            //    try
-            //    {
-            //        page = helper.ViewContext.Controller.ViewBag.Page;
-            //    }
-            //    catch
-            //    {
-            //        return new MvcHtmlString("<!-- RenderComponentPresentations can only be used if the model is an instance of IPage or if there is a Page property in the viewbag with type IPage -->");
-            //    }
-            //}
-
-            //if (renderer == null)
-            //{
-            //    LoggerService.Debug("about to create DefaultComponentPresentationRenderer", LoggingCategory.Performance);
-            //    renderer = DefaultComponentPresentationRenderer.Create();
-            //    LoggerService.Debug("finished creating DefaultComponentPresentationRenderer", LoggingCategory.Performance);
-            //}
-
-            //LoggerService.Debug("about to call renderer.ComponentPresentations", LoggingCategory.Performance);
-            //MvcHtmlString output = renderer.ComponentPresentations(page, helper, byComponentTemplate, bySchema);
-            //LoggerService.Debug("finished calling renderer.ComponentPresentations", LoggingCategory.Performance);
-            //LoggerService.Information("<<RenderComponentPresentations", LoggingCategory.Performance);
-
-            return null;
+            return TridionHelperWrapper.RenderComponentPresentations(helper, byComponentTemplate, bySchema, renderer);
         }
 
 
         #region linking functionality
         public static string GetResolvedUrl(this IComponent component)
         {
-            return LinkFactory.ResolveLink(component.Id);
+            return TridionHelperWrapper.GetResolvedUrl(component);
         }
         public static MvcHtmlString GetResolvedLink(this IComponent component)
         {
-            return component.GetResolvedLink(component.Title, "");
+            return TridionHelperWrapper.GetResolvedLink(component);
         }
 
         public static MvcHtmlString GetResolvedLink(this IComponent component, string linkText, string showOnFail)
@@ -131,29 +85,106 @@ namespace DD4T.Mvc.Html
         #endregion
 
         #region welcome file functionality
-        //public static string AddWelcomeFile(string url)
-        //{
-        //    if (string.IsNullOrEmpty(url))
-        //        return DefaultPageFileName;
-        //    if (!reDefaultPage.IsMatch("/" + url))
-        //        return url;
-        //    if (url.EndsWith("/"))
-        //        return url + DefaultPageFileName;
-        //    return url + "/" + DefaultPageFileName;
-        //}
+        public static string AddWelcomeFile(string url)
+        {
+            if (string.IsNullOrEmpty(url))
+                return DefaultPageFileName;
+            if (!reDefaultPage.IsMatch("/" + url))
+                return url;
+            if (url.EndsWith("/"))
+                return url + DefaultPageFileName;
+            return url + "/" + DefaultPageFileName;
+        }
 
-        //private static string _defaultPageFileName = null;
-        //private static Regex reDefaultPage = new Regex(@".*/[^/\.]*(/?)$");
-        //public static string DefaultPageFileName
-        //{
-        //    get
-        //    {
-        //        if (_defaultPageFileName == null)
-        //            _defaultPageFileName = Configuration.WelcomeFile;
+        private static string _defaultPageFileName = null;
+        private static Regex reDefaultPage = new Regex(@".*/[^/\.]*(/?)$");
+        public static string DefaultPageFileName
+        {
+            get
+            {
+                if (_defaultPageFileName == null)
+                    _defaultPageFileName = TridionHelperWrapper.GetDefaultPageFileName(); ;
 
-        //        return _defaultPageFileName;
-        //    }
-        //}
+                return _defaultPageFileName;
+            }
+        }
         #endregion
+    }
+
+    public class TridionHelperWrapper
+    {
+        private static IDD4TConfiguration _configuration;
+        private static ILinkFactory _linkFactory;
+        private static ILogger _logger;
+        private static IComponentPresentationRenderer _renderer;
+
+        public TridionHelperWrapper(ILinkFactory linkFactory, IDD4TConfiguration configuration, ILogger logger, IComponentPresentationRenderer renderer)
+        {
+            if (linkFactory == null)
+                throw new ArgumentNullException("linkFactory");
+
+            if (configuration == null)
+                throw new ArgumentNullException("configuration");
+
+            if (logger == null)
+                throw new ArgumentNullException("logger");
+            if (renderer == null)
+                throw new ArgumentNullException("renderer");
+
+            TridionHelperWrapper._linkFactory = linkFactory;
+            TridionHelperWrapper._configuration = configuration;
+            TridionHelperWrapper._logger = logger;
+            TridionHelperWrapper._renderer = renderer;
+        }
+
+        public static string GetDefaultPageFileName()
+        {
+            return _configuration.DefaultPage;
+        }
+
+        public static string GetResolvedUrl(IComponent component)
+        {
+            return _linkFactory.ResolveLink(component.Id);
+        }
+        public static MvcHtmlString GetResolvedLink(IComponent component)
+        {
+            return component.GetResolvedLink(component.Title, "");
+        }
+
+        public static MvcHtmlString RenderComponentPresentations(HtmlHelper helper, string[] byComponentTemplate, string bySchema, IComponentPresentationRenderer renderer)
+        {
+            _logger.Information(">>RenderComponentPresentations", LoggingCategory.Performance);
+            IComponentPresentationRenderer cpr = renderer;
+            IPage page = null;
+            if (helper.ViewData.Model is IPage)
+            {
+                page = helper.ViewData.Model as IPage;
+            }
+            else
+            {
+                try
+                {
+                    page = helper.ViewContext.Controller.ViewBag.Page;
+                }
+                catch
+                {
+                    return new MvcHtmlString("<!-- RenderComponentPresentations can only be used if the model is an instance of IPage or if there is a Page property in the viewbag with type IPage -->");
+                }
+            }
+
+            if (renderer == null)
+            {
+                _logger.Debug("about to create DefaultComponentPresentationRenderer", LoggingCategory.Performance);
+                renderer = _renderer;
+                _logger.Debug("finished creating DefaultComponentPresentationRenderer", LoggingCategory.Performance);
+            }
+
+            _logger.Debug("about to call renderer.ComponentPresentations", LoggingCategory.Performance);
+            MvcHtmlString output = renderer.ComponentPresentations(page, helper, byComponentTemplate, bySchema);
+            _logger.Debug("finished calling renderer.ComponentPresentations", LoggingCategory.Performance);
+            _logger.Information("<<RenderComponentPresentations", LoggingCategory.Performance);
+
+            return null;
+        }
     }
 }

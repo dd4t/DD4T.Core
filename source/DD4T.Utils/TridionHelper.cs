@@ -33,10 +33,10 @@
 //            }
 //        }
 
-//        public static string GetLocalAnchor(IComponentPresentation cp)
-//        {
-//            return ConfigurationHelper.UseUriAsAnchor ? Convert.ToString(new TcmUri(cp.Component.Id).ItemId) : Convert.ToString(cp.OrderOnPage);
-//        }
+        //public static string GetLocalAnchor(IComponentPresentation cp)
+        //{
+        //    return ConfigurationHelper.UseUriAsAnchor ? Convert.ToString(new TcmUri(cp.Component.Id).ItemId) : Convert.ToString(cp.OrderOnPage);
+        //}
 
 //        public static string GetLocalAnchorTag(TcmUri pageUri, TcmUri componentUri, TcmUri componentTemplateUri, string nativeAnchor)
 //        {

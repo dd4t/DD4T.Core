@@ -2,10 +2,22 @@
 using System.Xml;
 using System.Web.Mvc;
 using DD4T.ContentModel.Factories;
+using System;
 
 namespace DD4T.Mvc.Html
 {
     public static class RichTextHelper
+    {
+        public static MvcHtmlString ResolveRichText(this string value)
+        {
+            return RichTextHelperWrapper.ResolveRichText(value);
+        }
+    }
+
+    /// <summary>
+    /// Wrapper class to enable linkfactory injection.
+    /// </summary>
+    public class RichTextHelperWrapper
     {
         /// <summary>
         /// xhtml namespace uri
@@ -17,21 +29,17 @@ namespace DD4T.Mvc.Html
         /// </summary>
         private const string XlinkNamespaceUri = "http://www.w3.org/1999/xlink";
 
-        public static ILinkFactory LinkFactory {get;set;}
+        private static ILinkFactory _linkFactory;
 
-        //private static ILinkFactory LinkFactory
-        //{
-        //    get
-        //    {
-        //        if (_linkFactory == null)
-        //        {
-        //            _linkFactory = new LinkFactory(); 
-        //        }
-        //        return _linkFactory;
-        //    }
-        //}
+        public RichTextHelperWrapper(ILinkFactory linkFactory)
+        {
+            if (linkFactory == null)
+                throw new ArgumentNullException("linkFactory");
 
-        public static MvcHtmlString ResolveRichText(this string value)
+            RichTextHelperWrapper._linkFactory = linkFactory;
+        }
+
+        public static MvcHtmlString ResolveRichText(string value)
         {
             XmlDocument doc = new XmlDocument();
             XmlNamespaceManager nsmgr = new XmlNamespaceManager(doc.NameTable);
@@ -43,7 +51,7 @@ namespace DD4T.Mvc.Html
             foreach (XmlNode link in doc.SelectNodes("//xhtml:a[@xlink:href[starts-with(string(.),'tcm:')]][@xhtml:href='' or not(@xhtml:href)]", nsmgr))
             {
                 string tcmuri = link.Attributes["xlink:href"].Value;
-                string linkUrl = LinkFactory.ResolveLink(tcmuri);
+                string linkUrl = _linkFactory.ResolveLink(tcmuri);
 
                 if (!string.IsNullOrEmpty(linkUrl))
                 {
