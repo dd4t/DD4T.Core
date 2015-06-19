@@ -10,8 +10,30 @@ using System;
 
 namespace DD4T.Mvc.Html
 {
+    [Obsolete("Controller should handle this kind of logic")]
     public static class TridionHelper
     {
+        private static IDD4TConfiguration _configuration;
+        private static ILinkFactory _linkFactory;
+        private static ILogger _logger;
+        private static IComponentPresentationRenderer _renderer;
+
+        static TridionHelper()
+        {
+            //this is Anti-Pattern, there is no other way to inject dependencies into this class.
+            //This helper should not be used in views, this logic should get executed by the controller.
+
+            var config = DependencyResolver.Current.GetService<IDD4TConfiguration>();
+            var linkFactory = DependencyResolver.Current.GetService<ILinkFactory>();
+            var logger = DependencyResolver.Current.GetService<ILogger>();
+            var renderer = DependencyResolver.Current.GetService<IComponentPresentationRenderer>();
+
+            _linkFactory = linkFactory;
+            _configuration = config;
+            _logger = logger;
+            _renderer = renderer;
+        }
+
         public static MvcHtmlString RenderComponentPresentations(this HtmlHelper helper)
         {
             return RenderComponentPresentations(helper, null, null, null);
@@ -58,99 +80,6 @@ namespace DD4T.Mvc.Html
             return RenderComponentPresentations(helper, null, bySchema, null);
         }
 
-        public static MvcHtmlString RenderComponentPresentations(this HtmlHelper helper, string[] byComponentTemplate, string bySchema, IComponentPresentationRenderer renderer)
-        {
-            return TridionHelperWrapper.RenderComponentPresentations(helper, byComponentTemplate, bySchema, renderer);
-        }
-
-
-        #region linking functionality
-        public static string GetResolvedUrl(this IComponent component)
-        {
-            return TridionHelperWrapper.GetResolvedUrl(component);
-        }
-        public static MvcHtmlString GetResolvedLink(this IComponent component)
-        {
-            return TridionHelperWrapper.GetResolvedLink(component);
-        }
-
-        public static MvcHtmlString GetResolvedLink(this IComponent component, string linkText, string showOnFail)
-        {
-            string url = component.GetResolvedUrl();
-            if (string.IsNullOrEmpty(url))
-                return new MvcHtmlString(showOnFail);
-            return new MvcHtmlString(string.Format("<a href=\"{0}\">{1}</a>", url, linkText));
-        }
-
-        #endregion
-
-        #region welcome file functionality
-        public static string AddWelcomeFile(string url)
-        {
-            if (string.IsNullOrEmpty(url))
-                return DefaultPageFileName;
-            if (!reDefaultPage.IsMatch("/" + url))
-                return url;
-            if (url.EndsWith("/"))
-                return url + DefaultPageFileName;
-            return url + "/" + DefaultPageFileName;
-        }
-
-        private static string _defaultPageFileName = null;
-        private static Regex reDefaultPage = new Regex(@".*/[^/\.]*(/?)$");
-        public static string DefaultPageFileName
-        {
-            get
-            {
-                if (_defaultPageFileName == null)
-                    _defaultPageFileName = TridionHelperWrapper.GetDefaultPageFileName(); ;
-
-                return _defaultPageFileName;
-            }
-        }
-        #endregion
-    }
-
-    public class TridionHelperWrapper
-    {
-        private static IDD4TConfiguration _configuration;
-        private static ILinkFactory _linkFactory;
-        private static ILogger _logger;
-        private static IComponentPresentationRenderer _renderer;
-
-        public TridionHelperWrapper(ILinkFactory linkFactory, IDD4TConfiguration configuration, ILogger logger, IComponentPresentationRenderer renderer)
-        {
-            if (linkFactory == null)
-                throw new ArgumentNullException("linkFactory");
-
-            if (configuration == null)
-                throw new ArgumentNullException("configuration");
-
-            if (logger == null)
-                throw new ArgumentNullException("logger");
-            if (renderer == null)
-                throw new ArgumentNullException("renderer");
-
-            TridionHelperWrapper._linkFactory = linkFactory;
-            TridionHelperWrapper._configuration = configuration;
-            TridionHelperWrapper._logger = logger;
-            TridionHelperWrapper._renderer = renderer;
-        }
-
-        public static string GetDefaultPageFileName()
-        {
-            return _configuration.DefaultPage;
-        }
-
-        public static string GetResolvedUrl(IComponent component)
-        {
-            return _linkFactory.ResolveLink(component.Id);
-        }
-        public static MvcHtmlString GetResolvedLink(IComponent component)
-        {
-            return component.GetResolvedLink(component.Title, "");
-        }
-
         public static MvcHtmlString RenderComponentPresentations(HtmlHelper helper, string[] byComponentTemplate, string bySchema, IComponentPresentationRenderer renderer)
         {
             _logger.Information(">>RenderComponentPresentations", LoggingCategory.Performance);
@@ -186,5 +115,53 @@ namespace DD4T.Mvc.Html
 
             return null;
         }
+
+        #region linking functionality
+        public static string GetResolvedUrl(this IComponent component)
+        {
+            return _linkFactory.ResolveLink(component.Id);
+        }
+        public static MvcHtmlString GetResolvedLink(this IComponent component)
+        {
+            return component.GetResolvedLink();
+        }
+
+        public static MvcHtmlString GetResolvedLink(this IComponent component, string linkText, string showOnFail)
+        {
+            string url = component.GetResolvedUrl();
+            if (string.IsNullOrEmpty(url))
+                return new MvcHtmlString(showOnFail);
+            return new MvcHtmlString(string.Format("<a href=\"{0}\">{1}</a>", url, linkText));
+        }
+
+        #endregion
+
+        #region welcome file functionality
+        public static string AddWelcomeFile(string url)
+        {
+            if (string.IsNullOrEmpty(url))
+                return DefaultPageFileName;
+            if (!reDefaultPage.IsMatch("/" + url))
+                return url;
+            if (url.EndsWith("/"))
+                return url + DefaultPageFileName;
+            return url + "/" + DefaultPageFileName;
+        }
+
+        private static string _defaultPageFileName = null;
+        private static Regex reDefaultPage = new Regex(@".*/[^/\.]*(/?)$");
+        public static string DefaultPageFileName
+        {
+            get
+            {
+                if (_defaultPageFileName == null)
+                    _defaultPageFileName = _configuration.DefaultPage;
+
+                return _defaultPageFileName;
+            }
+        }
+        #endregion
     }
+
+
 }

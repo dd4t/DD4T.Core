@@ -6,18 +6,8 @@ using System;
 
 namespace DD4T.Mvc.Html
 {
-    public static class RichTextHelper
-    {
-        public static MvcHtmlString ResolveRichText(this string value)
-        {
-            return RichTextHelperWrapper.ResolveRichText(value);
-        }
-    }
-
-    /// <summary>
-    /// Wrapper class to enable linkfactory injection.
-    /// </summary>
-    public class RichTextHelperWrapper
+    [Obsolete("resolving of the richtext fields should happen in your controller.")]
+    public static class RichTextHelper 
     {
         /// <summary>
         /// xhtml namespace uri
@@ -31,12 +21,12 @@ namespace DD4T.Mvc.Html
 
         private static ILinkFactory _linkFactory;
 
-        public RichTextHelperWrapper(ILinkFactory linkFactory)
+        static RichTextHelper()
         {
-            if (linkFactory == null)
-                throw new ArgumentNullException("linkFactory");
-
-            RichTextHelperWrapper._linkFactory = linkFactory;
+            //this is Anti-Pattern, there is no other way to inject dependencies into this class.
+            //This helper should not be used in views, this logic should get executed by the controller.
+            var linkFactory = DependencyResolver.Current.GetService<ILinkFactory>();
+            _linkFactory = linkFactory;
         }
 
         public static MvcHtmlString ResolveRichText(string value)
