@@ -32,9 +32,9 @@
         private bool ShouldResolveComponentLinks { get; set; }
 
         private readonly IPageFactory _pageFactory;
-        private readonly ILogger LoggerService;
+        private readonly ILogger _logger;
         private readonly IDD4TConfiguration _configuration;
-        public readonly ICacheAgent _cacheAgent;
+        private readonly ICacheAgent _cacheAgent;
 
 
         public TridionSiteMapProvider(IPageFactory pageFactory, ICacheAgent cacheAgent, ILogger logger, IDD4TConfiguration configuration)
@@ -51,7 +51,7 @@
             _pageFactory = pageFactory;
             _configuration = configuration;
             _cacheAgent = cacheAgent;
-            LoggerService = logger;
+            _logger = logger;
         }
 
         public virtual ILinkFactory LinkFactory { get; set; }
@@ -72,7 +72,7 @@
 
         private SiteMapNode ReadSitemapFromXml(string sitemapUrl)
         {
-            LoggerService.Debug(">>ReadSitemapFromXml", LoggingCategory.Performance);
+            _logger.Debug(">>ReadSitemapFromXml", LoggingCategory.Performance);
             SiteMapNode rootNode = null;
             NodeDictionary = new Dictionary<string, SiteMapNode>();
 
@@ -81,11 +81,11 @@
             {
                 sitemap = emptySiteMapString();
             }
-            LoggerService.Debug(string.Format("loaded sitemap with url {0}, length {1}", sitemapUrl, sitemap.Length), LoggingCategory.Performance);
+            _logger.Debug(string.Format("loaded sitemap with url {0}, length {1}", sitemapUrl, sitemap.Length), LoggingCategory.Performance);
 
             XDocument xDoc = XDocument.Parse(sitemap);
 
-            LoggerService.Debug("parsed sitemap into XDocument", LoggingCategory.Performance);
+            _logger.Debug("parsed sitemap into XDocument", LoggingCategory.Performance);
 
             //XElement siteMapRoot = xDoc.Element("siteMap");
             XElement siteMapRoot = xDoc.Root;
@@ -94,9 +94,9 @@
             try
             {
                 rootNode = new TridionSiteMapNode(this, String.Empty, "root_" + _pageFactory.PageProvider.PublicationId, String.Empty, String.Empty, String.Empty, new ArrayList(), new NameValueCollection(), new NameValueCollection(), String.Empty);
-                LoggerService.Debug("created root node", LoggingCategory.Performance);
+                _logger.Debug("created root node", LoggingCategory.Performance);
                 AddNode(rootNode);
-                LoggerService.Debug("added root node", LoggingCategory.Performance);
+                _logger.Debug("added root node", LoggingCategory.Performance);
 
                 //Fill down the hierarchy.
                 AddChildren(rootNode, siteMapRoot.Elements(), 1);
@@ -105,7 +105,7 @@
             {
                 Exception e2 = e;
             }
-            LoggerService.Debug("<<ReadSitemapFromXml", LoggingCategory.Performance);
+            _logger.Debug("<<ReadSitemapFromXml", LoggingCategory.Performance);
             return rootNode;
         }
 
@@ -116,10 +116,10 @@
 
         private void AddChildren(SiteMapNode rootNode, IEnumerable<XElement> siteMapNodes, int currentLevel)
         {
-            LoggerService.Debug(">>AddChildren for root node {0} at level {1}", LoggingCategory.Performance, rootNode.Title, currentLevel);
+            _logger.Debug(">>AddChildren for root node {0} at level {1}", LoggingCategory.Performance, rootNode.Title, currentLevel);
             foreach (var element in siteMapNodes)
             {
-                LoggerService.Debug(">>>for loop iteration: {0}", LoggingCategory.Performance, element.ToString());
+                _logger.Debug(">>>for loop iteration: {0}", LoggingCategory.Performance, element.ToString());
                 SiteMapNode childNode = CreateNodeFromElement(element, currentLevel);
                 //childNode = new TridionSiteMapNode(this,
                 //    element.Attribute("id").Value, //key
@@ -131,22 +131,22 @@
                 //    attributes, //attributes
                 //    null, //explicitresourceKeys
                 //    null) { Level = currentLevel }; // implicitresourceKey
-                LoggerService.Debug("finished creating TridionSiteMapNode", LoggingCategory.Performance);
+                _logger.Debug("finished creating TridionSiteMapNode", LoggingCategory.Performance);
 
-                LoggerService.Debug("about to add TridionSiteMapNode to node dictionary", LoggingCategory.Performance);
-                LoggerService.Debug("finished adding TridionSiteMapNode to node dictionary", LoggingCategory.Performance);
+                _logger.Debug("about to add TridionSiteMapNode to node dictionary", LoggingCategory.Performance);
+                _logger.Debug("finished adding TridionSiteMapNode to node dictionary", LoggingCategory.Performance);
 
                 //Use the SiteMapNode AddNode method to add the SiteMapNode to the ChildNodes collection
-                LoggerService.Debug("about to add node to SiteMap", LoggingCategory.Performance);
+                _logger.Debug("about to add node to SiteMap", LoggingCategory.Performance);
                 AddNode(childNode, rootNode);
-                LoggerService.Debug(string.Format("finished adding node to sitemap (title={0}, parent title={1})", childNode.Title, rootNode.Title), LoggingCategory.Performance);
+                _logger.Debug(string.Format("finished adding node to sitemap (title={0}, parent title={1})", childNode.Title, rootNode.Title), LoggingCategory.Performance);
 
                 // Check for children in this node.
                 AddChildren(childNode, element.Elements(), currentLevel + 1);
-                LoggerService.Debug("<<<for loop iteration: {0}", LoggingCategory.Performance, element.ToString());
+                _logger.Debug("<<<for loop iteration: {0}", LoggingCategory.Performance, element.ToString());
             }
 
-            LoggerService.Debug("<<AddChildren for root node {0} at level {1}", LoggingCategory.Performance, rootNode.Title, currentLevel);
+            _logger.Debug("<<AddChildren for root node {0} at level {1}", LoggingCategory.Performance, rootNode.Title, currentLevel);
         }
 
         protected virtual SiteMapNode CreateNodeFromElement(XElement element, int currentLevel)
@@ -169,7 +169,7 @@
             }
             catch
             {
-                LoggerService.Debug("exception while retrieving uri", LoggingCategory.General);
+                _logger.Debug("exception while retrieving uri", LoggingCategory.General);
                 uri = "";
             }
             SiteMapNode childNode = new TridionSiteMapNode(this,

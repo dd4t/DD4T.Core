@@ -13,11 +13,6 @@ namespace DD4T.Mvc.Html
 {
     public class DefaultComponentPresentationRenderer : IComponentPresentationRenderer
     {
-
-        //public static IComponentPresentationRenderer Create()
-        //{
-        //    return new DefaultComponentPresentationRenderer();
-        //}
         private static ILogger _loggerService;
         private static IDD4TConfiguration _configuration;
         public DefaultComponentPresentationRenderer(ILogger logger, IDD4TConfiguration configuration)
