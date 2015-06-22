@@ -30,11 +30,6 @@ namespace DD4T.Factories
         public ILinkFactory LinkFactory { get; set; }
         public IComponentPresentationFactory ComponentPresentationFactory { get; set; }
 
-
-        //private static object lock1 = new object();
-        //private static object lock2 = new object();
-        //private static object lock3 = new object();
-
         public PageFactory(IPageProvider pageProvider, IComponentPresentationFactory componentPresentationFactory,
                             IFactoriesFacade facade)
             : base(facade)
@@ -48,8 +43,6 @@ namespace DD4T.Factories
             ComponentPresentationFactory = componentPresentationFactory;
             PageProvider = pageProvider;
 
-            //overriding cacheAgent GetLastPublished property
-            //CacheAgent.GetLastPublishDateCallBack = GetLastPublishedDateCallBack;
         }
 
 
@@ -83,29 +76,6 @@ namespace DD4T.Factories
                 return _serializerService;
             }
         }
-
-
-        /// <summary>
-        /// Get or set the CacheAgent
-        /// </summary>  
-        //public override ICacheAgent CacheAgent
-        //{
-        //    get
-        //    {
-        //        if (_cacheAgent == null)
-        //        {
-        //            _cacheAgent = new NullCacheAgent();
-        //            // the next line is the only reason we are overriding this property: to set a callback
-        //            _cacheAgent.GetLastPublishDateCallBack = GetLastPublishedDateCallBack;
-        //        }
-        //        return _cacheAgent;
-        //    }
-        //    set
-        //    {
-        //        _cacheAgent = value;
-        //        _cacheAgent.GetLastPublishDateCallBack = GetLastPublishedDateCallBack;
-        //    }
-        //}
 
         #region IPageFactory Members
         public virtual bool TryFindPage(string url, out IPage page)

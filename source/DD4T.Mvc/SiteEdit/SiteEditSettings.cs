@@ -21,7 +21,7 @@ namespace DD4T.Mvc.SiteEdit
         /// </summary>
         SiteEdit2012
     }
-
+    [Serializable]
     public class SiteEditSettings : Dictionary<string, SiteEditSetting>
     {
         public static string SiteEditConfigurationPath = "~/SiteEdit_config.xml";
@@ -73,6 +73,7 @@ namespace DD4T.Mvc.SiteEdit
             }
         }
 
+     
 
         /**
          * Retrieve siteedit setting for a specific publication id.

@@ -81,6 +81,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\DD4T-Model.0.0.0-alpha\lib\DD4T.Serialization.dll</HintPath>
     </Reference>
+    <Reference Include="log4net">
+      <HintPath>..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\DD4T-Model.2.0.4-draft\lib\Newtonsoft.Json.dll</HintPath>
@@ -99,9 +102,10 @@
     <Compile Include="ClassLoader.cs" />
     <Compile Include="ConfigurationHelper.cs" />
     <Compile Include="DD4TConfiguration.cs" />
-    <Compile Include="Defaults\DefaultPublicationResolver.cs" />
-    <Compile Include="Defaults\NullCacheAgent.cs" />
-    <Compile Include="Defaults\NullLogger.cs" />
+    <Compile Include="Logging\DefaultLogger.cs" />
+    <Compile Include="Resolver\DefaultPublicationResolver.cs" />
+    <Compile Include="Caching\NullCacheAgent.cs" />
+    <Compile Include="Logging\NullLogger.cs" />
     <Compile Include="ExtensionMethods\DD4TConfigurationExtensions.cs" />
     <Compile Include="LoggerService.cs" />
     <Compile Include="Properties\SpecificAssemblyInfo.cs" />

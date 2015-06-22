@@ -8,7 +8,6 @@ using System.Reflection;
 using DD4T.Providers.Test;
 using DD4T.ContentModel.Contracts.Providers;
 using DD4T.ContentModel.Contracts.Caching;
-using DD4T.Factories.Caching;
 using DD4T.ContentModel;
 using DD4T.ContentModel.Contracts.Serializing;
 using DD4T.Serialization;
@@ -16,7 +15,10 @@ using DD4T.ContentModel.Contracts.Configuration;
 using DD4T.ContentModel.Contracts.Resolvers;
 using DD4T.ContentModel.Contracts.Logging;
 using DD4T.Utils;
-using DD4T.Utils.Defaults;
+using DD4T.Utils.Logging;
+using DD4T.Utils.Caching;
+using DD4T.Utils.Resolver;
+
 
 namespace DD4T.Core.Test
 {

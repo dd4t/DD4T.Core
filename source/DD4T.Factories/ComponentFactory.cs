@@ -33,8 +33,6 @@ namespace DD4T.Factories
                 throw new ArgumentNullException("componentPresentationFactory");
 
             ComponentPresentationFactory = componentPresentationFactory;
-
-
         }
 
         #region IComponentFactory members

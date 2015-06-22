@@ -12,7 +12,6 @@ namespace DD4T.Factories
     public class BinaryFactory : FactoryBase, IBinaryFactory
     {
         private static IDictionary<string, DateTime> lastPublishedDates = new Dictionary<string, DateTime>();
-        //private IBinaryProvider _binaryProvider = null;
         public IBinaryProvider BinaryProvider { get; set; }
 
 
@@ -182,8 +181,6 @@ namespace DD4T.Factories
         {
             throw new NotImplementedException();
         }
-
-
 
         public string GetUrlForUri(string uri)
         {

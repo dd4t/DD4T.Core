@@ -15,10 +15,10 @@ namespace DD4T.Mvc.Controllers
     public abstract class TridionControllerBase : Controller, IPageController, IComponentPresentationController
     {
 
-        public virtual IPageFactory PageFactory { get; set; }
-        public virtual IComponentPresentationRenderer ComponentPresentationRenderer { get; set; }
+        public IPageFactory PageFactory { get; set; }
+        public IComponentPresentationRenderer ComponentPresentationRenderer { get; set; }
         //public virtual IComponentFactory ComponentFactory { get; set; }
-        public virtual IComponentPresentationFactory ComponentPresentationFactory { get; set; }
+        public IComponentPresentationFactory ComponentPresentationFactory { get; set; }
       
 
         private readonly ILogger LoggerService;

@@ -10,11 +10,12 @@ using DD4T.ContentModel.Contracts.Logging;
 using DD4T.ContentModel.Contracts.Providers;
 using DD4T.ContentModel.Factories;
 using DD4T.Factories;
-using DD4T.Utils.Defaults;
 using DD4T.Utils;
 using DD4T.Utils.Caching;
 using DD4T.ContentModel.Contracts.Caching;
 using DD4T.Mvc.Html;
+using DD4T.Utils.Resolver;
+using DD4T.Utils.Logging;
 
 namespace DD4T.Bootstrap.Ninject
 {
@@ -36,7 +37,7 @@ namespace DD4T.Bootstrap.Ninject
                 kernel.Bind<IComponentPresentationProvider>().To(cpProvider).InSingletonScope();
 
             if (kernel.TryGet<ILinkProvider>() == null)
-                kernel.Bind<ILinkProvider>().To(linkProvider).InThreadScope();
+                kernel.Bind<ILinkProvider>().To(linkProvider);
 
             if (kernel.TryGet<IProvidersFacade>() == null)
                 kernel.Bind<IProvidersFacade>().To(facadeProvider);
@@ -54,8 +55,6 @@ namespace DD4T.Bootstrap.Ninject
             if (kernel.TryGet<IPublicationResolver>() == null)
                 kernel.Bind<IPublicationResolver>().To<DefaultPublicationResolver>().InSingletonScope();
 
-
-
             //Kernel.Bind<ITaxonomyProvider>().To<TridionTaxonomyProvider>().InSingletonScope();
             if (kernel.TryGet<IPageFactory>() == null)
                 kernel.Bind<IPageFactory>().To<PageFactory>();
@@ -64,7 +63,10 @@ namespace DD4T.Bootstrap.Ninject
             if (kernel.TryGet<ILinkFactory>() == null)
                 kernel.Bind<ILinkFactory>().To<LinkFactory>();
 
-            //kernel.Bind<IComponentFactory>().To<ComponentFactory>();
+            
+            if(kernel.TryGet<IComponentFactory>() ==  null)
+                kernel.Bind<IComponentFactory>().To<ComponentFactory>();
+
             if (kernel.TryGet<IFactoriesFacade>() == null)
                 kernel.Bind<IFactoriesFacade>().To<FactoriesFacade>();
 

@@ -8,7 +8,6 @@ using System.Reflection;
 using DD4T.Providers.Test;
 using DD4T.ContentModel.Contracts.Providers;
 using DD4T.ContentModel.Contracts.Caching;
-using DD4T.Factories.Caching;
 using DD4T.ContentModel;
 using DD4T.ContentModel.Contracts.Serializing;
 using DD4T.Serialization;
