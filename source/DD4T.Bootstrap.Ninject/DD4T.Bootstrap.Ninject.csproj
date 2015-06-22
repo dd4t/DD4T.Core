@@ -17,7 +17,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\build\</OutputPath>
+    <OutputPath>..\..\build\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -31,6 +31,42 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DD4T.ContentModel, Version=2.0.0.0, Culture=neutral, PublicKeyToken=4450e3c7f68bf872, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\DD4T-Model.0.0.0-alpha\lib\DD4T.ContentModel.dll</HintPath>
+    </Reference>
+    <Reference Include="DD4T.ContentModel.Contracts, Version=2.0.0.0, Culture=neutral, PublicKeyToken=4450e3c7f68bf872, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\DD4T-Model.0.0.0-alpha\lib\DD4T.ContentModel.Contracts.dll</HintPath>
+    </Reference>
+    <Reference Include="DD4T.Core.Contracts, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\DD4T.NET.0.0.0-alpha\lib\DD4T.Core.Contracts.dll</HintPath>
+    </Reference>
+    <Reference Include="DD4T.Factories, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\DD4T.NET.0.0.0-alpha\lib\DD4T.Factories.dll</HintPath>
+    </Reference>
+    <Reference Include="DD4T.Mvc, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\DD4T.NET.0.0.0-alpha\lib\DD4T.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="DD4T.Serialization, Version=2.0.0.0, Culture=neutral, PublicKeyToken=4450e3c7f68bf872, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\DD4T-Model.0.0.0-alpha\lib\DD4T.Serialization.dll</HintPath>
+    </Reference>
+    <Reference Include="DD4T.Utils, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\DD4T.NET.0.0.0-alpha\lib\DD4T.Utils.dll</HintPath>
+    </Reference>
+    <Reference Include="netrtsn, Version=3.3.0.0, Culture=neutral, PublicKeyToken=3f62086c257dc8e1">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\SDL-Tridion-2013-sp1.1.0.0\lib\netrtsn.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="Ninject, Version=3.2.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Ninject.3.2.3-unstable-012\lib\net45-full\Ninject.dll</HintPath>
@@ -42,6 +78,22 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="Tridion.ContentDelivery, Version=7.1.0.165, Culture=neutral, PublicKeyToken=ddfc895746e5ee6b, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\SDL-Tridion-2013-sp1.1.0.0\lib\Tridion.ContentDelivery.dll</HintPath>
+    </Reference>
+    <Reference Include="Tridion.ContentDelivery.AmbientData, Version=7.1.0.165, Culture=neutral, PublicKeyToken=ddfc895746e5ee6b, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\SDL-Tridion-2013-sp1.1.0.0\lib\Tridion.ContentDelivery.AmbientData.dll</HintPath>
+    </Reference>
+    <Reference Include="Tridion.ContentDelivery.Configuration, Version=7.1.0.165, Culture=neutral, PublicKeyToken=ddfc895746e5ee6b, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\SDL-Tridion-2013-sp1.1.0.0\lib\Tridion.ContentDelivery.Configuration.dll</HintPath>
+    </Reference>
+    <Reference Include="Tridion.ContentDelivery.Interop, Version=7.1.0.10, Culture=neutral, PublicKeyToken=ddfc895746e5ee6b, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\SDL-Tridion-2013-sp1.1.0.0\lib\Tridion.ContentDelivery.Interop.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\Dynamic Delivery Presentation Solution Items\AssemblyInfo.cs">
@@ -54,35 +106,17 @@
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\DD4T.Core.Contracts\DD4T.Core.Contracts.csproj">
-      <Project>{f90a1191-cd6e-4016-9005-b28a96f7964e}</Project>
-      <Name>DD4T.Core.Contracts</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DD4T.Factories\DD4T.Factories.csproj">
-      <Project>{9e96efe0-7478-4551-a47a-1f04b9f01df7}</Project>
-      <Name>DD4T.Factories</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DD4T.Mvc\DD4T.Mvc.csproj">
-      <Project>{3ac37be3-9832-4317-a5e2-2c24c61decbd}</Project>
-      <Name>DD4T.Mvc</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DD4T.Utils\DD4T.Utils.csproj">
-      <Project>{d2ce08be-7281-4697-adfe-e7a031cb59ec}</Project>
-      <Name>DD4T.Utils</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>if not exist "$(OutDir)\nuget" mkdir "$(OutDir)\nuget"
-copy "$(TargetPath)" "$(OutDir)\nuget"
+    <PostBuildEvent>if not exist "$(TargetDir)nuget" mkdir "$(TargetDir)nuget"
+copy "$(TargetPath)" "$(TargetDir)nuget"
 
 if exist "$(nuget_local)"  (
 REM Create a NuGet package for this project and place the .nupkg file in the project's output directory.
 REM If you see this in Visual Studio's Error List window, check the Output window's Build tab for the actual error.
 ECHO Creating NuGet package in Post-Build event...
 
-PowerShell -NoProfile -ExecutionPolicy Bypass -Command "&amp; '$(SolutionDir)nuget\New-NuGetPackage.ps1' -NuSpecFilePath '$(SolutionDir)nuget\DD4T.Bootstrap.Ninject.0.0.0-alpha.nuspec' -ReleaseNotes 'Build with Visual studio' -VersionNumber 0.0.0-alpha  -PackOptions '-Build -OutputDirectory $Env:nuget_local'" -NoPrompt
+PowerShell -NoProfile -ExecutionPolicy Bypass -Command "&amp; '$(SolutionDir)..\configuration\New-NuGetPackage.ps1' -NuSpecFilePath '$(SolutionDir)..\configuration\DD4T.Bootstrap.Ninject.nuspec' -ReleaseNotes 'Build with Visual studio' -VersionNumber 2.0.0-alpha1  -PackOptions '-Build -OutputDirectory $Env:nuget_local'" -NoPrompt
 )</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

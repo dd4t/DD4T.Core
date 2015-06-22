@@ -64,7 +64,6 @@ namespace DD4T.Bootstrap.Ninject
             if (kernel.TryGet<IProvidersFacade>() == null)
                 kernel.Bind<IProvidersFacade>().To(facadeProvider);
 
-
             if (kernel.TryGet<IPageFactory>() == null)
                 kernel.Bind<IPageFactory>().To<PageFactory>();
 
@@ -74,7 +73,6 @@ namespace DD4T.Bootstrap.Ninject
             if (kernel.TryGet<ILinkFactory>() == null)
                 kernel.Bind<ILinkFactory>().To<LinkFactory>();
 
-            
             if(kernel.TryGet<IComponentFactory>() ==  null)
                 kernel.Bind<IComponentFactory>().To<ComponentFactory>();
 
