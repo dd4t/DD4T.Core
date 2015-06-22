@@ -29,12 +29,20 @@ namespace DD4T.Bootstrap.Ninject
             var cpProvider = providerTypes.Where(a => typeof(IComponentPresentationProvider).IsAssignableFrom(a)).FirstOrDefault();
             var linkProvider = providerTypes.Where(a => typeof(ILinkProvider).IsAssignableFrom(a)).FirstOrDefault();
             var facadeProvider = providerTypes.Where(a => typeof(IProvidersFacade).IsAssignableFrom(a)).FirstOrDefault();
+            var binaryProvider = providerTypes.Where(a => typeof(IBinaryProvider).IsAssignableFrom(a)).FirstOrDefault();
+            var componentProvider = providerTypes.Where(a => typeof(IComponentProvider).IsAssignableFrom(a)).FirstOrDefault();
+
+            if (kernel.TryGet<IBinaryProvider>() == null)
+                kernel.Bind<IBinaryProvider>().To(binaryProvider);
+
+            if (kernel.TryGet<IComponentProvider>() == null)
+                kernel.Bind<IComponentProvider>().To(componentProvider);
 
             if (kernel.TryGet<IPageProvider>() == null)
                 kernel.Bind<IPageProvider>().To(pageprovider);
 
             if (kernel.TryGet<IComponentPresentationProvider>() == null)
-                kernel.Bind<IComponentPresentationProvider>().To(cpProvider).InSingletonScope();
+                kernel.Bind<IComponentPresentationProvider>().To(cpProvider);
 
             if (kernel.TryGet<ILinkProvider>() == null)
                 kernel.Bind<ILinkProvider>().To(linkProvider);
