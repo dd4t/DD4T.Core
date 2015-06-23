@@ -131,7 +131,6 @@ namespace DD4T.Mvc.Html
                 action = cp.ComponentTemplate.MetadataFields["action"].Value;
             }
 
-
             _loggerService.Debug("about to render component presentation with controller {0} and action {1}", LoggingCategory.Performance, controller, action);
             //return ChildActionExtensions.Action(htmlHelper, action, controller, new { componentPresentation = ((ComponentPresentation)cp) });
             MvcHtmlString result = htmlHelper.Action(action, controller, new { componentPresentation = ((ComponentPresentation)cp) });

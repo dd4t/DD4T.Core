@@ -23,17 +23,18 @@ namespace DD4T.Factories
         protected readonly IDD4TConfiguration Configuration;
         protected readonly ILogger LoggerService;
 
+
         public FactoryBase(IFactoriesFacade facade)
         {
             if (facade == null)
                 throw new ArgumentNullException("facade");
 
+            
             LoggerService = facade.Logger;
             PublicationResolver = facade.PublicationResolver;
             Configuration = facade.Configuration;
             CacheAgent = facade.CacheAgent;
             CacheAgent.GetLastPublishDateCallBack = GetLastPublishedDateCallBack;
-           
         }
 
         /// <summary>

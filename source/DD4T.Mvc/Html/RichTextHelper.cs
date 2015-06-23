@@ -29,7 +29,7 @@ namespace DD4T.Mvc.Html
             _linkFactory = linkFactory;
         }
 
-        public static MvcHtmlString ResolveRichText(string value)
+        public static MvcHtmlString ResolveRichText(this string value)
         {
             XmlDocument doc = new XmlDocument();
             XmlNamespaceManager nsmgr = new XmlNamespaceManager(doc.NameTable);

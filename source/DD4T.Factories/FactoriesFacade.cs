@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DD4T.ContentModel.Contracts.Caching;
+using DD4T.ContentModel.Contracts.Serializing;
 
 namespace DD4T.Factories
 {
@@ -17,8 +18,10 @@ namespace DD4T.Factories
         public ILogger Logger { get; private set; }
         public IDD4TConfiguration Configuration { get; private set; }
         public ICacheAgent CacheAgent { get; private set; }
+        public ISerializerService SerializerService { get; private set; }
 
-        public FactoriesFacade(IPublicationResolver resolver, ILogger logger, IDD4TConfiguration configuration, ICacheAgent cacheAgent)
+        public FactoriesFacade(IPublicationResolver resolver, ILogger logger,
+                        IDD4TConfiguration configuration, ICacheAgent cacheAgent)
         {
             if (resolver == null)
                 throw new ArgumentNullException("resolver");

@@ -45,25 +45,26 @@ namespace DD4T.Bootstrap.Ninject
             if (kernel.TryGet<ICacheAgent>() == null)
                 kernel.Bind<ICacheAgent>().To<DefaultCacheAgent>();
 
-
-            if (kernel.TryGet<IBinaryProvider>() == null)
+            //providers
+            if (binaryProvider != null && kernel.TryGet<IBinaryProvider>() == null)
                 kernel.Bind<IBinaryProvider>().To(binaryProvider);
 
-            if (kernel.TryGet<IComponentProvider>() == null)
+            if (componentProvider != null && kernel.TryGet<IComponentProvider>() == null)
                 kernel.Bind<IComponentProvider>().To(componentProvider);
 
-            if (kernel.TryGet<IPageProvider>() == null)
+            if (pageprovider != null && kernel.TryGet<IPageProvider>() == null)
                 kernel.Bind<IPageProvider>().To(pageprovider);
 
-            if (kernel.TryGet<IComponentPresentationProvider>() == null)
+            if (cpProvider != null && kernel.TryGet<IComponentPresentationProvider>() == null)
                 kernel.Bind<IComponentPresentationProvider>().To(cpProvider);
 
-            if (kernel.TryGet<ILinkProvider>() == null)
+            if (facadeProvider != null && kernel.TryGet<ILinkProvider>() == null)
                 kernel.Bind<ILinkProvider>().To(linkProvider);
 
-            if (kernel.TryGet<IProvidersFacade>() == null)
+            if (binaryProvider != null && kernel.TryGet<IProvidersFacade>() == null)
                 kernel.Bind<IProvidersFacade>().To(facadeProvider);
 
+            //factories
             if (kernel.TryGet<IPageFactory>() == null)
                 kernel.Bind<IPageFactory>().To<PageFactory>();
 

@@ -44,58 +44,46 @@ namespace DD4T.Utils
             }
         }
 
-        string componentPresentationController = string.Empty;
+
         public string ComponentPresentationController
         {
             get
             {
-                var configurationValue = SafeGetConfigSettingAsString(ConfigurationKeys.ComponentPresentationController);
-                if (!string.IsNullOrEmpty(configurationValue))
-                    componentPresentationController = configurationValue;
-
-                return componentPresentationController;
+                return SafeGetConfigSettingAsString(ConfigurationKeys.ComponentPresentationController);
             }
         }
 
         public string ComponentPresentationAction
         {
-            get { throw new NotImplementedException(); }
+            get
+            {
+                return SafeGetConfigSettingAsString(ConfigurationKeys.ComponentPresentationAction, ConfigurationKeys.ComponentPresentationActionAlt1);
+            }
         }
 
         public string ActiveWebsite
         {
-            get { throw new NotImplementedException(); }
+            get
+            {
+                return SafeGetConfigSettingAsString(ConfigurationKeys.ActiveWebsite, ConfigurationKeys.ActiveWebsiteAlt1);
+
+            }
         }
 
-        string selectComponentByComponentTemplateId = string.Empty;
         public string SelectComponentByComponentTemplateId
         {
             get
             {
-                if (!string.IsNullOrEmpty(selectComponentByComponentTemplateId))
-                    return selectComponentByComponentTemplateId;
-
-                var configurationValue = SafeGetConfigSettingAsString(ConfigurationKeys.SelectComponentByComponentTemplateId, ConfigurationKeys.SelectComponentByComponentTemplateIdAlt1);
-                if (!string.IsNullOrEmpty(configurationValue))
-                    selectComponentByComponentTemplateId = configurationValue;
-
-                return selectComponentByComponentTemplateId;
+                return SafeGetConfigSettingAsString(ConfigurationKeys.SelectComponentByComponentTemplateId, ConfigurationKeys.SelectComponentByComponentTemplateIdAlt1);
             }
         }
 
-        string selectComponentByOutputFormat;
         public string SelectComponentByOutputFormat
         {
             get
             {
-                if (!string.IsNullOrEmpty(selectComponentByOutputFormat))
-                    return selectComponentByOutputFormat;
+              return SafeGetConfigSettingAsString(ConfigurationKeys.SelectComponentByOutputFormat, ConfigurationKeys.SelectComponentByOutputFormatAlt1);
 
-                var configurationValue = SafeGetConfigSettingAsString(ConfigurationKeys.SelectComponentByOutputFormat, ConfigurationKeys.SelectComponentByOutputFormatAlt1);
-                if (!string.IsNullOrEmpty(configurationValue))
-                    selectComponentByOutputFormat = configurationValue;
-
-                return selectComponentByOutputFormat;
             }
         }
 
@@ -104,7 +92,6 @@ namespace DD4T.Utils
         {
             get
             {
-
                 var configurationValue = SafeGetConfigSettingAsString(ConfigurationKeys.DataFormat);
                 if (!string.IsNullOrEmpty(configurationValue))
                     _dataFormat = configurationValue;
@@ -141,8 +128,8 @@ namespace DD4T.Utils
         {
             get
             {
-                var configurationvalue = SafeGetConfigSettingAsInt(ConfigurationKeys.BinaryHandlerCacheExpiration, ConfigurationKeys.BinaryHandlerCacheExpirationAlt1);
-                return configurationvalue;
+                return SafeGetConfigSettingAsInt(ConfigurationKeys.BinaryHandlerCacheExpiration, ConfigurationKeys.BinaryHandlerCacheExpirationAlt1);
+
             }
         }
 
@@ -175,8 +162,7 @@ namespace DD4T.Utils
         {
             get
             {
-                var configurationValue = SafeGetConfigSettingAsBoolean(ConfigurationKeys.IncludeLastPublishedDate);
-                return configurationValue;
+                return SafeGetConfigSettingAsBoolean(ConfigurationKeys.IncludeLastPublishedDate);
             }
         }
 
@@ -184,8 +170,7 @@ namespace DD4T.Utils
         {
             get
             {
-                var configurationValue = SafeGetConfigSettingAsBoolean(ConfigurationKeys.ShowAnchors);
-                return configurationValue;
+                return SafeGetConfigSettingAsBoolean(ConfigurationKeys.ShowAnchors);
             }
         }
 
@@ -194,8 +179,7 @@ namespace DD4T.Utils
         {
             get
             {
-                var configurationValue = SafeGetConfigSettingAsBoolean(ConfigurationKeys.LinkToAnchor);
-                return configurationValue;
+                return SafeGetConfigSettingAsBoolean(ConfigurationKeys.LinkToAnchor);
             }
         }
 
@@ -203,8 +187,7 @@ namespace DD4T.Utils
         {
             get
             {
-                var configurationValue = SafeGetConfigSettingAsInt(ConfigurationKeys.DefaultCacheSettings);
-                return configurationValue;
+                return SafeGetConfigSettingAsInt(ConfigurationKeys.DefaultCacheSettings);
             }
         }
 
@@ -213,8 +196,7 @@ namespace DD4T.Utils
         {
             get
             {
-                var configurationValue = SafeGetConfigSettingAsInt(ConfigurationKeys.CacheSettingCallBackInterval);
-                return configurationValue;
+                return SafeGetConfigSettingAsInt(ConfigurationKeys.CacheSettingCallBackInterval);
             }
         }
 
@@ -224,12 +206,9 @@ namespace DD4T.Utils
         }
         public bool UseUriAsAnchor
         {
-
             get
             {
-               var configurationvalue = SafeGetConfigSettingAsBoolean(ConfigurationKeys.UseUriAsAnchor );
-              
-                return configurationvalue;
+               return SafeGetConfigSettingAsBoolean(ConfigurationKeys.UseUriAsAnchor );
             }
         }
 
