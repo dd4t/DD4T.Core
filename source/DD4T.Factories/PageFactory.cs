@@ -150,7 +150,7 @@ namespace DD4T.Factories
                 LoggerService.Debug("about to load page content from provider with url {0}", LoggingCategory.Performance, url);
                 string tempPageContent = PageProvider.GetContentByUrl(url);
                 LoggerService.Debug("finished loading page content from provider with url {0}, has value: {1}", LoggingCategory.Performance, url, Convert.ToString(!(string.IsNullOrEmpty(tempPageContent))));
-                if (tempPageContent != string.Empty)
+                if (!string.IsNullOrEmpty(tempPageContent))
                 {
                     pageContent = tempPageContent;
                     LoggerService.Debug("about to store page in cache with key {0}", LoggingCategory.Performance, cacheKey);
