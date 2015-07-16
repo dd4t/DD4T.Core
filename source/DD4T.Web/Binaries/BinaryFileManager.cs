@@ -7,7 +7,6 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Drawing.Drawing2D;
 using System.Text.RegularExpressions;
-using DD4T.Factories.Caching;
 using DD4T.ContentModel.Exceptions;
 using DD4T.ContentModel.Contracts.Caching;
 using DD4T.Factories;
