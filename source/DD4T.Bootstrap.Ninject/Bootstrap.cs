@@ -75,7 +75,7 @@ namespace DD4T.Bootstrap.Ninject
                 kernel.Bind<ILinkFactory>().To<LinkFactory>();
 
             if (kernel.TryGet<IBinaryFactory>() == null)
-                kernel.Bind<IBinaryProvider>().To<BinaryFactory>();
+                kernel.Bind<IBinaryFactory>().To<BinaryFactory>();
 
             if(kernel.TryGet<IComponentFactory>() ==  null)
                 kernel.Bind<IComponentFactory>().To<ComponentFactory>();
