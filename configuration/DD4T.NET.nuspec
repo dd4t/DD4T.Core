@@ -3,19 +3,15 @@
   <metadata>
     <id>DD4T.NET</id>
     <version>2.0.0-alpha1</version>
-    <title>DD4T 2 Net</title>
-    <authors>Siavash Shibani</authors>
+    <authors>DD4T Community</authors>
+    <owners>DD4T Community</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>My package description.</description>
-    <releaseNotes>Build with Visual studio</releaseNotes>
+    <description>Content model classes of DD4T</description>
+    <releaseNotes>
+    </releaseNotes>
+    <tags>SDLTridion Tridion DD4T</tags>
     <dependencies>
       <dependency id="DD4T-Model" version="2.0.0-alpha1" />
     </dependencies>
   </metadata>
-  <files>
-    <file src="..\build\nuget\DD4T.Core.Contracts.dll" target="lib\DD4T.Core.Contracts.dll" />
-    <file src="..\build\nuget\DD4T.Factories.dll" target="lib\DD4T.Factories.dll" />
-    <file src="..\build\nuget\DD4T.Mvc.dll" target="lib\DD4T.Mvc.dll" />
-    <file src="..\build\nuget\DD4T.Utils.dll" target="lib\DD4T.Utils.dll" />
-  </files>
 </package>

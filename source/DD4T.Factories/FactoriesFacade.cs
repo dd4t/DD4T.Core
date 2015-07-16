@@ -39,7 +39,6 @@ namespace DD4T.Factories
             PublicationResolver = resolver;
             Configuration = configuration;
             CacheAgent = cacheAgent;
-
         }
        
     }

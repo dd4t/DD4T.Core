@@ -17,7 +17,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\build\</OutputPath>
+    <OutputPath>..\..\build\bin\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -33,27 +33,34 @@
   <ItemGroup>
     <Reference Include="DD4T.ContentModel">
       <HintPath>..\packages\DD4T.Model.2.0.0-alpha6\lib\net45\DD4T.ContentModel.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="DD4T.ContentModel.Contracts">
       <HintPath>..\packages\DD4T.Model.2.0.0-alpha6\lib\net45\DD4T.ContentModel.Contracts.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="DD4T.ContentModel.XmlSerializers">
       <HintPath>..\packages\DD4T.Model.2.0.0-alpha6\lib\net45\DD4T.ContentModel.XmlSerializers.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="DD4T.Core.Contracts, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\DD4T.NET.2.0.0-alpha1\lib\DD4T.Core.Contracts.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="DD4T.Serialization">
       <HintPath>..\packages\DD4T.Model.2.0.0-alpha6\lib\net45\DD4T.Serialization.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Ninject, Version=3.2.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Ninject.3.2.3-unstable-012\lib\net45-full\Ninject.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -78,28 +85,23 @@
     <ProjectReference Include="..\DD4T.Factories\DD4T.Factories.csproj">
       <Project>{9e96efe0-7478-4551-a47a-1f04b9f01df7}</Project>
       <Name>DD4T.Factories</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\DD4T.Mvc\DD4T.Mvc.csproj">
       <Project>{3ac37be3-9832-4317-a5e2-2c24c61decbd}</Project>
       <Name>DD4T.Mvc</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\DD4T.Utils\DD4T.Utils.csproj">
       <Project>{d2ce08be-7281-4697-adfe-e7a031cb59ec}</Project>
       <Name>DD4T.Utils</Name>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>if not exist "$(TargetDir)nuget" mkdir "$(TargetDir)nuget"
-copy "$(TargetPath)" "$(TargetDir)nuget"
-
-if exist "$(nuget_local)"  (
-REM Create a NuGet package for this project and place the .nupkg file in the project's output directory.
-REM If you see this in Visual Studio's Error List window, check the Output window's Build tab for the actual error.
-ECHO Creating NuGet package in Post-Build event...
-
-PowerShell -NoProfile -ExecutionPolicy Bypass -Command "&amp; '$(SolutionDir)..\configuration\New-NuGetPackage.ps1' -NuSpecFilePath '$(SolutionDir)..\configuration\DD4T.Bootstrap.Ninject.nuspec' -ReleaseNotes 'Build with Visual studio' -VersionNumber 2.0.0-alpha1  -PackOptions '-Build -OutputDirectory $Env:nuget_local'" -NoPrompt
-)</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
