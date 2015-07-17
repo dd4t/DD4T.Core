@@ -55,6 +55,25 @@
 		</Task>		
 	</UsingTask>
 
+	<!-- Task for generating a new version for local development -->
+	<UsingTask TaskName="GetNewDevVersion" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
+		<ParameterGroup>
+			<OldVersion ParameterType="System.String" Required="true" />
+			<NewVersion ParameterType="System.String" Output="true" />
+		</ParameterGroup>
+		<Task>
+			<Using Namespace="System.Diagnostics" />
+			<Code Type="Fragment" Language="cs">
+				<![CDATA[
+					Log.LogMessage("Getting a new version for " + this.OldVersion, MessageImportance.High);
+					Version version = new Version(this.OldVersion.Split('-')[0]);
+					this.NewVersion = version.ToString() + "-build" + DateTime.Now.ToString("yyyyMMddHHmmss");
+					Log.LogMessage("New Version: " + this.NewVersion, MessageImportance.High);
+				]]>
+			</Code>
+		</Task>		
+	</UsingTask>
+
 	<Target Name="CleanUp">
 		<!-- Clean removes all build artifacts to prepare for a new build. -->
 		<RemoveDir Directories="@(CleanFolders)" />
@@ -77,6 +96,10 @@
     	<GetInformationalVersion AssemblyFile="@(MainPackageFiles)">
     		<Output TaskParameter="Version" PropertyName="VersionInfo"/>
     	</GetInformationalVersion>
+
+    	<GetNewDevVersion OldVersion="$(VersionInfo)" Condition="'$(Configuration)' == 'Debug'">
+    		<Output TaskParameter="NewVersion" PropertyName="VersionInfo"/>
+    	</GetNewDevVersion>
 
         <ItemGroup>
         	<NuGetFiles Include="$(NuSpecFile)"/>
