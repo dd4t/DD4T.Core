@@ -9,7 +9,7 @@
     <description>Content model classes of DD4T</description>
     <releaseNotes>
     </releaseNotes>
-    <tags>SDLTridion Tridion DD4T</tags>
+    <tags>SDL Tridion DD4T</tags>
     <dependencies>
       <dependency id="DD4T-Model" version="2.0.0-alpha1" />
     </dependencies>
