@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<package xmlns="http://schemas.microsoft.com/packaging/2011/10/nuspec.xsd">
+<package>
   <metadata>
     <id>DD4T.NET</id>
-    <version>2.0.0-alpha1</version>
+    <version></version>
     <authors>DD4T Community</authors>
     <owners>DD4T Community</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
@@ -11,7 +11,7 @@
     </releaseNotes>
     <tags>SDL Tridion DD4T</tags>
     <dependencies>
-      <dependency id="DD4T-Model" version="2.0.0-alpha1" />
+      <dependency id="DD4T-Model" version="2.0.0.0" />
     </dependencies>
   </metadata>
 </package>
