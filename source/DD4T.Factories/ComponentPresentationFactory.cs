@@ -25,8 +25,8 @@ namespace DD4T.Factories
 
         private ICacheAgent _cacheAgent = null;
 
-        public ComponentPresentationFactory(IComponentPresentationProvider componentPresentationProvider, IFactoriesFacade facade)
-            : base(facade)
+        public ComponentPresentationFactory(IComponentPresentationProvider componentPresentationProvider, IFactoryCommonServices factoryCommonServices)
+            : base(factoryCommonServices)
         {
             if (componentPresentationProvider == null)
                 throw new ArgumentNullException("componentPresentationProvider");

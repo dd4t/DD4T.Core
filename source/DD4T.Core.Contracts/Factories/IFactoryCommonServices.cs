@@ -5,7 +5,7 @@ using DD4T.ContentModel.Contracts.Resolvers;
 
 namespace DD4T.ContentModel.Factories
 {
-    public interface IFactoriesFacade
+    public interface IFactoryCommonServices
     {
         IPublicationResolver PublicationResolver { get; }
         ILogger Logger { get; }

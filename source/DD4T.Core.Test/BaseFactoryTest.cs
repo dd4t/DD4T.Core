@@ -59,11 +59,11 @@ namespace DD4T.Core.Test
                 Bind<IPublicationResolver>().To<DefaultPublicationResolver>().InSingletonScope();
 
                 Bind<ILogger>().To<NullLogger>().InSingletonScope();
-                Bind<IFactoriesFacade>().To<FactoriesFacade>().InSingletonScope();
+                Bind<IFactoryCommonServices>().To<FactoryCommonServices>().InSingletonScope();
                 Bind<IPageFactory>().To<PageFactory>().InSingletonScope();
                 Bind<IComponentPresentationFactory>().To<ComponentPresentationFactory>().InSingletonScope();
                 Bind<IComponentFactory>().To<ComponentFactory>().InSingletonScope();
-                Bind<IProvidersFacade>().To<ProvidersFacade>().InSingletonScope();
+                Bind<IProvidersCommonServices>().To<ProviderCommonServices>().InSingletonScope();
                 Bind<IPageProvider>().To<TridionPageProvider>().InSingletonScope();
                 Bind<IComponentPresentationProvider>().To<TridionComponentPresentationProvider>().InSingletonScope();
                 Bind<ICacheAgent>().To<NullCacheAgent>().InSingletonScope();

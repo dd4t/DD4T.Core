@@ -15,8 +15,8 @@ namespace DD4T.Factories
         public IBinaryProvider BinaryProvider { get; set; }
 
 
-        public BinaryFactory(IBinaryProvider binaryProvider, IFactoriesFacade facade)
-            : base(facade)
+        public BinaryFactory(IBinaryProvider binaryProvider, IFactoryCommonServices factoryCommonServices)
+            : base(factoryCommonServices)
         {
             if (binaryProvider == null)
                 throw new ArgumentNullException("binaryProvider");

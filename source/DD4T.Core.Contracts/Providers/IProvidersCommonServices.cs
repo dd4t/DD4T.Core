@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace DD4T.ContentModel.Contracts.Providers
 {
-    public interface IProvidersFacade
+    public interface IProvidersCommonServices
     {
         IPublicationResolver PublicationResolver { get; }
         ILogger Logger { get; }

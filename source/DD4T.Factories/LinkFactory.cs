@@ -24,8 +24,8 @@ namespace DD4T.Factories
 
         public ILinkProvider LinkProvider { get; set; }
 
-        public LinkFactory(ILinkProvider linkProvider, IFactoriesFacade facade)
-            : base(facade)
+        public LinkFactory(ILinkProvider linkProvider, IFactoryCommonServices factoryCommonServices)
+            : base(factoryCommonServices)
         {
             if (linkProvider == null)
                 throw new ArgumentNullException("linkProvier");

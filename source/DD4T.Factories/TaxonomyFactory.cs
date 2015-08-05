@@ -17,8 +17,8 @@ namespace DD4T.Factories
         
         public ITaxonomyProvider TaxonomyProvider { get; set; }
 
-        public TaxonomyFactory(ITaxonomyProvider taxonomyProvider, IFactoriesFacade facade)
-            :base(facade)
+        public TaxonomyFactory(ITaxonomyProvider taxonomyProvider, IFactoryCommonServices factoryCommonServices)
+            :base(factoryCommonServices)
         {
             if (taxonomyProvider == null)
                 throw new ArgumentNullException("taxonomyProvider");

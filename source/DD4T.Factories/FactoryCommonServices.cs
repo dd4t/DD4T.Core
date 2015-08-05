@@ -12,7 +12,7 @@ using DD4T.ContentModel.Contracts.Serializing;
 
 namespace DD4T.Factories
 {
-    public class FactoriesFacade : IFactoriesFacade
+    public class FactoryCommonServices : IFactoryCommonServices
     {
         public IPublicationResolver PublicationResolver { get; private set; }
         public ILogger Logger { get; private set; }
@@ -20,7 +20,7 @@ namespace DD4T.Factories
         public ICacheAgent CacheAgent { get; private set; }
         public ISerializerService SerializerService { get; private set; }
 
-        public FactoriesFacade(IPublicationResolver resolver, ILogger logger,
+        public FactoryCommonServices(IPublicationResolver resolver, ILogger logger,
                         IDD4TConfiguration configuration, ICacheAgent cacheAgent)
         {
             if (resolver == null)

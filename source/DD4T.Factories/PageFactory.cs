@@ -31,8 +31,8 @@ namespace DD4T.Factories
         public IComponentPresentationFactory ComponentPresentationFactory { get; set; }
 
         public PageFactory(IPageProvider pageProvider, IComponentPresentationFactory componentPresentationFactory,
-                            IFactoriesFacade facade)
-            : base(facade)
+                            IFactoryCommonServices factoryCommonServices)
+            : base(factoryCommonServices)
         {
             if (pageProvider == null)
                 throw new ArgumentNullException("pageProvider");

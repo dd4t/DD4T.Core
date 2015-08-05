@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace DD4T.Providers.Test
 {
-    public class ProvidersFacade : IProvidersFacade
+    public class ProviderCommonServices : IProvidersCommonServices
     {
         public IPublicationResolver PublicationResolver
         {

@@ -25,8 +25,8 @@ namespace DD4T.Factories
         }
 
         public ComponentFactory( IComponentPresentationFactory componentPresentationFactory,
-                            IFactoriesFacade facade)
-            : base(facade)
+                            IFactoryCommonServices factoryCommonServices)
+            : base(factoryCommonServices)
         {
 
             if (componentPresentationFactory == null)

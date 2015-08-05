@@ -27,7 +27,7 @@ namespace DD4T.Bootstrap.Autofac
             var linkProvider = providerTypes.Where(a => typeof(ILinkProvider).IsAssignableFrom(a)).FirstOrDefault();
             var binaryProvider = providerTypes.Where(a => typeof(IBinaryProvider).IsAssignableFrom(a)).FirstOrDefault();
             var componentProvider = providerTypes.Where(a => typeof(IComponentProvider).IsAssignableFrom(a)).FirstOrDefault();
-            var facadeProvider = providerTypes.Where(a => typeof(IProvidersFacade).IsAssignableFrom(a)).FirstOrDefault();
+            var facadeProvider = providerTypes.Where(a => typeof(IProvidersCommonServices).IsAssignableFrom(a)).FirstOrDefault();
 
             builder.RegisterType<DD4TConfiguration>().As<IDD4TConfiguration>().SingleInstance().PreserveExistingDefaults();
             builder.RegisterType<DefaultPublicationResolver>().As<IPublicationResolver>().SingleInstance().PreserveExistingDefaults();
@@ -37,7 +37,7 @@ namespace DD4T.Bootstrap.Autofac
             builder.RegisterType<DefaultCacheAgent>().As<ICacheAgent>().PreserveExistingDefaults();
 
             if (facadeProvider != null)
-                builder.RegisterType(facadeProvider).As<IProvidersFacade>().PreserveExistingDefaults();
+                builder.RegisterType(facadeProvider).As<IProvidersCommonServices>().PreserveExistingDefaults();
             if (pageprovider != null)
                 builder.RegisterType(pageprovider).As<IPageProvider>().PreserveExistingDefaults();
             if (cpProvider != null)
@@ -50,7 +50,7 @@ namespace DD4T.Bootstrap.Autofac
                 builder.RegisterType(componentProvider).As<IComponentProvider>().PreserveExistingDefaults();
 
 
-            builder.RegisterType<FactoriesFacade>().As<IFactoriesFacade>().PreserveExistingDefaults();
+            builder.RegisterType<FactoryCommonServices>().As<IFactoryCommonServices>().PreserveExistingDefaults();
             builder.RegisterType<PageFactory>().As<IPageFactory>().PreserveExistingDefaults();
             builder.RegisterType<ComponentPresentationFactory>().As<IComponentPresentationFactory>().PreserveExistingDefaults();
             builder.RegisterType<ComponentFactory>().As<IComponentFactory>().PreserveExistingDefaults();

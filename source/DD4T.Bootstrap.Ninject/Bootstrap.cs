@@ -28,7 +28,7 @@ namespace DD4T.Bootstrap.Ninject
             var pageprovider = providerTypes.Where(a => typeof(IPageProvider).IsAssignableFrom(a)).FirstOrDefault();
             var cpProvider = providerTypes.Where(a => typeof(IComponentPresentationProvider).IsAssignableFrom(a)).FirstOrDefault();
             var linkProvider = providerTypes.Where(a => typeof(ILinkProvider).IsAssignableFrom(a)).FirstOrDefault();
-            var facadeProvider = providerTypes.Where(a => typeof(IProvidersFacade).IsAssignableFrom(a)).FirstOrDefault();
+            var facadeProvider = providerTypes.Where(a => typeof(IProvidersCommonServices).IsAssignableFrom(a)).FirstOrDefault();
             var binaryProvider = providerTypes.Where(a => typeof(IBinaryProvider).IsAssignableFrom(a)).FirstOrDefault();
             var componentProvider = providerTypes.Where(a => typeof(IComponentProvider).IsAssignableFrom(a)).FirstOrDefault();
 
@@ -61,8 +61,8 @@ namespace DD4T.Bootstrap.Ninject
             if (facadeProvider != null && kernel.TryGet<ILinkProvider>() == null)
                 kernel.Bind<ILinkProvider>().To(linkProvider);
 
-            if (binaryProvider != null && kernel.TryGet<IProvidersFacade>() == null)
-                kernel.Bind<IProvidersFacade>().To(facadeProvider);
+            if (binaryProvider != null && kernel.TryGet<IProvidersCommonServices>() == null)
+                kernel.Bind<IProvidersCommonServices>().To(facadeProvider);
 
             //factories
             if (kernel.TryGet<IPageFactory>() == null)
@@ -80,8 +80,8 @@ namespace DD4T.Bootstrap.Ninject
             if(kernel.TryGet<IComponentFactory>() ==  null)
                 kernel.Bind<IComponentFactory>().To<ComponentFactory>();
 
-            if (kernel.TryGet<IFactoriesFacade>() == null)
-                kernel.Bind<IFactoriesFacade>().To<FactoriesFacade>();
+            if (kernel.TryGet<IFactoryCommonServices>() == null)
+                kernel.Bind<IFactoryCommonServices>().To<FactoryCommonServices>();
 
             if (kernel.TryGet<IComponentPresentationRenderer>() == null)
                 kernel.Bind<IComponentPresentationRenderer>().To<DefaultComponentPresentationRenderer>().InSingletonScope();
