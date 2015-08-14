@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0">
 	<PropertyGroup>
 		<Configuration Condition="'$(Configuration)'==''">Debug</Configuration>
 		<ProductName>DD4T.NET</ProductName>
@@ -38,7 +38,7 @@
 	<Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets"/>
 
 	<!-- Task for retrieving ProductVersion from an Assembly -->
-	<UsingTask TaskName="GetInformationalVersion" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v$(MSBuildToolsVersion).dll">
+	<UsingTask TaskName="GetInformationalVersion" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v12.0.dll">
 		<ParameterGroup>
 			<AssemblyFile ParameterType="System.String" Required="true" />
 			<Version ParameterType="System.String" Output="true" />
@@ -56,7 +56,7 @@
 	</UsingTask>
 
 	<!-- Task for generating a new version for local development -->
-	<UsingTask TaskName="GetNewDevVersion" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v$(MSBuildToolsVersion).dll">
+	<UsingTask TaskName="GetNewDevVersion" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v12.0.dll">
 		<ParameterGroup>
 			<OldVersion ParameterType="System.String" Required="true" />
 			<NewVersion ParameterType="System.String" Output="true" />
