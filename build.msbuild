@@ -1,311 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project InitialTargets="" DefaultTargets="All" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
-	<!--
-		Debug == msbuild default.proj
-		Release == msbuild default.proj /p:BuildConfiguration=Release
-	-->
 	<PropertyGroup>
-		<ProjectName>DD4T.NET</ProjectName>
 		<Configuration Condition="'$(Configuration)'==''">Debug</Configuration>
-		
-		<!-- Source Directories -->
-		<SourceDirectory>$(MSBuildProjectDirectory)\source</SourceDirectory>
-
-		<SolutionFile>$(SourceDirectory)\$(ProjectName).sln</SolutionFile>
-
-		<!-- Build Directories -->
-		<BuildOutputDirectory>$(MSBuildProjectDirectory)\build</BuildOutputDirectory>
-		<BuildBinDirectory>$(BuildOutputDirectory)\bin</BuildBinDirectory>
-		<BuildDocDirectory>$(BuildOutputDirectory)\doc</BuildDocDirectory>
-		<BuildLogDirectory>$(BuildOutputDirectory)\log</BuildLogDirectory>
-		<BuildPackageDirectory>$(BuildOutputDirectory)\package</BuildPackageDirectory>
-		<BuildWorkDirectory>$(BuildOutputDirectory)\work</BuildWorkDirectory>
-		<BuildNuGetDirectory>$(BuildWorkDirectory)\lib</BuildNuGetDirectory>
-		<BuildNuGetFramework40Directory>$(BuildNuGetDirectory)\net40</BuildNuGetFramework40Directory>
-		<BuildNuGetFramework45Directory>$(BuildNuGetDirectory)\net45</BuildNuGetFramework45Directory>
-
-		<!-- NuGet Download location -->
-		<NuGetFolder>$(MSBuildProjectDirectory)\source\.nuget</NuGetFolder>
-
-
-		<ConfigurationDirectory>$(MSBuildProjectDirectory)\configuration</ConfigurationDirectory>
-
-		<NuGetSpecFile>$(ConfigurationDirectory)\DD4T.NET.nuspec</NuGetSpecFile>
-		<MVC3NuGetSpecFile>$(ConfigurationDirectory)\DD4T.MVC3.nuspec</MVC3NuGetSpecFile>
-		<MVC4NuGetSpecFile>$(ConfigurationDirectory)\DD4T.MVC4.nuspec</MVC4NuGetSpecFile>
 	</PropertyGroup>
-	<ItemGroup>
-		<CleanFolders Include="$(BuildOutputDirectory)"/>
-		<CleanFolders Include="$(BuildWorkDirectory)"/>
-		<CleanFolders Include="TestResults"/>
-		
-		<NuGetStructureFolders Include="$(BuildNugetDirectory)"/>
-		<NuGetStructureFolders Include="$(BuildNuGetFramework40Directory)"/>
-		<NuGetStructureFolders Include="$(BuildNuGetFramework45Directory)"/>
 
-		<!-- Project Files -->
-		<MainProjectFiles Include="$(SourceDirectory)\DD4T.Utils\DD4T.Utils.csproj"/>
-		<MainProjectFiles Include="$(SourceDirectory)\DD4T.Factories\DD4T.Factories.csproj"/>
-		<MainProjectFiles Include="$(SourceDirectory)\DD4T.Web\DD4T.Web.csproj"/>
-
-		<!-- MVC -->
-		<MVCProjectFiles Include="$(SourceDirectory)\DD4T.Mvc\DD4T.Mvc.csproj"/>
-
-		<!-- LogWrappers -->
-		<ProjectFiles Include="$(SourceDirectory)\DD4T.LogWrappers.EntLib\DD4T.LogWrappers.Entlib.csproj"/>
-		<ProjectFiles Include="$(SourceDirectory)\DD4T.LogWrappers.Log4NET\DD4T.LogWrappers.Log4NET.csproj"/>
-		
-		<!-- Providers -->
-		<!-- These are disabled in Debug because the Tridion dll's aren't available as a nuget package for now. The CI environment does have access. -->
-		<ProjectFiles Include="$(SourceDirectory)\DD4T.Providers.SDLTridion2009\DD4T.Providers.SDLTridion2009.csproj" Condition="'$(Configuration)'=='Release'"/>
-		<ProjectFiles Include="$(SourceDirectory)\DD4T.Providers.SDLTridion2011\DD4T.Providers.SDLTridion2011.csproj" Condition="'$(Configuration)'=='Release'"/>
-		<ProjectFiles Include="$(SourceDirectory)\DD4T.Providers.SDLTridion2011sp1\DD4T.Providers.SDLTridion2011sp1.csproj" Condition="'$(Configuration)'=='Release'"/>
-		<ProjectFiles Include="$(SourceDirectory)\DD4T.Providers.SDLTridion2013\DD4T.Providers.SDLTridion2013.csproj" Condition="'$(Configuration)'=='Release'"/>
-		<ProjectFiles Include="$(SourceDirectory)\DD4T.Providers.SDLTridion2013sp1\DD4T.Providers.SDLTridion2013sp1.csproj" Condition="'$(Configuration)'=='Release'"/>
-	</ItemGroup>
-
-	<Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets"/>
-	
-	<!-- Task for retrieving ProductVersion from an Assembly -->
-	<UsingTask TaskName="GetInformationalVersion" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
-		<ParameterGroup>
-			<AssemblyFile ParameterType="System.String" Required="true" />
-			<Version ParameterType="System.String" Output="true" />
-		</ParameterGroup>
-		<Task>
-			<Using Namespace="System.Diagnostics" />
-			<Code Type="Fragment" Language="cs">
-				<![CDATA[
-					Log.LogMessage("Getting version details of assembly " + this.AssemblyFile, MessageImportance.High);
-					this.Version = FileVersionInfo.GetVersionInfo(this.AssemblyFile.Split(';')[0]).ProductVersion;
-					Log.LogMessage("AssemblyVersion: " + this.Version, MessageImportance.High);
-				]]>
-			</Code>
-		</Task>		
-	</UsingTask>
+	<Import Project="DD4T Core.Targets" />
 
 	<Target Name="All">
-		<CallTarget Targets="Clean;Compile;Test;Analyze" />
+		<CallTarget Targets="Clean;CleanUp;Compile;Analyze" />
 		<CallTarget Targets="Doc;Package"/><!-- Condition="'$(Configuration)' == 'Release'"/>-->
+		<CallTarget Targets="Install" Condition="'$(NUGET_LOCALREPO)' != ''"/>
 		<Message Text="Build complete."/>
 	</Target>
-	<!-- Prepare build, download NuGet -->
+
 	<Target Name="Analyze">
 		<!-- Analyze runs post-build analysis like FxCop and NDepend. -->
+		<!-- TODO -->
 	</Target>
+
 	<Target Name="Clean">
 		<!-- Clean removes all build artifacts to prepare for a new build. -->
-		<RemoveDir Directories="@(CleanFolders)" />
-		<MSBuild Projects="$(SolutionFile)" Targets="Clean" />
+		<MSBuild Projects="$(MSBuildProjectDirectory)\source\DD4T.NET.sln" Targets="Clean" />
 	</Target>
 	<Target Name="Compile">
-		<!-- Build All to force build all and test all. -->
-		<!-- This is disabled in Debug because the Tridion dll's aren't available as a nuget package for now. The CI environment does have access. -->
-		<MSBuild Projects="$(SolutionFile)" Targets="Build" Properties="Configuration=$(Configuration)" Condition="'$(Configuration)'=='Release'" />
+		<!-- Build the solution. -->
+		<MSBuild Projects="$(MSBuildProjectDirectory)\source\DD4T.NET.sln" Targets="Build" Properties="Configuration=$(Configuration)" >
+			<Output ItemName="OutputFiles" TaskParameter="TargetOutputs"/>
+        </MSBuild>
 	</Target>
 	<Target Name="Doc">
 		<!-- Doc compiles any XML API docs into a distributable help package. -->
-	</Target>
-	<Target Name="Package">
-		<CallTarget Targets="Package DD4T DOTNET" />
-		<CallTarget Targets="Package DD4T MVC" />
-		<CallTarget Targets="PackageProjects" />
-	</Target>
-	<Target Name="Package DD4T DOTNET">
-		<RemoveDir Directories="$(BuildWorkDirectory)" />
-		<RemoveDir Directories="$(BuildBinDirectory)" />
-
-		<MSBuild Projects="@(MainProjectFiles)" Targets="Build" Properties="Configuration=$(Configuration)" >
-			<Output ItemName="MainPackageFiles" TaskParameter="TargetOutputs"/>
-        </MSBuild>
-		
-		<MakeDir Directories="@(NuGetStructureFolders)"/>
-
-    	<Message Text="@(MainPackageFiles)" />
-
-    	<!-- Get the productversion from the assemblies -->
-    	<GetInformationalVersion AssemblyFile="@(MainPackageFiles)">
-    		<Output TaskParameter="Version" PropertyName="VersionInfo"/>
-    	</GetInformationalVersion>
-
-        <ItemGroup>
-        	<NuGetFiles Include="$(NuGetSpecFile)"/>
-        </ItemGroup>
-
-    	<Copy SourceFiles="@(NuGetFiles)" DestinationFiles="@(NuGetFiles->'$(BuildWorkDirectory)\%(Filename)%(Extension)')"/>
-    	<Copy SourceFiles="@(MainPackageFiles)" DestinationFiles="@(MainPackageFiles->'$(BuildBinDirectory)\%(Filename)%(Extension)')"/>
-
-    	<PropertyGroup>
-    		<NuSpecFile>$(BuildWorkDirectory)\DD4T.NET.nuspec</NuSpecFile>
-    	</PropertyGroup>
-    	<ItemGroup>
-    		<FlattenedPackageFiles Include="$(BuildBinDirectory)\**\*.*"/>
-    	</ItemGroup>
-
-    	<!-- Update version in nuspec file -->
-    	<XmlUpdate XmlFileName="$(NuSpecFile)" XPath="//version" Value="$(VersionInfo)" />
-
-    	<!-- Create ZipPackage -->
-		<Zip Files="@(FlattenedPackageFiles)" ZipFileName="$(BuildPackageDirectory)\DD4T.NET.$(VersionInfo).zip" WorkingDirectory="$(BuildBinDirectory)" />
-
-		<Copy SourceFiles="@(FlattenedPackageFiles)" DestinationFiles="@(FlattenedPackageFiles->'$(BuildNuGetFramework40Directory)\%(RecursiveDir)%(Filename)%(Extension)')" />
-		<Copy SourceFiles="@(FlattenedPackageFiles)" DestinationFiles="@(FlattenedPackageFiles->'$(BuildNuGetFramework45Directory)\%(RecursiveDir)%(Filename)%(Extension)')" />
-
-    	<!-- Create NuGet package -->
-    	<Exec Command='$(NuGetFolder)\nuget.exe pack "$(NuSpecFile)"' WorkingDirectory="$(BuildPackageDirectory)"/>
-
-    	<RemoveDir Directories="$(BuildWorkDirectory)" />
-    	<RemoveDir Directories="$(BuildBinDirectory)" />
-	</Target>
-	<Target Name="Package DD4T MVC">
-		<RemoveDir Directories="$(BuildWorkDirectory)" />
-		<RemoveDir Directories="$(BuildBinDirectory)" />
-
-		<Message Text="Creating MVC Packages" />
-
-		<Message Text="MVC3" />
-
-		<MSBuild Projects="@(MVCProjectFiles)" Targets="Build" Properties="Configuration=MVC3" >
-			<Output ItemName="MVC3Files" TaskParameter="TargetOutputs"/>
-        </MSBuild>
-
-    	<!-- Get the productversion from the assemblies -->
-    	<GetInformationalVersion AssemblyFile="@(MVC3Files)">
-    		<Output TaskParameter="Version" PropertyName="VersionInfo"/>
-    	</GetInformationalVersion>
-
-		<MakeDir Directories="@(NuGetStructureFolders)"/>
-
-        <ItemGroup>
-        	<NuGetFiles Include="$(MVC3NuGetSpecFile)"/>
-        </ItemGroup>
-
-    	<Copy SourceFiles="@(NuGetFiles)" DestinationFiles="@(NuGetFiles->'$(BuildWorkDirectory)\%(Filename)%(Extension)')"/>
-    	<Copy SourceFiles="@(MVC3Files)" DestinationFiles="@(MVC3Files->'$(BuildBinDirectory)\%(Filename)%(Extension)')"/>
-
-    	<ItemGroup>
-    		<MVC3PackageFiles Include="$(BuildBinDirectory)\**\*.*"/>
-    	</ItemGroup>
-    	<PropertyGroup>
-    		<NuSpecFile>$(BuildWorkDirectory)\DD4T.MVC3.nuspec</NuSpecFile>
-    	</PropertyGroup>
-
-    	<!-- Update version in nuspec file -->
-    	<XmlUpdate XmlFileName="$(NuSpecFile)" XPath="//version" Value="$(VersionInfo)" />
-
-    	<!-- Create ZipPackage -->
-		<Zip Files="@(MVC3PackageFiles)" ZipFileName="$(BuildPackageDirectory)\DD4T.MVC3.$(VersionInfo).zip" WorkingDirectory="$(BuildBinDirectory)" />
-
-		<Copy SourceFiles="@(MVC3PackageFiles)" DestinationFiles="@(MVC3PackageFiles->'$(BuildNuGetFramework40Directory)\%(RecursiveDir)%(Filename)%(Extension)')" />
-		<Copy SourceFiles="@(MVC3PackageFiles)" DestinationFiles="@(MVC3PackageFiles->'$(BuildNuGetFramework45Directory)\%(RecursiveDir)%(Filename)%(Extension)')" />
-
-    	<!-- Create NuGet package -->
-    	<Exec Command='$(NuGetFolder)\nuget.exe pack "$(NuSpecFile)"' WorkingDirectory="$(BuildPackageDirectory)"/>
-
-    	<RemoveDir Directories="$(BuildWorkDirectory)" />
-    	<RemoveDir Directories="$(BuildBinDirectory)" />
-
-		<Message Text="MVC4" />
-
-		<MSBuild Projects="@(MVCProjectFiles)" Targets="Build" Properties="Configuration=MVC4" >
-			<Output ItemName="MVC4Files" TaskParameter="TargetOutputs"/>
-        </MSBuild>
-
-		<MakeDir Directories="@(NuGetStructureFolders)"/>
-
-        <ItemGroup>
-        	<NuGetFiles Include="$(MVC4NuGetSpecFile)"/>
-        </ItemGroup>
-
-    	<Copy SourceFiles="@(NuGetFiles)" DestinationFiles="@(NuGetFiles->'$(BuildWorkDirectory)\%(Filename)%(Extension)')"/>
-    	<Copy SourceFiles="@(MVC4Files)" DestinationFiles="@(MVC4Files->'$(BuildBinDirectory)\%(Filename)%(Extension)')"/>
-
-    	<ItemGroup>
-    		<MVC4PackageFiles Include="$(BuildBinDirectory)\**\*.*"/>
-    	</ItemGroup>
-    	<PropertyGroup>
-    		<NuSpecFile>$(BuildWorkDirectory)\DD4T.MVC4.nuspec</NuSpecFile>
-    	</PropertyGroup>
-
-    	<!-- Update version in nuspec file -->
-    	<XmlUpdate XmlFileName="$(NuSpecFile)" XPath="//version" Value="$(VersionInfo)" />
-
-    	<!-- Create ZipPackage -->
-		<Zip Files="@(MVC4PackageFiles)" ZipFileName="$(BuildPackageDirectory)\DD4T.MVC4.$(VersionInfo).zip" WorkingDirectory="$(BuildBinDirectory)" />
-
-		<Copy SourceFiles="@(MVC4PackageFiles)" DestinationFiles="@(MVC4PackageFiles->'$(BuildNuGetFramework40Directory)\%(RecursiveDir)%(Filename)%(Extension)')" />
-		<Copy SourceFiles="@(MVC4PackageFiles)" DestinationFiles="@(MVC4PackageFiles->'$(BuildNuGetFramework45Directory)\%(RecursiveDir)%(Filename)%(Extension)')" />
-
-    	<!-- Create NuGet package -->
-    	<Exec Command='$(NuGetFolder)\nuget.exe pack "$(NuSpecFile)"' WorkingDirectory="$(BuildPackageDirectory)"/>
-
-    	<RemoveDir Directories="$(BuildWorkDirectory)" />
-    	<RemoveDir Directories="$(BuildBinDirectory)" />
-	</Target>
-	<Target Name="PackageProjects" Inputs="@(ProjectFiles)" Outputs="%(ProjectFiles.Directory)">
-		<RemoveDir Directories="$(BuildWorkDirectory)" />
-		<RemoveDir Directories="$(BuildBinDirectory)" />
-
-		<PropertyGroup>
-			<PackageFilesDirectory>%(ProjectFiles.Identity)</PackageFilesDirectory>
-			<FilePath>$([System.IO.Directory]::GetParent(%(ProjectFiles.Identity)))</FilePath>
-			<PackageName>$([System.IO.Path]::GetFileName($(FilePath)))</PackageName>
-			<PackageNameSafe>$([System.String]::Copy('$(PackageName)').Replace(' ','-').ToLower())</PackageNameSafe>
-			<NuGetSpecFile>$(ConfigurationDirectory)\$(PackageName).nuspec</NuGetSpecFile>
-		</PropertyGroup>
-
-		<Message Text="Creating package for $(PackageName)" />
-
-		<MSBuild Projects="%(ProjectFiles.Identity)" Targets="Build" Properties="Configuration=$(Configuration)" >
-			<Output ItemName="OutputFiles" TaskParameter="TargetOutputs"/>
-        </MSBuild>
-
-		<MakeDir Directories="@(NuGetStructureFolders)"/>
-
-    	<!-- Get the productversion from the assemblies -->
-    	<GetInformationalVersion AssemblyFile="@(OutputFiles)">
-    		<Output TaskParameter="Version" PropertyName="VersionInfo"/>
-    	</GetInformationalVersion>
-
-        <ItemGroup>
-        	<NuGetFiles Include="$(NuGetSpecFile)"/>
-        </ItemGroup>
-
-    	<Copy SourceFiles="@(NuGetFiles)" DestinationFiles="@(NuGetFiles->'$(BuildWorkDirectory)\%(Filename)%(Extension)')"/>
-
-    	<Copy SourceFiles="@(OutputFiles)" DestinationFiles="@(OutputFiles->'$(BuildBinDirectory)\%(Filename)%(Extension)')"/>
-    	<ItemGroup>
-    		<PackageFiles Include="$(BuildBinDirectory)\**\*.*"/>
-    	</ItemGroup>
-    	<PropertyGroup>
-    		<NuSpecFile>$(BuildWorkDirectory)\$(PackageName).nuspec</NuSpecFile>
-    	</PropertyGroup>
-
-    	<!-- Update version in nuspec file -->
-    	<XmlUpdate XmlFileName="$(NuSpecFile)" XPath="//version" Value="$(VersionInfo)" />
-
-    	<!-- Create ZipPackage -->
-		<Zip Files="@(PackageFiles)" ZipFileName="$(BuildPackageDirectory)\$(PackageName).$(VersionInfo).zip" WorkingDirectory="$(BuildBinDirectory)" />
-
-		<Copy SourceFiles="@(PackageFiles)" DestinationFiles="@(PackageFiles->'$(BuildNuGetFramework40Directory)\%(RecursiveDir)%(Filename)%(Extension)')" />
-		<Copy SourceFiles="@(PackageFiles)" DestinationFiles="@(PackageFiles->'$(BuildNuGetFramework45Directory)\%(RecursiveDir)%(Filename)%(Extension)')" />
-
-    	<!-- Create NuGet package -->
-    	<Exec Command='$(NuGetFolder)\nuget.exe pack "$(NuSpecFile)"' WorkingDirectory="$(BuildPackageDirectory)"/>
-
-    	<RemoveDir Directories="$(BuildWorkDirectory)" />
-    	<RemoveDir Directories="$(BuildBinDirectory)" />
+		<!-- TODO -->
 	</Target>
 
-	<Target Name="Test">
-		<!-- Test runs the unit testing/coverage for the project. -->
-		<!--ItemGroup>
-			<NUnitRunner Include="$(MSBuildProjectDirectory)\packages\NUnit.Runners.*\tools\nunit-console.exe" />
-		</ItemGroup>
-		<PropertyGroup>
-			<TestResultsFile>$(BuildLogDirectory)TestResults.Unit.xml</TestResultsFile>
-			<TestAssembly>$(MSBuildProjectDirectory)\MyProject\bin\$(Configuration)\MyProject.Tests.dll</TestAssembly>
-		</PropertyGroup>
-		<Exec Command="&quot;%(NUnitRunner.FullPath)&quot; &quot;$(TestAssembly)&quot; /xml:$(TestResultsFile)" /-->
-	</Target>
 </Project>
