@@ -23,8 +23,6 @@ namespace DD4T.Factories
         public const string CacheRegion = "ComponentPresentation";
         public IComponentPresentationProvider ComponentPresentationProvider { get; set; }
 
-        private ICacheAgent _cacheAgent = null;
-
         public ComponentPresentationFactory(IComponentPresentationProvider componentPresentationProvider, IFactoryCommonServices factoryCommonServices)
             : base(factoryCommonServices)
         {

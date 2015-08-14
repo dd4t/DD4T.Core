@@ -106,7 +106,7 @@ namespace DD4T.Utils
             {
                var configurationvalue = SafeGetConfigSettingAsString(ConfigurationKeys.ContentProviderEndPoint);
                 if(string.IsNullOrEmpty(configurationvalue))
-                    throw new ConfigurationException("Content Provider endpoint not defined. Configure 'DD4T.ContentProviderEndPoint'.");
+                    throw new ConfigurationErrorsException("Content Provider endpoint not defined. Configure 'DD4T.ContentProviderEndPoint'.");
 
                 return configurationvalue;
             }
@@ -118,7 +118,7 @@ namespace DD4T.Utils
             {
                var configurationvalue = SafeGetConfigSettingAsString(ConfigurationKeys.SitemapPath, ConfigurationKeys.SitemapPathAlt1);
                 if(string.IsNullOrEmpty(configurationvalue))
-                    throw new ConfigurationException("SiteMapPath not defined. Configure 'DD4T.SitemapPath'.");
+                    throw new ConfigurationErrorsException("SiteMapPath not defined. Configure 'DD4T.SitemapPath'.");
 
                 return configurationvalue;
             }
@@ -139,7 +139,7 @@ namespace DD4T.Utils
             {
                var configurationvalue = SafeGetConfigSettingAsString(ConfigurationKeys.BinaryFileExtensions ,ConfigurationKeys.BinaryFileExtensionsAlt1 );
                 if(string.IsNullOrEmpty(configurationvalue))
-                    throw new ConfigurationException("BinaryFileExtensions not defined. Configure 'DD4T.BinaryFileExtensions'.");
+                    throw new ConfigurationErrorsException("BinaryFileExtensions not defined. Configure 'DD4T.BinaryFileExtensions'.");
 
                 return configurationvalue;
             }
@@ -151,7 +151,7 @@ namespace DD4T.Utils
             {
                var configurationvalue = SafeGetConfigSettingAsString(ConfigurationKeys.BinaryUrlPattern );
                 if(string.IsNullOrEmpty(configurationvalue))
-                    throw new ConfigurationException("BinaryUrlPattern not defined. Configure 'DD4T.BinaryUrlPattern'.");
+                    throw new ConfigurationErrorsException("BinaryUrlPattern not defined. Configure 'DD4T.BinaryUrlPattern'.");
 
                 return configurationvalue;
             }

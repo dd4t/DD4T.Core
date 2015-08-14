@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using System.Web.Routing;
 using DD4T.ContentModel.Contracts.Logging;
 using System;
+using DD4T.ContentModel.Contracts.Configuration;
 
 namespace DD4T.Mvc.Attributes
 {
@@ -16,10 +17,11 @@ namespace DD4T.Mvc.Attributes
     public class UsesTridionPage : ActionFilterAttribute
     {
         private readonly ILogger _logger;
-        public UsesTridionPage(ILogger logger)
+        public UsesTridionPage(ILogger logger, IDD4TConfiguration configuration)
         {
             if (logger == null)
                 throw new ArgumentNullException("logger");
+           
 
             _logger = logger;
         }
