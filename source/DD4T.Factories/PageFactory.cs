@@ -8,10 +8,11 @@ using DD4T.ContentModel;
 using DD4T.ContentModel.Contracts.Caching;
 using DD4T.ContentModel.Contracts.Providers;
 using DD4T.ContentModel.Exceptions;
-using DD4T.ContentModel.Logging;
-using DD4T.Factories.Caching;
+using DD4T.ContentModel.Contracts.Logging;
 using DD4T.Utils;
 using DD4T.ContentModel.Factories;
+using DD4T.Serialization;
+using DD4T.ContentModel.Contracts.Serializing;
 
 namespace DD4T.Factories
 {
@@ -21,91 +22,58 @@ namespace DD4T.Factories
     public class PageFactory : FactoryBase, IPageFactory
     {
 
-		private static IDictionary<string, DateTime> lastPublishedDates = new Dictionary<string, DateTime>();
+        private static IDictionary<string, DateTime> lastPublishedDates = new Dictionary<string, DateTime>();
         private static Regex rePageContentByUrl = new Regex("PageContent_([0-9\\-]+)_(.*)");
-        private ICacheAgent _cacheAgent = null;
-        public const string CacheRegion = "Page";        
-        private IPageProvider _pageProvider = null;
-        private static object lock1 = new object();
-        private static object lock2 = new object();
-        private static object lock3 = new object();
-        public IPageProvider PageProvider
-        {
-            get
-            {
-                if (_pageProvider == null)
-                {
-                    lock (lock1)
-                    {
-                        if (_pageProvider == null) // we must test again, because in the mean time another thread might have created the object!
-                        {
-                            _pageProvider = (IPageProvider)ProviderLoader.LoadProvider<IPageProvider>(this.PublicationId);
-                        }
-                    }
-                }
-				
-                // If using your own DI you can pass the provider PublicationID yourself
-				// However by not doing so, the below will leverage the configuted PublicationResolver - which could still return 0 if you needed.
-                if (_pageProvider.PublicationId == 0)
-                    _pageProvider.PublicationId = this.PublicationId;
-					
-                return _pageProvider;
-            }
-            set
-            {
-                _pageProvider = value;
-            }
-        }
-
-        private IComponentFactory _componentFactory = null;
-        public IComponentFactory ComponentFactory
-        {
-            get
-            {
-                if (_componentFactory == null)
-                {
-                    lock (lock2)
-                    {
-                        if (_componentFactory == null)  // we must test again, because in the mean time another thread might have created the object!
-                        {
-                            // if there is no component factory set, check if there is one in the current assembly
-                            _componentFactory = (IComponentFactory)ClassLoader.Load<IComponentFactory>(this.GetType().Assembly);
-
-                            // the ComponentFactory must have a ComponentProvider
-                            // if there is a ProviderVersion configured, the ComponentFactory will figure this out by itself
-                            // otherwise, try to load a IComponentProvider from the same assembly as the current PageProvider
-                            if (ConfigurationHelper.ProviderVersion == ProviderVersion.Undefined && PageProvider != null)
-                                _componentFactory.ComponentProvider = (IComponentProvider)ClassLoader.Load<IComponentProvider>(PageProvider.GetType().Assembly);
-                        }
-                    }
-                }
-                return _componentFactory;
-            }
-            set
-            {
-                _componentFactory = value;
-            }
-        }
+        //private ICacheAgent _cacheAgent = null;
+        public const string CacheRegion = "Page";
+        public IPageProvider PageProvider { get; set; }
         public ILinkFactory LinkFactory { get; set; }
+        public IComponentPresentationFactory ComponentPresentationFactory { get; set; }
 
-        private static XmlSerializer _pageSerializer = null;
-        private static XmlSerializer PageSerializer
+        public PageFactory(IPageProvider pageProvider, IComponentPresentationFactory componentPresentationFactory,
+                            IFactoryCommonServices factoryCommonServices)
+            : base(factoryCommonServices)
+        {
+            if (pageProvider == null)
+                throw new ArgumentNullException("pageProvider");
+
+            if (componentPresentationFactory == null)
+                throw new ArgumentNullException("componentPresentationFactory");
+
+            ComponentPresentationFactory = componentPresentationFactory;
+            PageProvider = pageProvider;
+
+        }
+
+
+        private string DataFormat
         {
             get
             {
-                if (_pageSerializer == null)
+                return Configuration.DataFormat;
+            }
+        }
+
+
+
+        private ISerializerService _serializerService;
+        private ISerializerService SerializerService
+        {
+            get
+            {
+                if (_serializerService == null)
                 {
-                    lock (lock3)
+                    if (DataFormat.ToLower() == "json")
                     {
-                        if (_pageSerializer == null) // we must test again, because in the mean time another thread might have created the object!
-                        {
-                            LoggerService.Debug("about to create page serializer", LoggingCategory.Performance);
-                            _pageSerializer = new XmlSerializer(typeof(Page));
-                            LoggerService.Debug("finished creating page serializer", LoggingCategory.Performance);
-                        }
+                        _serializerService = new JSONSerializerService();
                     }
+                    if (DataFormat.ToLower() == "xml")
+                    {
+                        _serializerService = new XmlSerializerService();
+                    }
+                    _serializerService = new AutoDetectSerializerService();
                 }
-                return _pageSerializer;
+                return _serializerService;
             }
         }
 
@@ -113,25 +81,26 @@ namespace DD4T.Factories
         public virtual bool TryFindPage(string url, out IPage page)
         {
             LoggerService.Debug(">>TryFindPage ({0}", LoggingCategory.Performance, url);
-			page = null;
+            page = null;
 
-
-			string cacheKey = String.Format("Page_{0}_{1}", url, PublicationId);
-
+            string cacheKey = String.Format("Page_{0}_{1}", url, PublicationId);
 
             LoggerService.Debug("about to load page from cache with key {0}", LoggingCategory.Performance, cacheKey);
             page = (IPage)CacheAgent.Load(cacheKey);
             LoggerService.Debug("finished loading page from cache with key {0}, page found = {1}", LoggingCategory.Performance, cacheKey, Convert.ToString(page != null));
 
-			if (page != null) {
+            if (page != null)
+            {
                 LoggerService.Debug("<<TryFindPage ({0}", LoggingCategory.Performance, url);
                 return true;
-			} else {
+            }
+            else
+            {
                 LoggerService.Debug("about to load page content from provider with url {0}", LoggingCategory.Performance, url);
                 string pageContentFromBroker = PageProvider.GetContentByUrl(url);
                 LoggerService.Debug("finished loading page content from provider with url {0}, has value: {1}", LoggingCategory.Performance, url, Convert.ToString(!(string.IsNullOrEmpty(pageContentFromBroker))));
 
-				if (!pageContentFromBroker.Equals(String.Empty)) 
+                if (!pageContentFromBroker.Equals(String.Empty))
                 {
                     LoggerService.Debug("about to create IPage from content for url {0}", LoggingCategory.Performance, url);
                     page = GetIPageObject(pageContentFromBroker);
@@ -143,15 +112,15 @@ namespace DD4T.Factories
                     LoggerService.Debug("finished storing page in cache with key {0}", LoggingCategory.Performance, cacheKey);
                     LoggerService.Debug("<<TryFindPage ({0}", LoggingCategory.Performance, url);
                     return true;
-				}
-			}
+                }
+            }
 
             LoggerService.Debug("<<TryFindPage ({0}", LoggingCategory.Performance, url);
             return false;
         }
 
         public IPage FindPage(string url)
-        {            
+        {
             IPage page;
             if (!TryFindPage(url, out page))
             {
@@ -171,25 +140,26 @@ namespace DD4T.Factories
             LoggerService.Debug("about to load page content from cache with key {0}", LoggingCategory.Performance, cacheKey);
             pageContent = (string)CacheAgent.Load(cacheKey);
             LoggerService.Debug("finished loading page content from cache with key {0}, pageContent found {1}", LoggingCategory.Performance, cacheKey, Convert.ToString(!(string.IsNullOrEmpty(pageContent))));
-            if (pageContent != null) 
-			{
+            if (pageContent != null)
+            {
                 LoggerService.Debug("<<TryFindPageContent ({0}", LoggingCategory.Performance, url);
                 return true;
-            } 
-			else 
-			{
+            }
+            else
+            {
                 LoggerService.Debug("about to load page content from provider with url {0}", LoggingCategory.Performance, url);
                 string tempPageContent = PageProvider.GetContentByUrl(url);
                 LoggerService.Debug("finished loading page content from provider with url {0}, has value: {1}", LoggingCategory.Performance, url, Convert.ToString(!(string.IsNullOrEmpty(tempPageContent))));
-				if (tempPageContent != string.Empty) {
-					pageContent = tempPageContent;
+                if (!string.IsNullOrEmpty(tempPageContent))
+                {
+                    pageContent = tempPageContent;
                     LoggerService.Debug("about to store page in cache with key {0}", LoggingCategory.Performance, cacheKey);
                     CacheAgent.Store(cacheKey, CacheRegion, pageContent);
                     LoggerService.Debug("finished storing page in cache with key {0}", LoggingCategory.Performance, cacheKey);
                     LoggerService.Debug("<<TryFindPageContent ({0}", LoggingCategory.Performance, url);
                     return true;
-				}
-			}
+                }
+            }
 
             LoggerService.Debug("<<TryFindPageContent ({0}", LoggingCategory.Performance, url);
             return false;
@@ -235,7 +205,7 @@ namespace DD4T.Factories
         public IPage GetPage(string tcmUri)
         {
             IPage page;
-            if(!TryGetPage(tcmUri, out page))
+            if (!TryGetPage(tcmUri, out page))
             {
                 throw new PageNotFoundException();
             }
@@ -247,22 +217,23 @@ namespace DD4T.Factories
         {
             pageContent = string.Empty;
 
-			string cacheKey = String.Format("PageContentByUri_{0}", tcmUri);
+            string cacheKey = String.Format("PageContentByUri_{0}", tcmUri);
             pageContent = (string)CacheAgent.Load(cacheKey);
             if (pageContent != null)
-			{
-				return true;
-			} 
-			else 
-			{
-				string tempPageContent = PageProvider.GetContentByUri(tcmUri);
-				if (tempPageContent != string.Empty) {
-					pageContent = tempPageContent;
+            {
+                return true;
+            }
+            else
+            {
+                string tempPageContent = PageProvider.GetContentByUri(tcmUri);
+                if (tempPageContent != string.Empty)
+                {
+                    pageContent = tempPageContent;
                     CacheAgent.Store(cacheKey, CacheRegion, pageContent);
-					return true;
-				}
-			}
-            
+                    return true;
+                }
+            }
+
 
             return false;
         }
@@ -293,30 +264,19 @@ namespace DD4T.Factories
         {
             LoggerService.Debug(">>GetIPageObject(string length {0})", LoggingCategory.Performance, Convert.ToString(pageStringContent.Length));
 
-            IPage page;
-            //Create XML Document to hold Xml returned from WCF Client
-            LoggerService.Debug("GetIPageObject: about to load XML into XmlDocument", LoggingCategory.Performance);
-            XmlDocument pageContent = new XmlDocument();
-            pageContent.LoadXml(pageStringContent);
-            LoggerService.Debug("GetIPageObject: finished loading XML into XmlDocument", LoggingCategory.Performance);
+            LoggerService.Debug("GetIPageObject: about to deserialize", LoggingCategory.Performance);
+            IPage page = SerializerService.Deserialize<Page>(pageStringContent);
+            LoggerService.Debug("GetIPageObject: finished deserializing", LoggingCategory.Performance);
 
-            //Load XML into Reader for deserialization
-            using (var reader = new XmlNodeReader(pageContent.DocumentElement))
+            // set order on page for each ComponentPresentation
+            int orderOnPage = 0;
+            foreach (IComponentPresentation cp in page.ComponentPresentations)
             {
-
-                LoggerService.Debug("GetIPageObject: about to deserialize", LoggingCategory.Performance);
-                page = (IPage)PageSerializer.Deserialize(reader);
-                LoggerService.Debug("GetIPageObject: finished deserializing", LoggingCategory.Performance);
-                // set order on page for each ComponentPresentation
-                int orderOnPage = 0;
-                foreach (IComponentPresentation cp in page.ComponentPresentations)
-                {
-                    cp.OrderOnPage = orderOnPage++;
-                }
-                LoggerService.Debug("GetIPageObject: about to load DCPs", LoggingCategory.Performance);
-                LoadComponentModelsFromComponentFactory(page);
-                LoggerService.Debug("GetIPageObject: finished loading DCPs", LoggingCategory.Performance);
+                cp.OrderOnPage = orderOnPage++;
             }
+            LoggerService.Debug("GetIPageObject: about to load DCPs", LoggingCategory.Performance);
+            LoadComponentModelsFromComponentPresentationFactory(page);
+            LoggerService.Debug("GetIPageObject: finished loading DCPs", LoggingCategory.Performance);
             LoggerService.Debug("<<GetIPageObject(string length {0})", LoggingCategory.Performance, Convert.ToString(pageStringContent.Length));
             return page;
         }
@@ -336,7 +296,7 @@ namespace DD4T.Factories
 
         public override DateTime GetLastPublishedDateCallBack(string key, object cachedItem)
         {
-            
+
             LoggerService.Debug(">>GetLastPublishedDateCallBack {0}", LoggingCategory.Performance, key);
             if (cachedItem == null)
                 return DateTime.Now; // this will force the item to be removed from the cache
@@ -368,7 +328,7 @@ namespace DD4T.Factories
             }
 
 
-            throw new Exception (string.Format("GetLastPublishedDateCallBack called for unexpected object type '{0}' or with unexpected key '{1}'", cachedItem.GetType(), key));
+            throw new Exception(string.Format("GetLastPublishedDateCallBack called for unexpected object type '{0}' or with unexpected key '{1}'", cachedItem.GetType(), key));
         }
 
         public string[] GetAllPublishedPageUrls(string[] includeExtensions, string[] pathStarts)
@@ -376,35 +336,13 @@ namespace DD4T.Factories
             return PageProvider.GetAllPublishedPageUrls(includeExtensions, pathStarts);
         }
 
-
-        /// <summary>
-        /// Get or set the CacheAgent
-        /// </summary>  
-        public override ICacheAgent CacheAgent
-        {
-            get
-            {
-                if (_cacheAgent == null)
-                {
-                    _cacheAgent = new DefaultCacheAgent();
-                    // the next line is the only reason we are overriding this property: to set a callback
-                    _cacheAgent.GetLastPublishDateCallBack = GetLastPublishedDateCallBack;
-                }
-                return _cacheAgent;
-            }
-            set
-            {
-                _cacheAgent = value;
-                _cacheAgent.GetLastPublishDateCallBack = GetLastPublishedDateCallBack;
-            }
-        }
-#endregion
+        #endregion
 
 
         #region private helper methods
-        private void LoadComponentModelsFromComponentFactory(IPage page)
+        private void LoadComponentModelsFromComponentPresentationFactory(IPage page)
         {
-            LoggerService.Debug(">>LoadComponentModelsFromComponentFactory ({0})", LoggingCategory.Performance, page.Id);
+            LoggerService.Debug(">>LoadComponentModelsFromComponentPresentationFactory ({0})", LoggingCategory.Performance, page.Id);
 
             foreach (DD4T.ContentModel.ComponentPresentation cp in page.ComponentPresentations)
             {
@@ -416,67 +354,63 @@ namespace DD4T.Factories
                 {
                     try
                     {
-                        Component c = (Component)ComponentFactory.GetComponent(cp.Component.Id);
-                        cp.Component = c;
+                        ComponentPresentation dcp = (ComponentPresentation)ComponentPresentationFactory.GetComponentPresentation(cp.Component.Id, cp.ComponentTemplate.Id);
+                        cp.Component = dcp.Component;
+                        cp.ComponentTemplate = dcp.ComponentTemplate;
+                        cp.Conditions = dcp.Conditions;
                     }
-                    catch (ComponentNotFoundException)
+                    catch (ComponentPresentationNotFoundException)
                     {
+                        LoggerService.Warning("dynamic component presentation {0} / {1} included on page {2} cannot be found; it may have been unpublished", LoggingCategory.Model, cp.Component.Id, cp.ComponentTemplate.Id, page.Id);
                         // DCPs can be unpublished while the page that they are embedded on remain published
                         // in this case, simply ignore the exception (the 'stub' component is still on the page)
                     }
                 }
-
-                LoggerService.Debug("about to resolve links in component {0}", LoggingCategory.Performance, cp.Component.Id);
-                foreach (Field tempField in cp.Component.Fields.Values.Where(item => item.FieldType == FieldType.Xhtml))
-                {
-                    resolveLinks(tempField, new TcmUri(page.Id));
-                }
-                LoggerService.Debug("finished resolving links in DCPs on page {0}", LoggingCategory.Performance, page.Id);
             }
-            LoggerService.Debug("<<LoadComponentModelsFromComponentFactory ({0})", LoggingCategory.Performance, page.Id);
+            LoggerService.Debug("<<LoadComponentModelsFromComponentPresentationFactory ({0})", LoggingCategory.Performance, page.Id);
         }
 
-        private void resolveLinks(Field richTextField, TcmUri pageUri)
-        {
-            // Find any <a> nodes with xlink:href="tcm attribute
-            string nodeText = richTextField.Value;
-            XmlDocument tempDocument = new XmlDocument();
-            tempDocument.LoadXml("<tempRoot>" + nodeText + "</tempRoot>");
-           
+        //private void resolveLinks(Field richTextField, TcmUri pageUri)
+        //{
+        //    // Find any <a> nodes with xlink:href="tcm attribute
+        //    string nodeText = richTextField.Value;
+        //    XmlDocument tempDocument = new XmlDocument();
+        //    tempDocument.LoadXml("<tempRoot>" + nodeText + "</tempRoot>");
 
-            XmlNamespaceManager nsManager = new XmlNamespaceManager(tempDocument.NameTable);
-            nsManager.AddNamespace("xlink", "http://www.w3.org/1999/xlink");
 
-            XmlNodeList linkNodes = tempDocument.SelectNodes("//*[local-name()='a'][@xlink:href[starts-with(string(.),'tcm:')]]", nsManager);
+        //    XmlNamespaceManager nsManager = new XmlNamespaceManager(tempDocument.NameTable);
+        //    nsManager.AddNamespace("xlink", "http://www.w3.org/1999/xlink");
 
-            foreach (XmlNode linkElement in linkNodes)
-            {
-                // TODO test with including the Page Uri, seems to always link with Source Page
-                //string linkText = linkFactory.ResolveLink(pageUri.ToString(), linkElement.Attributes["xlink:href"].Value, "tcm:0-0-0");
-                string linkText = LinkFactory.ResolveLink("tcm:0-0-0", linkElement.Attributes["xlink:href"].Value, "tcm:0-0-0");
-                if (!string.IsNullOrEmpty(linkText))
-                {
-                    XmlAttribute linkUrl = tempDocument.CreateAttribute("href");
-                    linkUrl.Value = linkText;
-                    linkElement.Attributes.Append(linkUrl);
+        //    XmlNodeList linkNodes = tempDocument.SelectNodes("//*[local-name()='a'][@xlink:href[starts-with(string(.),'tcm:')]]", nsManager);
 
-                    // Remove the other xlink attributes from the a element
-                    for (int attribCount = linkElement.Attributes.Count - 1; attribCount >= 0; attribCount--)
-                    {
-                        if (!string.IsNullOrEmpty(linkElement.Attributes[attribCount].NamespaceURI))
-                        {
-                            linkElement.Attributes.RemoveAt(attribCount);
-                        }
-                    }
-                }
-            }
+        //    foreach (XmlNode linkElement in linkNodes)
+        //    {
+        //        // TODO test with including the Page Uri, seems to always link with Source Page
+        //        //string linkText = linkFactory.ResolveLink(pageUri.ToString(), linkElement.Attributes["xlink:href"].Value, "tcm:0-0-0");
+        //        string linkText = LinkFactory.ResolveLink("tcm:0-0-0", linkElement.Attributes["xlink:href"].Value, "tcm:0-0-0");
+        //        if (!string.IsNullOrEmpty(linkText))
+        //        {
+        //            XmlAttribute linkUrl = tempDocument.CreateAttribute("href");
+        //            linkUrl.Value = linkText;
+        //            linkElement.Attributes.Append(linkUrl);
 
-            if (linkNodes.Count > 0)
-            {
-                richTextField.Values.Clear();
-                richTextField.Values.Add(tempDocument.DocumentElement.InnerXml);
-            }
-        }
+        //            // Remove the other xlink attributes from the a element
+        //            for (int attribCount = linkElement.Attributes.Count - 1; attribCount >= 0; attribCount--)
+        //            {
+        //                if (!string.IsNullOrEmpty(linkElement.Attributes[attribCount].NamespaceURI))
+        //                {
+        //                    linkElement.Attributes.RemoveAt(attribCount);
+        //                }
+        //            }
+        //        }
+        //    }
+
+        //    if (linkNodes.Count > 0)
+        //    {
+        //        richTextField.Values.Clear();
+        //        richTextField.Values.Add(tempDocument.DocumentElement.InnerXml);
+        //    }
+        //}
 
         #endregion
 

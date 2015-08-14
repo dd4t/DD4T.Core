@@ -37,212 +37,217 @@ namespace DD4T.Utils
         public const string BinaryUrlPattern = "DD4T.BinaryUrlPattern";
         public const string WelcomeFile = "DD4T.WelcomeFile";
         public const string WelcomeFileAlt1 = "DefaultPage";
+        public const string DataFormat = "DD4T.DataFormat";
+        // CacheAgent
 
+        public const string DefaultCacheSettings = "DD4T.CacheSettings.Default";
+        public const string CacheSettingCallBackInterval = "DD4T.CacheSettings.CallBackInterval";
+        public const string ContentProviderEndPoint = "DD4T.ContentProviderEndPoint";
     }
 
-    public static class ConfigurationHelper
-    {
+    //public static class ConfigurationHelper
+    //{
 
-        public static string GetSetting(params string[] key)
-        {
-            return SafeGetConfigSettingAsString(key);
-        }
+    //    public static string GetSetting(params string[] key)
+    //    {
+    //        return SafeGetConfigSettingAsString(key);
+    //    }
 
-        public static int GetSettingAsInt(params string[] key)
-        {
-            return SafeGetConfigSettingAsInt(key);
-        }
+    //    public static int GetSettingAsInt(params string[] key)
+    //    {
+    //        return SafeGetConfigSettingAsInt(key);
+    //    }
 
-        public static string ComponentPresentationController
-        {
-            get
-            {
-                return SafeGetConfigSettingAsString(ConfigurationKeys.ComponentPresentationController, ConfigurationKeys.ComponentPresentationControllerAlt1);
-            }
-        }
+    //    public static string ComponentPresentationController
+    //    {
+    //        get
+    //        {
+    //            return SafeGetConfigSettingAsString(ConfigurationKeys.ComponentPresentationController, ConfigurationKeys.ComponentPresentationControllerAlt1);
+    //        }
+    //    }
 
-        public static string ComponentPresentationAction
-        {
-            get
-            {
-                return SafeGetConfigSettingAsString(ConfigurationKeys.ComponentPresentationAction, ConfigurationKeys.ComponentPresentationActionAlt1);
-            }
-        }
+    //    public static string ComponentPresentationAction
+    //    {
+    //        get
+    //        {
+    //            return SafeGetConfigSettingAsString(ConfigurationKeys.ComponentPresentationAction, ConfigurationKeys.ComponentPresentationActionAlt1);
+    //        }
+    //    }
 
-        public static string ActiveWebsite
-        {
-            get
-            {
-                return SafeGetConfigSettingAsString(ConfigurationKeys.ActiveWebsite, ConfigurationKeys.ActiveWebsiteAlt1);
-            }
-        }
+    //    public static string ActiveWebsite
+    //    {
+    //        get
+    //        {
+    //            return SafeGetConfigSettingAsString(ConfigurationKeys.ActiveWebsite, ConfigurationKeys.ActiveWebsiteAlt1);
+    //        }
+    //    }
 
-        public static string DefaultPage
-        {
-            get
-            {
-                return SafeGetConfigSettingAsString(ConfigurationKeys.DefaultPage, ConfigurationKeys.DefaultPageAlt1);
-            }
-        }
+    //    public static string DefaultPage
+    //    {
+    //        get
+    //        {
+    //            return SafeGetConfigSettingAsString(ConfigurationKeys.DefaultPage, ConfigurationKeys.DefaultPageAlt1);
+    //        }
+    //    }
 
-        public static string SelectComponentByComponentTemplateId
-        {
-            get
-            {
-                return SafeGetConfigSettingAsString(ConfigurationKeys.SelectComponentByComponentTemplateId, ConfigurationKeys.SelectComponentByComponentTemplateIdAlt1);
-            }
-        }
+    //    public static string SelectComponentByComponentTemplateId
+    //    {
+    //        get
+    //        {
+    //            return SafeGetConfigSettingAsString(ConfigurationKeys.SelectComponentByComponentTemplateId, ConfigurationKeys.SelectComponentByComponentTemplateIdAlt1);
+    //        }
+    //    }
 
-        public static string SelectComponentByOutputFormat
-        {
-            get
-            {
-                return SafeGetConfigSettingAsString(ConfigurationKeys.SelectComponentByOutputFormat, ConfigurationKeys.SelectComponentByOutputFormatAlt1);
-            }
-        }
+    //    public static string SelectComponentByOutputFormat
+    //    {
+    //        get
+    //        {
+    //            return SafeGetConfigSettingAsString(ConfigurationKeys.SelectComponentByOutputFormat, ConfigurationKeys.SelectComponentByOutputFormatAlt1);
+    //        }
+    //    }
 
-        public static string SiteMapPath
-        {
-            get
-            {
-                return SafeGetConfigSettingAsString(ConfigurationKeys.SitemapPath, ConfigurationKeys.SitemapPathAlt1);
-            }
-        }
+    //    public static string SiteMapPath
+    //    {
+    //        get
+    //        {
+    //            return SafeGetConfigSettingAsString(ConfigurationKeys.SitemapPath, ConfigurationKeys.SitemapPathAlt1);
+    //        }
+    //    }
 
-        public static int BinaryHandlerCacheExpiration
-        {
-            get
-            {
-                return SafeGetConfigSettingAsInt(ConfigurationKeys.BinaryHandlerCacheExpiration, ConfigurationKeys.BinaryHandlerCacheExpirationAlt1);
-            }
-        }
+    //    public static int BinaryHandlerCacheExpiration
+    //    {
+    //        get
+    //        {
+    //            return SafeGetConfigSettingAsInt(ConfigurationKeys.BinaryHandlerCacheExpiration, ConfigurationKeys.BinaryHandlerCacheExpirationAlt1);
+    //        }
+    //    }
 
-        public static int PublicationId
-        {
-            get
-            {
-                int r = SafeGetConfigSettingAsInt(ConfigurationKeys.PublicationId);
-                if (r == int.MinValue)
-                {
-                    return 0;
-                }
-                return r;
-            }
-        }
+    //    public static int PublicationId
+    //    {
+    //        get
+    //        {
+    //            int r = SafeGetConfigSettingAsInt(ConfigurationKeys.PublicationId);
+    //            if (r == int.MinValue)
+    //            {
+    //                return 0;
+    //            }
+    //            return r;
+    //        }
+    //    }
 
-        public static string BinaryFileExtensions
-        {
-            get
-            {
-                return SafeGetConfigSettingAsString(ConfigurationKeys.BinaryFileExtensions, ConfigurationKeys.BinaryFileExtensionsAlt1);
-            }
-        }
+    //    public static string BinaryFileExtensions
+    //    {
+    //        get
+    //        {
+    //            return SafeGetConfigSettingAsString(ConfigurationKeys.BinaryFileExtensions, ConfigurationKeys.BinaryFileExtensionsAlt1);
+    //        }
+    //    }
 
-        public static string BinaryUrlPattern
-        {
-            get
-            {
-                return SafeGetConfigSettingAsString(ConfigurationKeys.BinaryUrlPattern);
-            }
-        }
+    //    public static string BinaryUrlPattern
+    //    {
+    //        get
+    //        {
+    //            return SafeGetConfigSettingAsString(ConfigurationKeys.BinaryUrlPattern);
+    //        }
+    //    }
 
-        public static string LoggerClass
-        {
-            get
-            {
-                return SafeGetConfigSettingAsString(ConfigurationKeys.LoggerClass);
-            }
-        }
+    //    public static string LoggerClass
+    //    {
+    //        get
+    //        {
+    //            return SafeGetConfigSettingAsString(ConfigurationKeys.LoggerClass);
+    //        }
+    //    }
 
-        public static bool IncludeLastPublishedDate
-        {
-            get
-            {
-                return SafeGetConfigSettingAsBoolean(ConfigurationKeys.IncludeLastPublishedDate);
-            }
-        }
+    //    public static bool IncludeLastPublishedDate
+    //    {
+    //        get
+    //        {
+    //            return SafeGetConfigSettingAsBoolean(ConfigurationKeys.IncludeLastPublishedDate);
+    //        }
+    //    }
 
-        public static bool ShowAnchors
-        {
-            get
-            {
-                return SafeGetConfigSettingAsBoolean(ConfigurationKeys.ShowAnchors);
-            }
-        }
+    //    public static bool ShowAnchors
+    //    {
+    //        get
+    //        {
+    //            return SafeGetConfigSettingAsBoolean(ConfigurationKeys.ShowAnchors);
+    //        }
+    //    }
 
-        public static bool LinkToAnchor
-        {
-            get
-            {
-                return SafeGetConfigSettingAsBoolean(ConfigurationKeys.LinkToAnchor);
-            }
-        }
+    //    public static bool LinkToAnchor
+    //    {
+    //        get
+    //        {
+    //            return SafeGetConfigSettingAsBoolean(ConfigurationKeys.LinkToAnchor);
+    //        }
+    //    }
 
-        public static bool UseUriAsAnchor
-        {
-            get
-            {
-                return SafeGetConfigSettingAsBoolean(ConfigurationKeys.UseUriAsAnchor);
-            }
-        }
+    //    public static bool UseUriAsAnchor
+    //    {
+    //        get
+    //        {
+    //            return SafeGetConfigSettingAsBoolean(ConfigurationKeys.UseUriAsAnchor);
+    //        }
+    //    }
 
-        public static ProviderVersion ProviderVersion
-        {
-            get
-            {
-                string version = SafeGetConfigSettingAsString(ConfigurationKeys.ProviderVersion);
-                if (string.IsNullOrEmpty(version))
-                    return ContentModel.Contracts.Providers.ProviderVersion.Undefined;
-                try
-                {
-                    return (ProviderVersion)Enum.Parse(typeof(ProviderVersion), version);
-                }
-                catch (Exception)
-                {
-                    LoggerService.Warning("invalid provider version {0}", version);
-                    return ProviderVersion.Undefined;
-                }
-            }
-        }
-        private static int SafeGetConfigSettingAsInt(params string[] keys)
-        {
-            string setting = SafeGetConfigSettingAsString(keys);
-            if (string.IsNullOrEmpty(setting))
-                return int.MinValue;
-            int i = int.MinValue;
-            Int32.TryParse(setting, out i);
-            return i;
-        }
+    //    public static ProviderVersion ProviderVersion
+    //    {
+    //        get
+    //        {
+    //            string version = SafeGetConfigSettingAsString(ConfigurationKeys.ProviderVersion);
+    //            if (string.IsNullOrEmpty(version))
+    //                return ContentModel.Contracts.Providers.ProviderVersion.Undefined;
+    //            try
+    //            {
+    //                return (ProviderVersion)Enum.Parse(typeof(ProviderVersion), version);
+    //            }
+    //            catch (Exception)
+    //            {
+    //                //LoggerService.Warning("invalid provider version {0}", version);
+    //                return ProviderVersion.Undefined;
+    //            }
+    //        }
+    //    }
+    //    private static int SafeGetConfigSettingAsInt(params string[] keys)
+    //    {
+    //        string setting = SafeGetConfigSettingAsString(keys);
+    //        if (string.IsNullOrEmpty(setting))
+    //            return int.MinValue;
+    //        int i = int.MinValue;
+    //        Int32.TryParse(setting, out i);
+    //        return i;
+    //    }
 
-        private static bool SafeGetConfigSettingAsBoolean(params string[] keys)
-        {
-            string setting = SafeGetConfigSettingAsString(keys);
-            if (string.IsNullOrEmpty(setting))
-                return false;
-            bool b = false;
-            Boolean.TryParse(setting, out b);
-            return b;
-        }
+    //    private static bool SafeGetConfigSettingAsBoolean(params string[] keys)
+    //    {
+    //        string setting = SafeGetConfigSettingAsString(keys);
+    //        if (string.IsNullOrEmpty(setting))
+    //            return false;
+    //        bool b = false;
+    //        Boolean.TryParse(setting, out b);
+    //        return b;
+    //    }
 
-        private static string SafeGetConfigSettingAsString(params string[] keys)
-        {
-            foreach (string key in keys)
-            {
-                string setting = ConfigurationManager.AppSettings[key];
-                if (! string.IsNullOrEmpty(setting))
-                    return setting;
-            }
-            return string.Empty;
-        }
+    //    private static string SafeGetConfigSettingAsString(params string[] keys)
+    //    {
+    //        foreach (string key in keys)
+    //        {
+    //            string setting = ConfigurationManager.AppSettings[key];
+    //            if (!string.IsNullOrEmpty(setting))
+    //                return setting;
+    //        }
+    //        return string.Empty;
+    //    }
 
-        public static string WelcomeFile
-        {
-            get
-            {
-                return SafeGetConfigSettingAsString(ConfigurationKeys.WelcomeFile, ConfigurationKeys.WelcomeFileAlt1);
-            }
-        }
+    //    public static string WelcomeFile
+    //    {
+    //        get
+    //        {
+    //            return SafeGetConfigSettingAsString(ConfigurationKeys.WelcomeFile, ConfigurationKeys.WelcomeFileAlt1);
+    //        }
+    //    }
 
-    }
+    //}
 
 }

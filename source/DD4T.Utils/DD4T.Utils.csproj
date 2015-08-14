@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -10,89 +10,76 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>DD4T.Utils</RootNamespace>
     <AssemblyName>DD4T.Utils</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <TargetFrameworkProfile />
     <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\build\</OutputPath>
+    <OutputPath>..\..\build\bin\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\build\framework\</OutputPath>
+    <OutputPath>..\..\build\bin\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'MVC4|AnyCPU'">
-    <OutputPath>bin\MVC4\</OutputPath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release2011SP1|AnyCPU'">
-    <OutputPath>..\..\build\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release2013|AnyCPU'">
-    <OutputPath>..\..\build\tridion2013\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'MVC3|AnyCPU'">
-    <OutputPath>..\..\build\mvc3\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DD4T.ContentModel">
-      <HintPath>..\packages\DD4T-Model.2.0.2-beta\lib\DD4T.ContentModel.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="DD4T.ContentModel, Version=2.0.3.0, Culture=neutral, PublicKeyToken=4450e3c7f68bf872, processorArchitecture=MSIL">
+      <HintPath>..\packages\DD4T.Model.2.0.3-alpha21\lib\net45\DD4T.ContentModel.dll</HintPath>
+      <Private>False</Private>
     </Reference>
-    <Reference Include="DD4T.ContentModel.Contracts">
-      <HintPath>..\packages\DD4T-Model.2.0.2-beta\lib\DD4T.ContentModel.Contracts.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="DD4T.ContentModel.Contracts, Version=2.0.3.0, Culture=neutral, PublicKeyToken=4450e3c7f68bf872, processorArchitecture=MSIL">
+      <HintPath>..\packages\DD4T.Model.2.0.3-alpha21\lib\net45\DD4T.ContentModel.Contracts.dll</HintPath>
+      <Private>False</Private>
     </Reference>
-    <Reference Include="DD4T.ContentModel.XmlSerializers">
-      <HintPath>..\packages\DD4T-Model.2.0.2-beta\lib\DD4T.ContentModel.XmlSerializers.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="DD4T.ContentModel.XmlSerializers, Version=2.0.3.0, Culture=neutral, PublicKeyToken=4450e3c7f68bf872, processorArchitecture=MSIL">
+      <HintPath>..\packages\DD4T.Model.2.0.3-alpha21\lib\net45\DD4T.ContentModel.XmlSerializers.dll</HintPath>
+      <Private>False</Private>
     </Reference>
-    <Reference Include="DD4T.Serialization">
-      <HintPath>..\packages\DD4T-Model.2.0.2-beta\lib\DD4T.Serialization.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="DD4T.Serialization, Version=2.0.3.0, Culture=neutral, PublicKeyToken=4450e3c7f68bf872, processorArchitecture=MSIL">
+      <HintPath>..\packages\DD4T.Model.2.0.3-alpha21\lib\net45\DD4T.Serialization.dll</HintPath>
+      <Private>False</Private>
     </Reference>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\DD4T-Model.2.0.2-beta\lib\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Caching" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\Dynamic Delivery Presentation Solution Items\AssemblyInfo.cs">
       <Link>Properties\AssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Caching\DefaultCacheAgent.cs" />
+    <Compile Include="Caching\LastPublishDateChangeMonitor.cs" />
     <Compile Include="ClassLoader.cs" />
     <Compile Include="ConfigurationHelper.cs" />
+    <Compile Include="DD4TConfiguration.cs" />
+    <Compile Include="Logging\DefaultLogger.cs" />
+    <Compile Include="Resolver\DefaultPublicationResolver.cs" />
+    <Compile Include="Caching\NullCacheAgent.cs" />
+    <Compile Include="Logging\NullLogger.cs" />
+    <Compile Include="ExtensionMethods\DD4TConfigurationExtensions.cs" />
     <Compile Include="LoggerService.cs" />
     <Compile Include="Properties\SpecificAssemblyInfo.cs" />
     <Compile Include="ProviderLoader.cs" />
@@ -100,23 +87,17 @@
     <Compile Include="TridionHelper.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Newtonsoft.Json.xml" />
+    <ProjectReference Include="..\DD4T.Core.Contracts\DD4T.Core.Contracts.csproj">
+      <Project>{f90a1191-cd6e-4016-9005-b28a96f7964e}</Project>
+      <Name>DD4T.Core.Contracts</Name>
+      <Private>False</Private>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>if not exist "$(OutDir)\nuget" mkdir "$(OutDir)\nuget"
-copy "$(TargetPath)" "$(OutDir)\nuget"</PostBuildEvent>
-  </PropertyGroup>
-  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
-  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -124,4 +105,11 @@ copy "$(TargetPath)" "$(OutDir)\nuget"</PostBuildEvent>
   <Target Name="AfterBuild">
   </Target>
   -->
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
+  </Target>
 </Project>
