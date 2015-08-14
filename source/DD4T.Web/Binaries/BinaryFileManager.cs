@@ -11,32 +11,31 @@ using DD4T.ContentModel.Exceptions;
 using DD4T.ContentModel.Contracts.Caching;
 using DD4T.Factories;
 using DD4T.ContentModel.Factories;
+using System.Web.Mvc;
+using DD4T.ContentModel.Contracts.Logging;
 
 namespace DD4T.Web.Binaries
 {
     /// <summary>
     /// Ensures a Binary file is cached on the file-system from the Tridion Broker DB
     /// </summary>
+    [Obsolete()]
     public class BinaryFileManager : IBinaryFileManager
     {
-        #region caching
-        private ICacheAgent _cacheAgent = null;
-        /// <summary>
-        /// Get or set the CacheAgent
-        /// </summary>  
-        public ICacheAgent CacheAgent 
+        private readonly ICacheAgent CacheAgent;
+        private readonly ILogger LoggerService;
+        private readonly IBinaryFactory BinaryFactory;
+       
+        public BinaryFileManager()
         {
-            get
-            {
-                if (_cacheAgent == null)
-                    _cacheAgent = new DefaultCacheAgent();
-                return _cacheAgent;
-            }
-            set
-            {
-                _cacheAgent = value;
-            }
+            //this is a wrong way of using your DI container. has to be done to support this Depracated class.
+            CacheAgent = DependencyResolver.Current.GetService<ICacheAgent>();
+            LoggerService = DependencyResolver.Current.GetService<ILogger>();
+            BinaryFactory = DependencyResolver.Current.GetService<IBinaryFactory>();
         }
+        #region caching
+        
+
         public const string CacheKeyFormatBinary = "Binary_{0}";
         private string GetCacheKey(string url)
         {
@@ -122,20 +121,7 @@ namespace DD4T.Web.Binaries
         #region private
 
 
-        private IBinaryFactory _binaryFactory = null;
-        public virtual IBinaryFactory BinaryFactory
-        {
-            get
-            {
-                if (_binaryFactory == null)
-                    _binaryFactory = new BinaryFactory();
-                return _binaryFactory;
-            }
-            set
-            {
-                _binaryFactory = value;
-            }
-        }
+        
 
        
         /// <summary>
