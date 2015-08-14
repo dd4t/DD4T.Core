@@ -38,7 +38,7 @@
 	<Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets"/>
 
 	<!-- Task for retrieving ProductVersion from an Assembly -->
-	<UsingTask TaskName="GetInformationalVersion" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
+	<UsingTask TaskName="GetInformationalVersion" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v$(MSBuildToolsVersion).dll">
 		<ParameterGroup>
 			<AssemblyFile ParameterType="System.String" Required="true" />
 			<Version ParameterType="System.String" Output="true" />
@@ -56,7 +56,7 @@
 	</UsingTask>
 
 	<!-- Task for generating a new version for local development -->
-	<UsingTask TaskName="GetNewDevVersion" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
+	<UsingTask TaskName="GetNewDevVersion" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v$(MSBuildToolsVersion).dll">
 		<ParameterGroup>
 			<OldVersion ParameterType="System.String" Required="true" />
 			<NewVersion ParameterType="System.String" Output="true" />
@@ -84,12 +84,11 @@
 			<PackageFilesCleanup Include="$(BuildPackageDirectory)\**\*.*"/>
 		</ItemGroup>
 		<Delete Files="@(PackageFilesCleanup)" />
-		<Message Text="##### $(SourceDirectory) - $(NuGetFolder)" />
 		
 		<MakeDir Directories="@(NuGetStructureFolders)"/>
 
 		<ItemGroup>
-        	<MainPackageFiles Include="$(BuildBinDirectory)\**\*.*"/>
+        	<MainPackageFiles Include="$(BuildBinDirectory)\**\*.dll;$(BuildBinDirectory)\**\*.xml;$(BuildBinDirectory)\**\*.pdb" Exclude="$(BuildBinDirectory)\**\*CodeAnalysis*;$(BuildBinDirectory)\**\*Test.dll;$(BuildBinDirectory)\**\*Test.pdb"/>
         </ItemGroup>
     	
     	<!-- Get the productversion from the assemblies -->
@@ -106,21 +105,17 @@
         </ItemGroup>
 
     	<Copy SourceFiles="@(NuGetFiles)" DestinationFiles="@(NuGetFiles->'$(BuildPackageDirectory)\%(Filename)%(Extension)')"/>
-    	<Copy SourceFiles="@(MainPackageFiles)" DestinationFiles="@(MainPackageFiles->'$(BuildBinDirectory)\%(Filename)%(Extension)')"/>
 
     	<PropertyGroup>
     		<NuSpecFile>$(BuildPackageDirectory)\$(NuSpecFileName)</NuSpecFile>
     	</PropertyGroup>
-    	<ItemGroup>
-    		<FlattenedPackageFiles Include="$(BuildBinDirectory)\**\*.*"/>
-    	</ItemGroup>
 
     	<!-- Update version in nuspec file -->
     	<XmlUpdate XmlFileName="$(NuSpecFile)" XPath="//version" Value="$(VersionInfo)" />
 
 
-		<Copy SourceFiles="@(FlattenedPackageFiles)" DestinationFiles="@(FlattenedPackageFiles->'$(BuildNuGetFramework40Directory)\%(RecursiveDir)%(Filename)%(Extension)')" />
-		<Copy SourceFiles="@(FlattenedPackageFiles)" DestinationFiles="@(FlattenedPackageFiles->'$(BuildNuGetFramework45Directory)\%(RecursiveDir)%(Filename)%(Extension)')" />
+		<Copy SourceFiles="@(MainPackageFiles)" DestinationFiles="@(MainPackageFiles->'$(BuildNuGetFramework40Directory)\%(RecursiveDir)%(Filename)%(Extension)')" />
+		<Copy SourceFiles="@(MainPackageFiles)" DestinationFiles="@(MainPackageFiles->'$(BuildNuGetFramework45Directory)\%(RecursiveDir)%(Filename)%(Extension)')" />
 
     	<!-- Create NuGet package -->
     	<Exec Command='$(NuGetFolder)\nuget.exe pack "$(NuSpecFile)"' WorkingDirectory="$(BuildPackageDirectory)"/>
@@ -128,7 +123,7 @@
     	<Delete Files="$(NuSpecFile)" />
 
     	<!-- Create ZipPackage -->
-		<Zip Files="@(FlattenedPackageFiles)" ZipFileName="$(BuildPackageDirectory)\$(ProductName).$(VersionInfo).zip" WorkingDirectory="$(BuildBinDirectory)" />
+		<Zip Files="@(MainPackageFiles)" ZipFileName="$(BuildPackageDirectory)\$(ProductName).$(VersionInfo).zip" WorkingDirectory="$(BuildBinDirectory)" />
 
     	<RemoveDir Directories="$(BuildWorkDirectory)" />
 	</Target>
