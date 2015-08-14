@@ -13,6 +13,7 @@
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <TargetFrameworkProfile />
+    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -33,19 +34,19 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="DD4T.ContentModel, Version=2.0.3.0, Culture=neutral, PublicKeyToken=4450e3c7f68bf872, processorArchitecture=MSIL">
-      <HintPath>..\packages\DD4T.Model.2.0.3-alpha19\lib\net45\DD4T.ContentModel.dll</HintPath>
+      <HintPath>..\packages\DD4T.Model.2.0.3-alpha21\lib\net45\DD4T.ContentModel.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="DD4T.ContentModel.Contracts, Version=2.0.3.0, Culture=neutral, PublicKeyToken=4450e3c7f68bf872, processorArchitecture=MSIL">
-      <HintPath>..\packages\DD4T.Model.2.0.3-alpha19\lib\net45\DD4T.ContentModel.Contracts.dll</HintPath>
+      <HintPath>..\packages\DD4T.Model.2.0.3-alpha21\lib\net45\DD4T.ContentModel.Contracts.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="DD4T.ContentModel.XmlSerializers, Version=2.0.3.0, Culture=neutral, PublicKeyToken=4450e3c7f68bf872, processorArchitecture=MSIL">
-      <HintPath>..\packages\DD4T.Model.2.0.3-alpha19\lib\net45\DD4T.ContentModel.XmlSerializers.dll</HintPath>
+      <HintPath>..\packages\DD4T.Model.2.0.3-alpha21\lib\net45\DD4T.ContentModel.XmlSerializers.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="DD4T.Serialization, Version=2.0.3.0, Culture=neutral, PublicKeyToken=4450e3c7f68bf872, processorArchitecture=MSIL">
-      <HintPath>..\packages\DD4T.Model.2.0.3-alpha19\lib\net45\DD4T.Serialization.dll</HintPath>
+      <HintPath>..\packages\DD4T.Model.2.0.3-alpha21\lib\net45\DD4T.Serialization.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
