@@ -4,18 +4,9 @@
 		<Configuration Condition="'$(Configuration)'==''">Debug</Configuration>
 	</PropertyGroup>
 
-	<Import Project="DD4T Core.Targets" />
-
 	<Target Name="All">
-		<CallTarget Targets="Clean;CleanUp;Compile;Analyze" />
-		<CallTarget Targets="Doc;Package"/><!-- Condition="'$(Configuration)' == 'Release'"/>-->
-		<CallTarget Targets="Install" Condition="'$(NUGET_LOCALREPO)' != ''"/>
+		<CallTarget Targets="Clean;Compile" />
 		<Message Text="Build complete."/>
-	</Target>
-
-	<Target Name="Analyze">
-		<!-- Analyze runs post-build analysis like FxCop and NDepend. -->
-		<!-- TODO -->
 	</Target>
 
 	<Target Name="Clean">
@@ -28,9 +19,4 @@
 			<Output ItemName="OutputFiles" TaskParameter="TargetOutputs"/>
         </MSBuild>
 	</Target>
-	<Target Name="Doc">
-		<!-- Doc compiles any XML API docs into a distributable help package. -->
-		<!-- TODO -->
-	</Target>
-
 </Project>
