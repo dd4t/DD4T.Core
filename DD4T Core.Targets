@@ -2,7 +2,7 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0">
 	<PropertyGroup>
 		<Configuration Condition="'$(Configuration)'==''">Debug</Configuration>
-		<ProductName>DD4T.NET</ProductName>
+		<ProductName>DD4T.Core</ProductName>
 
 		<!-- Source Directories -->
 		<BaseDirectory Condition="'$(BaseDirectory)' == ''">$(MSBuildProjectDirectory)</BaseDirectory>

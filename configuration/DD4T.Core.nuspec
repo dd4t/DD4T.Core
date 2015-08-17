@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <package>
   <metadata>
-    <id>DD4T.NET</id>
+    <id>DD4T.Core</id>
     <version></version>
     <authors>DD4T Community</authors>
     <owners>DD4T Community</owners>
