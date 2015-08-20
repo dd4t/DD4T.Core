@@ -72,9 +72,6 @@
     <Compile Include="Exceptions\ComponentPresentationNotFoundException.cs" />
     <Compile Include="Exceptions\ComponentNotFoundException.cs" />
     <Compile Include="Exceptions\ConfigurationException.cs" />
-    <Compile Include="Exceptions\FieldHasNoValueException.cs" />
-    <Compile Include="Exceptions\FieldTypeNotDefinedException.cs" />
-    <Compile Include="Exceptions\ItemDoesNotExistException.cs" />
     <Compile Include="Exceptions\KeywordNotFoundException.cs" />
     <Compile Include="Exceptions\ModelNotCreatedException.cs" />
     <Compile Include="Exceptions\PageNotFoundException.cs" />
