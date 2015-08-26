@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using DD4T.ViewModels.Contracts;
+using DD4T.Core.Contracts.ViewModels;
 using System.Reflection;
 using System.Web;
 using DD4T.ViewModels.Reflection;
@@ -10,6 +10,8 @@ using DD4T.ViewModels.Exceptions;
 using System.Collections;
 using DD4T.ViewModels;
 using DD4T.ContentModel;
+using DD4T.Core.Contracts.ViewModels;
+using DD4T.Core.Contracts.ViewModels.Binding;
 
 namespace DD4T.ViewModels.Attributes
 {
@@ -27,7 +29,7 @@ namespace DD4T.ViewModels.Attributes
         public abstract Type ExpectedReturnType { get; }
 
 
-        public Binding.IModelMapping ComplexTypeMapping
+        public IModelMapping ComplexTypeMapping
         {
             get;
             set;
@@ -277,19 +279,19 @@ namespace DD4T.ViewModels.Attributes
         //TODO: De-couple this from the Schema name specifically? What would make sense?
         //TOOD: Possibly change this to use purely ViewModelKey and make that an object, leave it to the key provider to assign objects with logical equals overrides
 
-        private string schemaName;
+        private string schemaRootElementName;
         private bool inlineEditable = false;
         private bool isDefault = false;
         private string[] viewModelKeys;
         /// <summary>
         /// View Model
         /// </summary>
-        /// <param name="schemaName">Tridion schema name for component type for this View Model</param>
+        /// <param name="schemaRootElementName">Tridion schema name for component type for this View Model</param>
         /// <param name="isDefault">Is this the default View Model for this schema. If true, Components
         /// with this schema will use this class if no other View Models' Keys match.</param>
-        public ContentModelAttribute(string schemaName, bool isDefault)
+        public ContentModelAttribute(string schemaRootElementName, bool isDefault)
         {
-            this.schemaName = schemaName;
+            this.schemaRootElementName = schemaRootElementName;
             this.isDefault = isDefault;
         }
 
@@ -300,11 +302,11 @@ namespace DD4T.ViewModels.Attributes
         //be covered by decent Schema design i.e. use of Embedded Schemas and Linked Components. Same fields shouldn't
         //occur repeatedly)
 
-        public string SchemaName
+        public string SchemaRootElementName
         {
             get
             {
-                return schemaName;
+                return schemaRootElementName;
             }
         }
 
@@ -338,7 +340,7 @@ namespace DD4T.ViewModels.Attributes
 
         public override int GetHashCode()
         {
-            return (ViewModelKeys != null ? ViewModelKeys.GetHashCode() : 0) * 37 + SchemaName.GetHashCode();
+            return (ViewModelKeys != null ? ViewModelKeys.GetHashCode() : 0) * 37 + SchemaRootElementName.GetHashCode();
         }
         public override bool Equals(object obj)
         {
@@ -354,7 +356,7 @@ namespace DD4T.ViewModels.Attributes
                                 on i equals j
                                 select i;
                     //Schema names match and there is a matching view model ID
-                    if (this.SchemaName == key.SchemaName && match.Count() > 0)
+                    if (this.SchemaRootElementName == key.SchemaRootElementName && match.Count() > 0)
                         return true;
                 }
                 //Note: if the parent of a linked component is using a View Model Key, the View Model
@@ -365,7 +367,7 @@ namespace DD4T.ViewModels.Attributes
                 //if (key.IsDefault || this.IsDefault) //Fall back to default if the view model key isn't found -- useful for linked components
                 {
                     //Just compare the schema names
-                    return this.SchemaName == key.SchemaName;
+                    return this.SchemaRootElementName == key.SchemaRootElementName;
                 }
             }
             return false;
@@ -374,28 +376,28 @@ namespace DD4T.ViewModels.Attributes
         public bool IsMatch(IModel data, string key)
         {
             bool result = false;
-            string schemaName = null;
+            string schemaRootElementName = null;
             if (data != null)
             {
                 //Ideally we'd have a common interface for these 2 that have a Schema property
                 if (data is IComponentPresentation)
                 {
                     var definedData = data as IComponentPresentation;
-                    schemaName = definedData.Component.Schema.Title;
+                    schemaRootElementName = definedData.Component.Schema.RootElementName;
                 }
                 else if (data is IComponent)
                 {
                     var definedData = data as IComponent;
-                    schemaName = definedData.Schema.Title;
+                    schemaRootElementName = definedData.Schema.Title;
                 }
                 else if (data is IEmbeddedFields)
                 {
                     var definedData = data as IEmbeddedFields;
-                    schemaName = definedData.EmbeddedSchema.Title;
+                    schemaRootElementName = definedData.EmbeddedSchema.RootElementName;
                 }
-                if (!String.IsNullOrEmpty(schemaName))
+                if (!String.IsNullOrEmpty(schemaRootElementName))
                 {
-                    var compare = new ContentModelAttribute(schemaName, false)
+                    var compare = new ContentModelAttribute(schemaRootElementName, false)
                     {
                         ViewModelKeys = key == null ? null : new string[] { key }
                     };

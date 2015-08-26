@@ -1,4 +1,4 @@
-﻿using DD4T.ViewModels.Contracts;
+﻿using DD4T.Core.Contracts.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +13,7 @@ using System.Linq.Expressions;
 using DD4T.ViewModels.Binding;
 using System.Collections;
 using DD4T.ContentModel;
+using DD4T.Core.Contracts.ViewModels.Binding;
 
 namespace DD4T.ViewModels
 {

@@ -81,6 +81,7 @@
     <Compile Include="FactoryCommonServices.cs" />
     <Compile Include="FactoryBase.cs" />
     <Compile Include="LinkFactory.cs" />
+    <Compile Include="ModelFactory.cs" />
     <Compile Include="PageFactory.cs" />
     <Compile Include="Properties\SpecificAssemblyInfo.cs" />
     <Compile Include="TaxonomyFactory.cs" />
@@ -95,6 +96,10 @@
       <Project>{D2CE08BE-7281-4697-ADFE-E7A031CB59EC}</Project>
       <Name>DD4T.Utils</Name>
       <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\DD4T.ViewModels\DD4T.ViewModels.csproj">
+      <Project>{cc2b55da-ffbc-44b9-ada5-c087876ac199}</Project>
+      <Name>DD4T.ViewModels</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -123,5 +128,5 @@
     <CallTarget Targets="Package" />
     <Message Text="Installing package to local NuGet repo" Importance="high" Condition="'$(NUGET_LOCALREPO)' != ''" />
     <CallTarget Targets="Install" Condition="'$(NUGET_LOCALREPO)' != ''" />
-  </Target>
+  </Target> 
 </Project>

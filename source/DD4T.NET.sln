@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DD4T.Factories", "DD4T.Factories\DD4T.Factories.csproj", "{9E96EFE0-7478-4551-A47A-1F04B9F01DF7}"
 EndProject
@@ -24,6 +24,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{8B0B47
 		.nuget\NuGet.exe = .nuget\NuGet.exe
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DD4T.ViewModels", "DD4T.ViewModels\DD4T.ViewModels.csproj", "{CC2B55DA-FFBC-44B9-ADA5-C087876AC199}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +53,10 @@ Global
 		{899CC432-25D8-4D65-9D98-95D109300127}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{899CC432-25D8-4D65-9D98-95D109300127}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{899CC432-25D8-4D65-9D98-95D109300127}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CC2B55DA-FFBC-44B9-ADA5-C087876AC199}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CC2B55DA-FFBC-44B9-ADA5-C087876AC199}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CC2B55DA-FFBC-44B9-ADA5-C087876AC199}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CC2B55DA-FFBC-44B9-ADA5-C087876AC199}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,5 +1,5 @@
 ﻿using DD4T.ContentModel;
-using DD4T.ViewModels.Contracts;
+using DD4T.Core.Contracts.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -1,6 +1,6 @@
 ﻿using DD4T.ContentModel;
 using DD4T.ViewModels.Attributes;
-using DD4T.ViewModels.Contracts;
+using DD4T.Core.Contracts.ViewModels;
 using DD4T.ViewModels;
 using System;
 using System.Collections;

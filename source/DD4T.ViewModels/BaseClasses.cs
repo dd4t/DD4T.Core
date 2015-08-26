@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using DD4T.ViewModels.Contracts;
+using DD4T.Core.Contracts.ViewModels;
 using System.ComponentModel;
 using DD4T.ContentModel;
 
@@ -15,7 +15,7 @@ namespace DD4T.ViewModels.Base
     public abstract class ViewModelBase : IViewModel
     {
         [EditorBrowsable(EditorBrowsableState.Never)] //Hidden from intellisense as View Authors should not access this directly
-        public IModel ModelData
+        IModel IViewModel.ModelData
         {
             get;
             set;

@@ -1,5 +1,6 @@
 ﻿using DD4T.ContentModel;
-using DD4T.ViewModels.Contracts;
+using DD4T.Core.Contracts.ViewModels;
+using DD4T.Core.Contracts.ViewModels.Binding;
 using DD4T.ViewModels.Binding;
 using DD4T.ViewModels.Exceptions;
 using System;
@@ -34,7 +35,7 @@ namespace DD4T.ViewModels
         /// Loads View Model Types from an Assembly. Use minimally due to reflection overhead.
         /// </summary>
         /// <param name="assembly"></param>
-        public void LoadViewModels(params Assembly[] assemblies) //We assume we have a singleton of this instance, otherwise we incur a lot of overhead
+        public void LoadViewModels(IEnumerable<Assembly> assemblies) //We assume we have a singleton of this instance, otherwise we incur a lot of overhead
         {
             foreach (var assembly in assemblies)
             {
@@ -53,6 +54,20 @@ namespace DD4T.ViewModels
                     }
                 }
             }
+        }
+        /// <summary>
+        /// Loads View Model Types from an Assembly. Use minimally due to reflection overhead.
+        /// </summary>
+        /// <param name="assembly"></param>
+        public void LoadViewModels() //We assume we have a singleton of this instance, otherwise we incur a lot of overhead
+        {
+            var assemblies = AppDomain.CurrentDomain.GetAssemblies()
+                                        .Where(a => !a.GlobalAssemblyCache 
+                                                        && !a.IsDynamic 
+                                                        && !a.ReflectionOnly 
+                                                        && !a.FullName.StartsWith("Tridion."));
+
+            LoadViewModels(assemblies);
         }
         public Type FindViewModelByAttribute<T>(IModel data, Type[] typesToSearch = null) where T : IModelAttribute
         {
