@@ -359,7 +359,7 @@ namespace DD4T.ViewModels.Attributes
                                 on i equals j
                                 select i;
                     //Schema names match and there is a matching view model ID
-                    if (this.SchemaRootElementName == key.SchemaRootElementName && match.Count() > 0)
+                    if (this.SchemaRootElementName.ToLower() == key.SchemaRootElementName.ToLower() && match.Count() > 0)
                         return true;
                 }
                 //Note: if the parent of a linked component is using a View Model Key, the View Model
@@ -370,7 +370,7 @@ namespace DD4T.ViewModels.Attributes
                 //if (key.IsDefault || this.IsDefault) //Fall back to default if the view model key isn't found -- useful for linked components
                 {
                     //Just compare the schema names
-                    return this.SchemaRootElementName == key.SchemaRootElementName;
+                    return this.SchemaRootElementName.ToLower() == key.SchemaRootElementName.ToLower();
                 }
             }
             return false;
@@ -432,7 +432,7 @@ namespace DD4T.ViewModels.Attributes
             if (data is IPage)
             {
                 var contentData = data as IPage;
-                result = ViewModelKeys.Any(x => x.Equals(key));
+                result = ViewModelKeys.Any(x => x.ToLower().Equals(key.ToLower()));
             }
             return result;
         }
@@ -462,7 +462,7 @@ namespace DD4T.ViewModels.Attributes
             bool result = false;
             if (data is IKeyword)
             {
-                result = ViewModelKeys.Any(x => x.Equals(key));
+                result = ViewModelKeys.Any(x => x.ToLower().Equals(key.ToLower()));
             }
             return result;
         }

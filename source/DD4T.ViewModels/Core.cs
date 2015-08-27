@@ -190,5 +190,6 @@ namespace DD4T.ViewModels
         //    //Todo: Sia
         //    get { return Template == null ? -1 : 0; } //Template.PublicationNumber; }
         //}
+
     }
 }
