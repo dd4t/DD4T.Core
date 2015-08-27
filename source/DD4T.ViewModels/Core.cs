@@ -114,7 +114,7 @@ namespace DD4T.ViewModels
                         result = keyword.TaxonomyId;
                 }
             }
-            return result;
+            return string.IsNullOrEmpty(result) ? null : result; 
         }
     }
 
