@@ -105,7 +105,10 @@ namespace DD4T.ViewModels.Attributes
                 {
                     fields = (modelData as IComponentPresentation).Component.Fields;
                 }
-
+                else if (modelData is IEmbeddedFields)
+                {
+                    fields = (modelData as IEmbeddedFields).Fields;
+                }
                 if (String.IsNullOrEmpty(FieldName)) FieldName = GetFieldName(property.Name); //Convention over configuration by default -- Field name = Property name
                 
                 if (fields != null && fields.ContainsKey(FieldName))

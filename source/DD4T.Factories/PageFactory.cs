@@ -100,7 +100,7 @@ namespace DD4T.Factories
                 string pageContentFromBroker = PageProvider.GetContentByUrl(url);
                 LoggerService.Debug("finished loading page content from provider with url {0}, has value: {1}", LoggingCategory.Performance, url, Convert.ToString(!(string.IsNullOrEmpty(pageContentFromBroker))));
 
-                if (!pageContentFromBroker.Equals(String.Empty))
+                if (!string.IsNullOrEmpty(pageContentFromBroker))
                 {
                     LoggerService.Debug("about to create IPage from content for url {0}", LoggingCategory.Performance, url);
                     page = GetIPageObject(pageContentFromBroker);

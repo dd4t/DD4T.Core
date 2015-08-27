@@ -185,10 +185,10 @@ namespace DD4T.ViewModels
 
         public IFieldSet MetadataFields { get; set; }
 
-        public int PublicationNumber
-        {
-            //Todo: Sia
-            get { return Template == null ? -1 : 0; } //Template.PublicationNumber; }
-        }
+        //public int PublicationNumber
+        //{
+        //    //Todo: Sia
+        //    get { return Template == null ? -1 : 0; } //Template.PublicationNumber; }
+        //}
     }
 }
