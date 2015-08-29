@@ -2,6 +2,7 @@
 using DD4T.ContentModel.Contracts.Logging;
 using DD4T.ContentModel.Factories;
 using DD4T.Core.Contracts.ViewModels;
+using DD4T.Core.Contracts.ViewModels.Binding;
 using DD4T.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -27,9 +28,39 @@ namespace DD4T.Factories
             ViewModelDefaults.Factory.LoadViewModels();
         }
 
-        public IViewModel GetModelFor(IModel domainModel)
+        public IViewModel GetModelFor(IModel modelData)
         {
-            var viewModel = ViewModelDefaults.Factory.BuildViewModel(domainModel);
+            var viewModel = ViewModelDefaults.Factory.BuildViewModel(modelData);
+            return viewModel;
+        }
+        public T GetModelFor<T>(IModel modelData)
+            where T : IViewModel
+        {
+            var viewModel = ViewModelDefaults.Factory.BuildViewModel<T>(modelData);
+            if (viewModel != null)
+                return viewModel;
+
+            return default(T);
+        }
+        public object GetMappedModelFor(IModel modelData, IModelMapping modelMapping)
+        {
+            var viewModel = ViewModelDefaults.Factory.BuildMappedModel(modelData, modelMapping);
+            return viewModel;
+        }
+
+      
+        public T GetMappedModelFor<T>(IModel modelData, IModelMapping modelMapping)
+        {
+            var viewModel = ViewModelDefaults.Factory.BuildMappedModel<T>(modelData, modelMapping);
+            if (viewModel != null)
+                return viewModel;
+
+            return default(T);
+        }
+        public IViewModel GetModelByAttribute<T>(IModel modelData)
+             where T : IModelAttribute
+        {
+            var viewModel = ViewModelDefaults.Factory.BuildViewModelByAttribute<T>(modelData);
             return viewModel;
         }
 
