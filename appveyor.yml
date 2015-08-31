@@ -29,8 +29,13 @@ deploy:
   auth_token:
     secure: J3fYimU+fyAaZQ3JI4DTeRAp6dmat8KIA7O6h899eBP++3FRtO/RCeHti1HGJRzs
   artifact: /.*\.zip/
-  draft: false
-  prerelease: false
+  draft: true
+  prerelease: true
   on:
     branch: master
     appveyor_repo_tag: true
+notifications:
+  - provider: Slack
+    auth_token:
+      secure: sPqYbVki+502+OjRT+o3eITyiG8UDZ0Fu4M1fejZxs3O6OKtYu9JCNS9Ssw3/XjL
+    channel: development
