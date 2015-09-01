@@ -170,7 +170,7 @@ namespace DD4T.ViewModels
             return model;
         }
         #region Private methods
-
+        
 
         private void ProcessViewModel(IViewModel viewModel, Type type)
         {

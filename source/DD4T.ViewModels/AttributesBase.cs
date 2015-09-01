@@ -354,8 +354,8 @@ namespace DD4T.ViewModels.Attributes
                 {
                     //if both have a ViewModelKey set, use both ViewModelKey and schema
                     //Check for a match anywhere in both lists
-                    var match = from i in this.ViewModelKeys
-                                join j in key.ViewModelKeys
+                    var match = from i in this.ViewModelKeys.Select(a => a.ToLower())
+                                join j in key.ViewModelKeys.Select(a => a.ToLower())
                                 on i equals j
                                 select i;
                     //Schema names match and there is a matching view model ID
@@ -417,11 +417,15 @@ namespace DD4T.ViewModels.Attributes
     /// </summary>
     public class PageViewModelAttribute : Attribute, IPageModelAttribute
     {
-        public PageViewModelAttribute(string[] viewModelKeys)
+        public PageViewModelAttribute()
         {
-            ViewModelKeys = viewModelKeys;
         }
         public string[] ViewModelKeys
+        {
+            get;
+            set;
+        }
+        public string TemplateTitle
         {
             get;
             set;
@@ -433,6 +437,14 @@ namespace DD4T.ViewModels.Attributes
             if (data is IPage)
             {
                 var contentData = data as IPage;
+                // if there are no view model keys defined on this model AND the page template does not specifically require a view model key, we will try to match on the page template title
+                if ((ViewModelKeys == null || ViewModelKeys.Count() == 0) && string.IsNullOrEmpty(key))
+                {
+                    if (! string.IsNullOrEmpty(TemplateTitle))
+                    {
+                        return contentData.PageTemplate.Title.ToLower() == TemplateTitle.ToLower();
+                    }
+                }
                 result = ViewModelKeys.Any(x => x.Equals(key, StringComparison.OrdinalIgnoreCase));
             }
             return result;

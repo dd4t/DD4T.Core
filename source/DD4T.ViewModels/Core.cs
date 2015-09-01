@@ -98,9 +98,12 @@ namespace DD4T.ViewModels
                     template = modelData as ITemplate;
                 }
 
-                if (template != null && template.MetadataFields != null && template.MetadataFields.ContainsKey(ViewModelKeyField))
+                if (template != null)
                 {
-                    result = template.MetadataFields[ViewModelKeyField].Values.Cast<string>().FirstOrDefault();
+                    if (template.MetadataFields != null && template.MetadataFields.ContainsKey(ViewModelKeyField))
+                    {
+                        result = template.MetadataFields[ViewModelKeyField].Values.Cast<string>().FirstOrDefault();
+                    }
                 }
                 else if (modelData is IKeyword)
                 {
