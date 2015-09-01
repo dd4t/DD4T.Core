@@ -81,7 +81,6 @@
     <Compile Include="FactoryCommonServices.cs" />
     <Compile Include="FactoryBase.cs" />
     <Compile Include="LinkFactory.cs" />
-    <Compile Include="ModelFactory.cs" />
     <Compile Include="PageFactory.cs" />
     <Compile Include="Properties\SpecificAssemblyInfo.cs" />
     <Compile Include="TaxonomyFactory.cs" />

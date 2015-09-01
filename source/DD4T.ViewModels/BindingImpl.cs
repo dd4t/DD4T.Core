@@ -15,9 +15,9 @@ namespace DD4T.ViewModels.Binding
 
     public class DefaultMappedModelFactory : IMappedModelFactory
     {
-        private static readonly IMappedModelFactory instance = new DefaultMappedModelFactory(ViewModelDefaults.Factory);
-        //Optional singleton
-        public static IMappedModelFactory Instance { get { return instance; } }
+        //private static readonly IMappedModelFactory instance = new DefaultMappedModelFactory(ViewModelDefaults.Factory);
+        ////Optional singleton
+        //public static IMappedModelFactory Instance { get { return instance; } }
 
         protected IViewModelFactory factory;
         public DefaultMappedModelFactory(IViewModelFactory factory)

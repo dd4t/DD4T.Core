@@ -43,6 +43,7 @@ namespace DD4T.Utils
         public const string DefaultCacheSettings = "DD4T.CacheSettings.Default";
         public const string CacheSettingCallBackInterval = "DD4T.CacheSettings.CallBackInterval";
         public const string ContentProviderEndPoint = "DD4T.ContentProviderEndPoint";
+        public const string ViewModelKeyFieldName = "DD4T.ViewModels.ViewModelKeyFieldName";
     }
 
     //public static class ConfigurationHelper

@@ -200,6 +200,10 @@ namespace DD4T.Utils
             }
         }
 
+        public string ViewModelKeyField
+        {
+            get { return SafeGetConfigSettingAsString(ConfigurationKeys.ViewModelKeyFieldName); }
+        }
         public string ResourcePath
         {
             get { throw new NotImplementedException(); }
@@ -212,10 +216,7 @@ namespace DD4T.Utils
             }
         }
 
-        public ProviderVersion ProviderVersion
-        {
-            get { throw new NotImplementedException(); }
-        }
+
 
         #region private methods
         private static string SafeGetConfigSettingAsString(params string[] keys)
@@ -249,5 +250,8 @@ namespace DD4T.Utils
         }
         #endregion
 
+
+
+       
     }
 }

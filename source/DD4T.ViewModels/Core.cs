@@ -14,62 +14,63 @@ using DD4T.ViewModels.Binding;
 using System.Collections;
 using DD4T.ContentModel;
 using DD4T.Core.Contracts.ViewModels.Binding;
+using DD4T.ContentModel.Contracts.Configuration;
 
 namespace DD4T.ViewModels
 {
-    /// <summary>
-    /// A static container class for default implementations of the View Model Framework for convenience.
-    /// </summary>
-    public static class ViewModelDefaults
-    {
-        //Singletons
-        private static readonly IViewModelKeyProvider keyProvider =
-            new WebConfigViewModelKeyProvider("DD4T.ViewModels.ViewModelKeyFieldName");
+    ///// <summary>
+    ///// A static container class for default implementations of the View Model Framework for convenience.
+    ///// </summary>
+    //public static class ViewModelDefaults
+    //{
+    //    //Singletons
+    //    private static readonly IViewModelKeyProvider keyProvider =
+    //        new WebConfigViewModelKeyProvider("DD4T.ViewModels.ViewModelKeyFieldName");
 
-        private static readonly IReflectionHelper reflectionHelper = new ReflectionOptimizer();
-        private static readonly IViewModelResolver resolver = new DefaultViewModelResolver(reflectionHelper);
-        //private static readonly IViewModelBuilder viewModelBuilder = new ViewModelBuilder(keyProvider, resolver);
-        private static readonly IViewModelFactory factory = new ViewModelFactory(keyProvider, resolver);
-        //private static readonly ITypeResolver typeResolver = new DefaultResolver(reflectionHelper);
-        /// <summary>
-        /// Default View Model Builder. 
-        /// <remarks>
-        /// Set View Model Key Component Template Metadata field in Web config
-        /// with key "DD4T.DomainModels.ViewModelKeyFieldName". Defaults to field name "viewModelKey".
-        /// </remarks>
-        /// </summary>
-        public static IViewModelFactory Factory { get { return factory; } }
-        /// <summary>
-        /// Default View Model Key Provider. 
-        /// <remarks>
-        /// Gets View Model Key from Component Template Metadata with field
-        /// name specified in Web config App Settings wtih key "DD4T.DomainModels.ViewModelKeyFieldName".
-        /// Defaults to field name "viewModelKey".
-        /// </remarks>
-        /// </summary>
-        public static IViewModelKeyProvider ViewModelKeyProvider { get { return keyProvider; } }
-        /// <summary>
-        /// Default View Model Resolver
-        /// </summary>
-        /// <remarks>Resolves View Models with default parameterless constructor. If none 
-        /// exists, it will throw an Exception.</remarks>
-        public static IViewModelResolver ModelResolver { get { return resolver; } }
-        /// <summary>
-        /// Optimized Reflection Helper that caches results of resource-heavy tasks (e.g. MemberInfo.GetCustomAttributes)
-        /// </summary>
-        public static IReflectionHelper ReflectionCache { get { return reflectionHelper; } }
-        /// <summary>
-        /// Creates a new Model Mapping object
-        /// </summary>
-        /// <typeparam name="T">Type of model for the model mapping</typeparam>
-        /// <returns>New Model Mapping</returns>
-        public static IModelMapping CreateModelMapping<T>() where T : class
-        {
-            return new DefaultModelMapping(resolver, reflectionHelper, typeof(T));
-        }
-        //public static ITypeResolver TypeResolver { get { return typeResolver; } }
+    //    private static readonly IReflectionHelper reflectionHelper = new ReflectionOptimizer();
+    //    private static readonly IViewModelResolver resolver = new DefaultViewModelResolver(reflectionHelper);
+    //    //private static readonly IViewModelBuilder viewModelBuilder = new ViewModelBuilder(keyProvider, resolver);
+    //    private static readonly IViewModelFactory factory = new ViewModelFactory(keyProvider, resolver);
+    //    //private static readonly ITypeResolver typeResolver = new DefaultResolver(reflectionHelper);
+    //    /// <summary>
+    //    /// Default View Model Builder. 
+    //    /// <remarks>
+    //    /// Set View Model Key Component Template Metadata field in Web config
+    //    /// with key "DD4T.DomainModels.ViewModelKeyFieldName". Defaults to field name "viewModelKey".
+    //    /// </remarks>
+    //    /// </summary>
+    //    public static IViewModelFactory Factory { get { return factory; } }
+    //    /// <summary>
+    //    /// Default View Model Key Provider. 
+    //    /// <remarks>
+    //    /// Gets View Model Key from Component Template Metadata with field
+    //    /// name specified in Web config App Settings wtih key "DD4T.DomainModels.ViewModelKeyFieldName".
+    //    /// Defaults to field name "viewModelKey".
+    //    /// </remarks>
+    //    /// </summary>
+    //    public static IViewModelKeyProvider ViewModelKeyProvider { get { return keyProvider; } }
+    //    /// <summary>
+    //    /// Default View Model Resolver
+    //    /// </summary>
+    //    /// <remarks>Resolves View Models with default parameterless constructor. If none 
+    //    /// exists, it will throw an Exception.</remarks>
+    //    public static IViewModelResolver ModelResolver { get { return resolver; } }
+    //    /// <summary>
+    //    /// Optimized Reflection Helper that caches results of resource-heavy tasks (e.g. MemberInfo.GetCustomAttributes)
+    //    /// </summary>
+    //    public static IReflectionHelper ReflectionCache { get { return reflectionHelper; } }
+    //    /// <summary>
+    //    /// Creates a new Model Mapping object
+    //    /// </summary>
+    //    /// <typeparam name="T">Type of model for the model mapping</typeparam>
+    //    /// <returns>New Model Mapping</returns>
+    //    public static IModelMapping CreateModelMapping<T>() where T : class
+    //    {
+    //        return new DefaultModelMapping(resolver, reflectionHelper, typeof(T));
+    //    }
+    //    //public static ITypeResolver TypeResolver { get { return typeResolver; } }
 
-    }
+    //}
 
     /// <summary>
     /// Base View Model Key Provider implementation with no external dependencies. Set protected 
@@ -127,11 +128,13 @@ namespace DD4T.ViewModels
     /// </summary>
     public class WebConfigViewModelKeyProvider : ViewModelKeyProviderBase
     {
-        public WebConfigViewModelKeyProvider(string webConfigKey)
+        public WebConfigViewModelKeyProvider(IDD4TConfiguration configuration)
         {
-            ViewModelKeyField = WebConfigurationManager.AppSettings[webConfigKey];
+            if (configuration == null) throw new ArgumentNullException("configuration");
+
+            ViewModelKeyField = configuration.ViewModelKeyField;
             if (string.IsNullOrEmpty(ViewModelKeyField)) ViewModelKeyField = "viewModelKey"; //Default value
-        }
+        } 
     }
 
     /// <summary>
