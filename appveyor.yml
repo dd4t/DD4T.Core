@@ -10,12 +10,7 @@ assembly_info:
   assembly_version: '{version}'
   assembly_file_version: '{version}'
   assembly_informational_version: '{version}'
-environment:
-  nuget_user: dd4t
-  nuget_password:
-    secure: fcubeaS+/aDXFPSjbqgrQg==
 install:
-- nuget sources add -Name Incentro -Source http://developer.incentro.com/nexus/service/local/nuget/tridion.net/ -UserName %nuget_user% -Password %nuget_password%
 - choco install msbuild.communitytasks -y
 build:
   project: build.msbuild
@@ -28,5 +23,14 @@ artifacts:
 deploy:
 - provider: NuGet
   api_key:
-    secure: fnfp0KvYrSJ4VETGtf4WyajYJnyKVIQsde+8uzQ42ERjcSPpCfX9fYlqrK3kHEp5
+    secure: QmYvNY2pkxjIhWiI/UwFB/rjAkoNhZpElLZhmXiNVKvasN3qRyvvag0/2ZQD5eFb
   artifact: /.*\.nupkg/
+- provider: GitHub
+  auth_token:
+    secure: J3fYimU+fyAaZQ3JI4DTeRAp6dmat8KIA7O6h899eBP++3FRtO/RCeHti1HGJRzs
+  artifact: /.*\.zip/
+  draft: false
+  prerelease: false
+  on:
+    branch: master
+    appveyor_repo_tag: true

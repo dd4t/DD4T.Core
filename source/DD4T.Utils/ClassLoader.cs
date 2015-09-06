@@ -27,7 +27,7 @@ namespace DD4T.Utils
                     }
                 }
             }
-            LoggerService.Warning("could not find type {0} in assembly {1}", typeof(T).FullName, assembly.FullName);
+            //LoggerService.Warning("could not find type {0} in assembly {1}", typeof(T).FullName, assembly.FullName);
             return null;
         }
     }
