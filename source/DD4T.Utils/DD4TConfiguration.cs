@@ -335,7 +335,10 @@ namespace DD4T.Utils
             }
         }
 
-      
+        public string ViewModelKeyField
+        {
+            get { return SafeGetConfigSettingAsString(ConfigurationKeys.ViewModelKeyFieldName); }
+        }
         public string ResourcePath
         {
             get
@@ -444,7 +447,6 @@ namespace DD4T.Utils
         }
 
 
-
         #region private methods
         private static string SafeGetConfigSettingAsString(params string[] keys)
         {
@@ -477,5 +479,8 @@ namespace DD4T.Utils
         }
         #endregion
 
+
+
+       
     }
 }

@@ -27,12 +27,12 @@ namespace DD4T.ContentModel.Contracts.Configuration
         bool ShowAnchors { get; }
         bool LinkToAnchor { get; }
         bool UseUriAsAnchor { get; }
-        ProviderVersion ProviderVersion { get; }
         int DefaultCacheSettings { get; }
         int CacheCallBackInterval { get; }
         string DataFormat { get; }
         string ContentProviderEndPoint { get; }
         string ResourcePath { get; }
+        string ViewModelKeyField { get; }
         int JMSNumberOfRetriesToConnect { get; }
         int JMSSecondsBetweenRetries { get; }
         string JMSHostname { get; }

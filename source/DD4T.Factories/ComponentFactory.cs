@@ -104,14 +104,7 @@ namespace DD4T.Factories
         [Obsolete]
         public IComponentProvider ComponentProvider
         {
-            get
-            {
-                throw new NotImplementedException();
-            }
-            set
-            {
-                throw new NotImplementedException();
-            }
+            get; set;
         }
         #endregion
 

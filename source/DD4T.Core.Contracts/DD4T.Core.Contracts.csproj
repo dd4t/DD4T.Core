@@ -83,7 +83,6 @@
     <Compile Include="Factories\IComponentFactory.cs" />
     <Compile Include="Factories\IFactoryCommonServices.cs" />
     <Compile Include="Factories\ILinkFactory.cs" />
-    <Compile Include="Factories\IModelFactory.cs" />
     <Compile Include="Factories\IPageFactory.cs" />
     <Compile Include="Factories\ITaxonomyFactory.cs" />
     <Compile Include="Logging\ILogger.cs" />
@@ -99,6 +98,8 @@
     <Compile Include="Providers\ProviderVersion.cs" />
     <Compile Include="Querying\IQuery.cs" />
     <Compile Include="Resolvers\IPublicationResolver.cs" />
+    <Compile Include="ViewModels\Binding.cs" />
+    <Compile Include="ViewModels\Contracts.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

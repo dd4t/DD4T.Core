@@ -96,6 +96,10 @@
       <Name>DD4T.Utils</Name>
       <Private>False</Private>
     </ProjectReference>
+    <ProjectReference Include="..\DD4T.ViewModels\DD4T.ViewModels.csproj">
+      <Project>{cc2b55da-ffbc-44b9-ada5-c087876ac199}</Project>
+      <Name>DD4T.ViewModels</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

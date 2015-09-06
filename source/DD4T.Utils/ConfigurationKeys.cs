@@ -39,16 +39,18 @@ namespace DD4T.Utils
         public const string WelcomeFileAlt1 = "DefaultPage";
         public const string DataFormat = "DD4T.DataFormat";
         public const string ResourcePath = "DD4T.ResourcePath";
+        public const string ViewModelKeyFieldName = "DD4T.ViewModels.ViewModelKeyFieldName";
+        public const string ContentProviderEndPoint = "DD4T.ContentProviderEndPoint";
+
+        // JMS settings
         public const string JMSHostname = "DD4T.JMS.Hostname";
         public const string JMSPort = "DD4T.JMS.Port";
         public const string JMSTopic = "DD4T.JMS.Topic";
         public const string JMSNumberOfRetriesToConnect = "DD4T.JMS.NumberOfRetriesToConnect";
         public const string JMSSecondsBetweenRetries = "DD4T.JMS.SecondsBetweenRetries";
 
-        // CacheAgent
-
+        // Caching settings
         public const string DefaultCacheSettings = "DD4T.CacheSettings.Default";
         public const string CacheSettingCallBackInterval = "DD4T.CacheSettings.CallBackInterval";
-        public const string ContentProviderEndPoint = "DD4T.ContentProviderEndPoint";
     }
 }
