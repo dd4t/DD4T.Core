@@ -81,18 +81,15 @@
     <Compile Include="Caching\DefaultCacheAgent.cs" />
     <Compile Include="Caching\JMSMessageProvider.cs" />
     <Compile Include="ClassLoader.cs" />
-    <Compile Include="ConfigurationHelper.cs" />
+    <Compile Include="ConfigurationKeys.cs" />
     <Compile Include="DD4TConfiguration.cs" />
     <Compile Include="Logging\DefaultLogger.cs" />
     <Compile Include="Resolver\DefaultPublicationResolver.cs" />
     <Compile Include="Caching\NullCacheAgent.cs" />
     <Compile Include="Logging\NullLogger.cs" />
     <Compile Include="ExtensionMethods\DD4TConfigurationExtensions.cs" />
-    <Compile Include="LoggerService.cs" />
     <Compile Include="Properties\SpecificAssemblyInfo.cs" />
-    <Compile Include="ProviderLoader.cs" />
     <Compile Include="TcmUri.cs" />
-    <Compile Include="TridionHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
