@@ -163,7 +163,7 @@ namespace DD4T.Factories
         public bool TryGetComponentPresentation(out IComponentPresentation cp, string componentUri, string templateUri = "")
         {
             cp = null;
-            // TODO: think of a way to store dependency on a real uri separately from the key
+           
             string cacheKey = CacheKeyFactory.GenerateKeyFromUri(componentUri, CacheRegion);
             cp = (IComponentPresentation)CacheAgent.Load(cacheKey);
 
@@ -198,7 +198,7 @@ namespace DD4T.Factories
             }
 
             LoggerService.Debug("about to store IComponentPresentation in cache ({0})", LoggingCategory.Performance, componentUri);
-            CacheAgent.Store(cacheKey, CacheRegion, cp);
+            CacheAgent.Store(cacheKey, CacheRegion, cp, new List<string> { cp.Component.Id });
             LoggerService.Debug("finished storing IComponentPresentation in cache ({0})", LoggingCategory.Performance, componentUri);
             LoggerService.Debug("<<TryGetComponentPresentation ({0})", LoggingCategory.Performance, componentUri);
 

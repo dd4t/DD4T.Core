@@ -73,15 +73,10 @@ namespace DD4T.Factories
             return ComponentPresentationFactory.GetLastPublishedDate(uri);
         }
 
+        [Obsolete]
         public override DateTime GetLastPublishedDateCallBack(string key, object cachedItem)
         {
-            if (cachedItem == null)
-                return DateTime.Now; // this will force the item to be removed from the cache
-            if (cachedItem is IComponent)
-            {
-                return GetLastPublishedDate(((IComponent)cachedItem).Id);
-            }
-            throw new Exception(string.Format("GetLastPublishedDateCallBack called for unexpected object type '{0}' or with unexpected key '{1}'", cachedItem.GetType(), key));
+            throw new NotImplementedException();
         }
 
         public bool TryGetComponent(string componentUri, out IComponent component, string templateUri = "")

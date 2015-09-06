@@ -16,9 +16,9 @@ namespace DD4T.Utils.Caching
         //{
         //    return cacheRegion + "_" + uris.Aggregate((current, next) => current + "_" + next);
         //}
-        public static string GenerateKeyFromString(string s, string cacheRegion)
+        public static string GenerateKey(string cacheRegion, params string[] keys)
         {
-            return cacheRegion + "_" + s;
+            return cacheRegion + "_" + string.Join("_", keys);
         }
     }
 }
