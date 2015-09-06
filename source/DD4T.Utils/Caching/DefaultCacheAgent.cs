@@ -105,11 +105,14 @@ namespace DD4T.Utils.Caching
             {
                 foreach (string tcmUri in dependOnTcmUris)
                 {
-                    IList<string> dependentItems = (IList<string>) Cache[GetDependencyCacheKey(tcmUri)];
+                    TcmUri u = new TcmUri(tcmUri);
+                    string lookupkey = string.Format("{0}:{1}", u.PublicationId, u.ItemId);  // Tridion communicates about cache expiry using a key like 6:1120 (pubid:itemid)
+                    IList<string> dependentItems = (IList<string>) Cache[GetDependencyCacheKey(lookupkey)];
                     if (dependentItems == null)
                     {
                         dependentItems = new List<string>();
                         dependentItems.Add(key);
+                        Cache.Add(GetDependencyCacheKey(lookupkey), dependentItems, DateTimeOffset.MaxValue);
                         continue;
                     }
                     if (!dependentItems.Contains(key))
@@ -172,12 +175,12 @@ namespace DD4T.Utils.Caching
         private static object lockOnDependencyList = new object();
         public void OnNext(ICacheEvent cacheEvent)
         {
-            _logger.Debug("received event with region {0}, uri {1} and type {2}", cacheEvent.RegionPath, cacheEvent.TcmUri, cacheEvent.Type);
+            _logger.Debug("received event with region {0}, uri {1} and type {2}", cacheEvent.RegionPath, cacheEvent.Key, cacheEvent.Type);
             // get the list of dependent items from the cache
             // NOTE: locking is not a problem here since this code is always running on a background thread (QS)
             lock (lockOnDependencyList)
             {
-                IList<string> dependencies = (IList<string>)Cache[GetDependencyCacheKey(cacheEvent.TcmUri)];
+                IList<string> dependencies = (IList<string>)Cache[GetDependencyCacheKey(cacheEvent.Key)];
                 if (dependencies != null)
                 {
                     foreach (var cacheKey in dependencies)
@@ -186,7 +189,7 @@ namespace DD4T.Utils.Caching
                         _logger.Debug("Removed item from cache (key = {0})", cacheKey);
 
                     }
-                    Cache.Remove(GetDependencyCacheKey(cacheEvent.TcmUri));
+                    Cache.Remove(GetDependencyCacheKey(cacheEvent.Key));
                 }
             }        
         }

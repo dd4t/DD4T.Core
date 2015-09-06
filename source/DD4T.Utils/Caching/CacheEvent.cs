@@ -10,7 +10,7 @@ namespace DD4T.Utils.Caching
     public class CacheEvent : ICacheEvent
     {
         public string RegionPath { get; set; }
-        public string TcmUri { get; set; }
+        public string Key { get; set; }
         public int Type { get; set; }
     }
 }
