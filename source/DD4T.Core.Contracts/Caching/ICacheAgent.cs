@@ -6,8 +6,7 @@ using DD4T.ContentModel.Factories;
 
 namespace DD4T.ContentModel.Contracts.Caching
 {
-    public delegate DateTime GetLastPublishDate(string key, object cachedItem);
-
+    
     public interface ICacheAgent
     {
 
@@ -30,8 +29,9 @@ namespace DD4T.ContentModel.Contracts.Caching
         /// </summary>
         /// <param name="key">Identification of the item</param>
         /// <param name="item">The IItem to store (can be a page, component, schema, etc) </param>
-        /// <param name="dependOnItems">List of items on which the current item depends. If one of these items is dropped from the cache, the current item must also be dropped.</param>
-        void Store(String key, object item, List<string> dependOnItems);
+        /// <param name="dependOnTcmUris">List of items on which the current item depends. If one of these items is dropped from the cache, the current item must also be dropped.</param>
+       
+        void Store(String key, object item, List<string> dependOnTcmUris);
 
         /// <summary>
         /// Store an object belonging to a specific region in the cache 
@@ -48,9 +48,11 @@ namespace DD4T.ContentModel.Contracts.Caching
         /// <param name="region">Identification of the region (any string)</param>
         /// <param name="item">The IItem to store (can be a page, component, schema, etc) </param>
         /// <param name="dependOnItems">List of items on which the current item depends</param>
-        void Store(string key, string region, object item, List<string> dependOnItems);
+        
+        void Store(string key, string region, object item, List<string> dependOnTcmUris);
 
-        GetLastPublishDate GetLastPublishDateCallBack { get; set; }
+
+        void Remove(string key);
 
     }
 }

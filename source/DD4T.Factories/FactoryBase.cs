@@ -34,7 +34,6 @@ namespace DD4T.Factories
             PublicationResolver = factoryCommonServices.PublicationResolver;
             Configuration = factoryCommonServices.Configuration;
             CacheAgent = factoryCommonServices.CacheAgent;
-            CacheAgent.GetLastPublishDateCallBack = GetLastPublishedDateCallBack;
         }
 
         /// <summary>

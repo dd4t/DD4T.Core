@@ -76,9 +76,10 @@
     <Compile Include="..\Dynamic Delivery Presentation Solution Items\AssemblyInfo.cs">
       <Link>Properties\AssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Caching\CacheEvent.cs" />
+    <Compile Include="Caching\CacheKeyFactory.cs" />
     <Compile Include="Caching\DefaultCacheAgent.cs" />
-    <Compile Include="Caching\JMSListener.cs" />
-    <Compile Include="Caching\LastPublishDateChangeMonitor.cs" />
+    <Compile Include="Caching\JMSMessageProvider.cs" />
     <Compile Include="ClassLoader.cs" />
     <Compile Include="ConfigurationHelper.cs" />
     <Compile Include="DD4TConfiguration.cs" />
@@ -104,6 +105,7 @@
       <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

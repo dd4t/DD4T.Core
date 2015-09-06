@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using DD4T.ContentModel.Contracts.Caching;
 
 
@@ -68,8 +69,9 @@ namespace DD4T.Utils.Caching
         {
         }
 
-
-        public GetLastPublishDate GetLastPublishDateCallBack { get; set; }
+        public void Remove(string key)
+        {
+        }
 
         #endregion
 

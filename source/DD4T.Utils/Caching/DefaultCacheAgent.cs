@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using DD4T.ContentModel.Contracts.Caching;
 using System.Runtime.Caching;
-using DD4T.Utils;
 using DD4T.ContentModel.Contracts.Configuration;
 using DD4T.ContentModel.Contracts.Logging;
-
+using DD4T.ContentModel.Contracts.Caching;
 
 namespace DD4T.Utils.Caching
 {
@@ -13,13 +11,14 @@ namespace DD4T.Utils.Caching
     /// Default implementation of ICacheAgent, as used by the factories in DD4T.Factories. It uses the System.Runtime.Caching API introduced in .NET 4. This will run in a web environment as well as a windows service, console application or any other type of environment.
     /// If you are unable to run .NET 4, you can use the WebCacheAgent which is part of DD4T.Mvc.
     /// </summary>
-    public class DefaultCacheAgent : ICacheAgent
+    public class DefaultCacheAgent : ICacheAgent, IObserver<ICacheEvent>, IDisposable
     {
         public const int DefaultExpirationInSeconds = 60;
 
         private readonly IDD4TConfiguration _configuration;
         private readonly ILogger _logger;
-
+        private IDisposable unsubscriber;
+       
         public DefaultCacheAgent(IDD4TConfiguration configuration, ILogger logger)
         {
             if (configuration == null)
@@ -63,7 +62,7 @@ namespace DD4T.Utils.Caching
         /// <param name="item">The object to store (can be a page, component, schema, etc) </param>
         public void Store(string key, object item)
         {
-            Cache.Add(key, item, FindCacheItemPolicy(key, item, null, null));
+            Store(key, null, item, null);
         }
 
         /// <summary>
@@ -71,10 +70,10 @@ namespace DD4T.Utils.Caching
         /// </summary>
         /// <param name="key">Identification of the item</param>
         /// <param name="item">The object to store (can be a page, component, schema, etc) </param>
-        /// <param name="dependOnItems">List of items on which the current item depends</param>
-        public void Store(string key, object item, List<string> dependOnItems)
+        /// <param name="dependOnTcmUris">List of items on which the current item depends</param>
+        public void Store(string key, object item, List<string> dependOnTcmUris)
         {
-            Cache.Add(key, item, FindCacheItemPolicy(key, item, null, dependOnItems));
+            Store(key, null, item, dependOnTcmUris);
         }
 
         /// <summary>
@@ -88,7 +87,7 @@ namespace DD4T.Utils.Caching
         /// </remarks>
         public void Store(string key, string region, object item)
         {
-            Cache.Add(key, item, FindCacheItemPolicy(key, item, region, null));
+            Store(key, region, item, null);
         }
 
         /// <summary>
@@ -97,33 +96,45 @@ namespace DD4T.Utils.Caching
         /// <param name="key">Identification of the item</param>
         /// <param name="region">Identification of the region</param>
         /// <param name="item">The object to store (can be a page, component, schema, etc) </param>
-        /// <param name="dependOnItems">List of items on which the current item depends</param>
+        /// <param name="dependOnTcmUris">List of items on which the current item depends</param>
         /// <remarks>The expiration time can be configured by adding an appSetting to the config with key 'CacheSettings_REGION' 
         /// (replace 'REGION' with the name of the region). If this key does not exist, the key 'CacheSettings_Default' will be used.
         /// </remarks>
-        public void Store(string key, string region, object item, List<string> dependOnItems)
+        public void Store(string key, string region, object item, List<string> dependOnTcmUris)
         {
-            Cache.Add(key, item, FindCacheItemPolicy(key, item, region, dependOnItems));
+            Cache.Add(key, item, FindCacheItemPolicy(key, item, region));
+            if (dependOnTcmUris != null)
+            {
+                foreach (string tcmUri in dependOnTcmUris)
+                {
+                    IList<string> dependentItems = (IList<string>) Cache[GetDependencyCacheKey(tcmUri)];
+                    if (dependentItems == null)
+                    {
+                        dependentItems = new List<string>();
+                        dependentItems.Add(key);
+                        continue;
+                    }
+                    if (!dependentItems.Contains(key))
+                    {
+                        dependentItems.Add(key);
+                    }
+                }
+            }
         }
-
-
-        public GetLastPublishDate GetLastPublishDateCallBack { get; set; }
 
         #endregion
 
         #region private
-        private CacheItemPolicy FindCacheItemPolicy(string key, object item, string region, List<string> dependOnItems)
+
+        private string GetDependencyCacheKey(string tcmUri)
+        {
+            return "Dependencies:" + tcmUri;
+        }
+        private CacheItemPolicy FindCacheItemPolicy(string key, object item, string region)
         {
             CacheItemPolicy policy = new CacheItemPolicy();
             policy.Priority = CacheItemPriority.Default;
 
-            if (GetLastPublishDateCallBack != null)
-                policy.ChangeMonitors.Add(new LastPublishDateChangeMonitor(_configuration, _logger, key, item, GetLastPublishDateCallBack));
-
-            if (dependOnItems != null && dependOnItems.Count > 0)
-            {
-                policy.ChangeMonitors.Add(Cache.CreateCacheEntryChangeMonitor(dependOnItems));
-            }
 
             int expirationSetting = 0;
             if (!string.IsNullOrEmpty(region))
@@ -149,6 +160,59 @@ namespace DD4T.Utils.Caching
             policy.AbsoluteExpiration = DateTimeOffset.Now.AddSeconds(expirationInSeconds);
             return policy;
 
+        }
+
+        public void Remove(string key)
+        {
+            Cache.Remove(key);
+        }
+        #endregion
+
+        #region IObserver
+        public virtual void Subscribe(IObservable<ICacheEvent> provider)
+        {
+            unsubscriber = provider.Subscribe(this);
+        }
+
+        public void OnCompleted()
+        {
+            _logger.Debug("Called OnCompleted");
+            // todo: see what this does....
+        }
+
+        public void OnError(Exception error)
+        {
+            throw error;
+        }
+
+
+        private static object lockOnDependencyList = new object();
+        public void OnNext(ICacheEvent cacheEvent)
+        {
+            _logger.Debug("received event with region {0}, uri {1} and type {2}", cacheEvent.RegionPath, cacheEvent.TcmUri, cacheEvent.Type);
+            // get the list of dependent items from the cache
+            // NOTE: locking is not a problem here since this code is always running on a background thread (QS)
+            lock (lockOnDependencyList)
+            {
+                IList<string> dependencies = (IList<string>)Cache[GetDependencyCacheKey(cacheEvent.TcmUri)];
+                if (dependencies != null)
+                {
+                    foreach (var cacheKey in dependencies)
+                    {
+                        Cache.Remove(cacheKey);
+                        _logger.Debug("Removed item from cache (key = {0})", cacheKey);
+
+                    }
+                    Cache.Remove(GetDependencyCacheKey(cacheEvent.TcmUri));
+                }
+            }        
+        }
+        #endregion
+
+        #region IDisposable
+        public void Dispose()
+        {
+            unsubscriber.Dispose();
         }
         #endregion
 

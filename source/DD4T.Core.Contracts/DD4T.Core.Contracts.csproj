@@ -67,6 +67,9 @@
       <Link>Properties\AssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Caching\ICacheAgent.cs" />
+    <Compile Include="Caching\ICacheEvent.cs" />
+    <Compile Include="Caching\IEvent.cs" />
+    <Compile Include="Caching\IMessageProvider.cs" />
     <Compile Include="Configuration\IDD4TConfiguration.cs" />
     <Compile Include="Exceptions\BinaryNotFoundException.cs" />
     <Compile Include="Exceptions\ComponentPresentationNotFoundException.cs" />
