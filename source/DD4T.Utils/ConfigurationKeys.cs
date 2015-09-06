@@ -51,6 +51,6 @@ namespace DD4T.Utils
 
         // Caching settings
         public const string DefaultCacheSettings = "DD4T.CacheSettings.Default";
-        public const string CacheSettingCallBackInterval = "DD4T.CacheSettings.CallBackInterval";
+        public const string CacheSettingsPerRegion = "DD4T.CacheSettings.{0}";
     }
 }

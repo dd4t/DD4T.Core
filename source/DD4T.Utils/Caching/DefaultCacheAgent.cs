@@ -13,8 +13,6 @@ namespace DD4T.Utils.Caching
     /// </summary>
     public class DefaultCacheAgent : ICacheAgent, IObserver<ICacheEvent>, IDisposable
     {
-        public const int DefaultExpirationInSeconds = 60;
-
         private readonly IDD4TConfiguration _configuration;
         private readonly ILogger _logger;
         private IDisposable unsubscriber;
@@ -141,25 +139,10 @@ namespace DD4T.Utils.Caching
             {
                 //Todo: introduce regions in the IDD4TConfiguration interface
                 //expirationSetting = ConfigurationHelper.GetSetting("DD4T.CacheSettings." + region, "CacheSettings_" + region);
+                expirationSetting = _configuration.GetExpirationForCacheRegion(region);
             }
-            if (expirationSetting == 0)
-            {
-                expirationSetting = _configuration.DefaultCacheSettings;
-            }
-            int expirationInSeconds = -1;
-
-            try
-            {
-                expirationInSeconds = expirationSetting == 0 ? DefaultExpirationInSeconds : expirationSetting;
-            }
-            catch
-            {
-                // if the value is not a proper number, we will use the default set in the code automatically
-                expirationInSeconds = DefaultExpirationInSeconds;
-            }
-            policy.AbsoluteExpiration = DateTimeOffset.Now.AddSeconds(expirationInSeconds);
+            policy.AbsoluteExpiration = DateTimeOffset.Now.AddSeconds(expirationSetting);
             return policy;
-
         }
 
         public void Remove(string key)

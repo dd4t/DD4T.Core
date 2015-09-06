@@ -322,19 +322,6 @@ namespace DD4T.Utils
             }
         }
 
-
-        public int CacheCallBackInterval
-        {
-            get
-            {
-                if (_cacheCallBackInterval == null)
-                {
-                    _cacheCallBackInterval = new int?(SafeGetConfigSettingAsInt(ConfigurationKeys.CacheSettingCallBackInterval));
-                }
-                return _cacheCallBackInterval.Value;
-            }
-        }
-
         public string ViewModelKeyField
         {
             get { return SafeGetConfigSettingAsString(ConfigurationKeys.ViewModelKeyFieldName); }
@@ -440,6 +427,23 @@ namespace DD4T.Utils
             }
         }
 
+        private Dictionary<string, int> _expirationPerRegion = new Dictionary<string, int>();
+        public int GetExpirationForCacheRegion(string region)
+        {
+            if (!_expirationPerRegion.ContainsKey(region))
+            {
+                string s = SafeGetConfigSettingAsString(string.Format(ConfigurationKeys.CacheSettingsPerRegion, region));
+                if (string.IsNullOrEmpty(s))
+                {
+                    _expirationPerRegion.Add(region, DefaultCacheSettings);
+                }
+                else
+                {
+                    _expirationPerRegion.Add(region, SafeGetConfigSettingAsInt(string.Format(ConfigurationKeys.CacheSettingsPerRegion, region)));
+                }
+            }
+            return _expirationPerRegion[region];
+        }
 
         public ProviderVersion ProviderVersion
         {
@@ -477,10 +481,12 @@ namespace DD4T.Utils
             Boolean.TryParse(setting, out b);
             return b;
         }
+
+
         #endregion
 
 
 
-       
+
     }
 }

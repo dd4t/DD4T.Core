@@ -28,7 +28,6 @@ namespace DD4T.ContentModel.Contracts.Configuration
         bool LinkToAnchor { get; }
         bool UseUriAsAnchor { get; }
         int DefaultCacheSettings { get; }
-        int CacheCallBackInterval { get; }
         string DataFormat { get; }
         string ContentProviderEndPoint { get; }
         string ResourcePath { get; }
@@ -38,5 +37,7 @@ namespace DD4T.ContentModel.Contracts.Configuration
         string JMSHostname { get; }
         int JMSPort { get; }
         string JMSTopic { get; }
+
+        int GetExpirationForCacheRegion(string region);
     }
 }
