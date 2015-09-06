@@ -38,7 +38,7 @@
   <ItemGroup>
     <Reference Include="Apache.NMS, Version=1.7.0.3635, Culture=neutral, PublicKeyToken=82756feee3957618, processorArchitecture=MSIL">
       <HintPath>..\packages\Apache.NMS.1.7.0\lib\net40\Apache.NMS.dll</HintPath>
-      <Private>True</Private>
+      <Private>False</Private>
     </Reference>
     <Reference Include="DD4T.ContentModel, Version=2.0.3.0, Culture=neutral, PublicKeyToken=4450e3c7f68bf872, processorArchitecture=MSIL">
       <HintPath>..\packages\DD4T.Model.2.0.3-alpha21\lib\net45\DD4T.ContentModel.dll</HintPath>
