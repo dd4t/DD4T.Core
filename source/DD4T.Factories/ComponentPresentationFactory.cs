@@ -11,6 +11,7 @@ using DD4T.ContentModel.Factories;
 using DD4T.ContentModel.Contracts.Serializing;
 using DD4T.Serialization;
 using DD4T.ContentModel.Contracts.Logging;
+using DD4T.Utils.Caching;
 
 namespace DD4T.Factories
 {
@@ -19,8 +20,7 @@ namespace DD4T.Factories
     /// </summary>
     public class ComponentPresentationFactory : FactoryBase, IComponentPresentationFactory
     {
-        public const string CacheKeyFormatByUri = "ComponentPresentationByUri_{0}_{1}";
-        public const string CacheRegion = "ComponentPresentation";
+       public const string CacheRegion = "ComponentPresentation";
         public IComponentPresentationProvider ComponentPresentationProvider { get; set; }
 
         public ComponentPresentationFactory(IComponentPresentationProvider componentPresentationProvider, IFactoryCommonServices factoryCommonServices)
@@ -163,7 +163,8 @@ namespace DD4T.Factories
         public bool TryGetComponentPresentation(out IComponentPresentation cp, string componentUri, string templateUri = "")
         {
             cp = null;
-            string cacheKey = String.Format(CacheKeyFormatByUri, componentUri, templateUri);
+           
+            string cacheKey = CacheKeyFactory.GenerateKeyFromUri(componentUri, CacheRegion);
             cp = (IComponentPresentation)CacheAgent.Load(cacheKey);
 
             if (cp != null)
@@ -197,7 +198,7 @@ namespace DD4T.Factories
             }
 
             LoggerService.Debug("about to store IComponentPresentation in cache ({0})", LoggingCategory.Performance, componentUri);
-            CacheAgent.Store(cacheKey, CacheRegion, cp);
+            CacheAgent.Store(cacheKey, CacheRegion, cp, new List<string> { cp.Component.Id });
             LoggerService.Debug("finished storing IComponentPresentation in cache ({0})", LoggingCategory.Performance, componentUri);
             LoggerService.Debug("<<TryGetComponentPresentation ({0})", LoggingCategory.Performance, componentUri);
 

@@ -13,6 +13,7 @@ using DD4T.Utils;
 using DD4T.ContentModel.Factories;
 using DD4T.Serialization;
 using DD4T.ContentModel.Contracts.Serializing;
+using DD4T.Utils.Caching;
 
 namespace DD4T.Factories
 {
@@ -83,7 +84,7 @@ namespace DD4T.Factories
             LoggerService.Debug(">>TryFindPage ({0}", LoggingCategory.Performance, url);
             page = null;
 
-            string cacheKey = String.Format("Page_{0}_{1}", url, PublicationId);
+            string cacheKey = CacheKeyFactory.GenerateKey(CacheRegion, url, Convert.ToString(PublicationId));
 
             LoggerService.Debug("about to load page from cache with key {0}", LoggingCategory.Performance, cacheKey);
             page = (IPage)CacheAgent.Load(cacheKey);
@@ -100,7 +101,7 @@ namespace DD4T.Factories
                 string pageContentFromBroker = PageProvider.GetContentByUrl(url);
                 LoggerService.Debug("finished loading page content from provider with url {0}, has value: {1}", LoggingCategory.Performance, url, Convert.ToString(!(string.IsNullOrEmpty(pageContentFromBroker))));
 
-                if (!pageContentFromBroker.Equals(String.Empty))
+                if (!string.IsNullOrEmpty(pageContentFromBroker))
                 {
                     LoggerService.Debug("about to create IPage from content for url {0}", LoggingCategory.Performance, url);
                     page = GetIPageObject(pageContentFromBroker);
@@ -108,7 +109,7 @@ namespace DD4T.Factories
                         ((Page)page).LastPublishedDate = PageProvider.GetLastPublishedDateByUrl(url);
                     LoggerService.Debug("finished creating IPage from content for url {0}", LoggingCategory.Performance, url);
                     LoggerService.Debug("about to store page in cache with key {0}", LoggingCategory.Performance, cacheKey);
-                    CacheAgent.Store(cacheKey, CacheRegion, page);
+                    CacheAgent.Store(cacheKey, CacheRegion, page, new List<string> { page.Id });
                     LoggerService.Debug("finished storing page in cache with key {0}", LoggingCategory.Performance, cacheKey);
                     LoggerService.Debug("<<TryFindPage ({0}", LoggingCategory.Performance, url);
                     return true;

@@ -8,43 +8,80 @@ using System.Text;
 
 namespace DD4T.Utils
 {
+    // TODO: make sure each value is retrieved only once (QS)
     public class DD4TConfiguration : IDD4TConfiguration
     {
-        int publicationId = 0;
+        public static readonly string DefaultDefaultPage = "default.html";
+        public static readonly string DefaultDataFormat = "json";
+        public static readonly int DefaultNumberOfRetriesToConnect = 10;
+        public static readonly int DefaultSecondsBetweenRetries = 10;
+
+        private int? _defaultCacheSettings;
+        private int? _cacheCallBackInterval;
+        private string _resourcePath;
+        private bool? _useUriAsAnchor;
+        private int? _jmsPort;
+        private int? _jmsNumberOfRetriesToConnect;
+        private int? _jmsSecondsBetweenRetries;
+        private string _jmsHostname;
+        private string _jmsTopic;
+        int? publicationId;
+        private string _activeWebsite;
+        private string _selectComponentPresentationByComponentTemplateId;
+        private string _selectComponentPresentationByOutputFormat;
+        private string _dataFormat;
+        private string _contentProviderEndPoint;
+        private string _siteMapPath;
+        private int? _binaryHandlerCacheExpiration;
+        private string _binaryFileExtensions;
+        private string _binaryUrlPattern;
+        private bool? _includeLastPublishedDate;
+        private bool? _showAnchors;
+        private bool? _linkToAnchor;
+
         public int PublicationId
         {
             get
             {
-                if (publicationId == 0)
+                if (publicationId == null)
                 {
                     int r = SafeGetConfigSettingAsInt(ConfigurationKeys.PublicationId);
                     if (r == int.MinValue)
                     {
-                        publicationId = 0;
+                        publicationId = new int?(0);
                     }
                     else
                     {
-                        publicationId = r;
+                        publicationId = new int?(r);
                     }
                 }
-                return publicationId;
+                return publicationId.Value;
             }
         }
 
-        string defaulPage = "default.html";
+        private string _defaultPage;
         public string DefaultPage
         {
             get
             {
-                var configurationValue = SafeGetConfigSettingAsString(ConfigurationKeys.WelcomeFile, ConfigurationKeys.WelcomeFileAlt1);
-                if (!string.IsNullOrEmpty(configurationValue))
-                    defaulPage = configurationValue;
-
-                return defaulPage;
+                if (_defaultPage == null)
+                {
+                    var configurationValue = SafeGetConfigSettingAsString(ConfigurationKeys.WelcomeFile, ConfigurationKeys.WelcomeFileAlt1);
+                    if (string.IsNullOrEmpty(configurationValue))
+                    {
+                        _defaultPage = DefaultDefaultPage;
+                    }
+                       else 
+                    {
+                        _defaultPage = configurationValue;
+                    }
+                }
+                return _defaultPage;
             }
         }
 
 
+        [Obsolete]
         public string ComponentPresentationController
         {
             get
@@ -53,6 +90,7 @@ namespace DD4T.Utils
             }
         }
 
+        [Obsolete]
         public string ComponentPresentationAction
         {
             get
@@ -61,66 +99,119 @@ namespace DD4T.Utils
             }
         }
 
+       
         public string ActiveWebsite
         {
             get
             {
-                return SafeGetConfigSettingAsString(ConfigurationKeys.ActiveWebsite, ConfigurationKeys.ActiveWebsiteAlt1);
-
+                if (_activeWebsite == null)
+                {
+                    _activeWebsite = SafeGetConfigSettingAsString(ConfigurationKeys.ActiveWebsite, ConfigurationKeys.ActiveWebsiteAlt1);
+                }
+                return _activeWebsite;
             }
         }
 
+        [Obsolete("Use SelectComponentPresentationByComponentTemplateId instead")]
         public string SelectComponentByComponentTemplateId
         {
             get
             {
-                return SafeGetConfigSettingAsString(ConfigurationKeys.SelectComponentByComponentTemplateId, ConfigurationKeys.SelectComponentByComponentTemplateIdAlt1);
+                return SelectComponentPresentationByComponentTemplateId;
+            }
+        }
+        public string SelectComponentPresentationByComponentTemplateId
+        {
+            get
+            {
+                if (_selectComponentPresentationByComponentTemplateId == null)
+                {
+                    _selectComponentPresentationByComponentTemplateId = SafeGetConfigSettingAsString(ConfigurationKeys.SelectComponentByComponentTemplateId, ConfigurationKeys.SelectComponentByComponentTemplateIdAlt1);
+                }
+                return _selectComponentPresentationByComponentTemplateId;
             }
         }
 
+        [Obsolete("Use SelectComponentPresentationByOutputFormat instead")]
         public string SelectComponentByOutputFormat
         {
             get
             {
-              return SafeGetConfigSettingAsString(ConfigurationKeys.SelectComponentByOutputFormat, ConfigurationKeys.SelectComponentByOutputFormatAlt1);
-
+                return SelectComponentPresentationByOutputFormat;
+            }
+        }
+        public string SelectComponentPresentationByOutputFormat
+        {
+            get
+            {
+                if (_selectComponentPresentationByOutputFormat == null)
+                {
+                    _selectComponentPresentationByOutputFormat = SafeGetConfigSettingAsString(ConfigurationKeys.SelectComponentByOutputFormat, ConfigurationKeys.SelectComponentByOutputFormatAlt1);
+                }
+                return _selectComponentPresentationByOutputFormat;
             }
         }
 
-        private string _dataFormat = "json";
         public string DataFormat
         {
             get
             {
-                var configurationValue = SafeGetConfigSettingAsString(ConfigurationKeys.DataFormat);
-                if (!string.IsNullOrEmpty(configurationValue))
-                    _dataFormat = configurationValue;
-
+                if (_dataFormat == null)
+                {
+                    var configurationValue = SafeGetConfigSettingAsString(ConfigurationKeys.DataFormat);
+                    if (string.IsNullOrEmpty(configurationValue))
+                    {
+                        _dataFormat = DefaultDataFormat;
+                    }
+                    else
+                    {
+                        _dataFormat = configurationValue;
+                    }
+                }
                 return _dataFormat;
             }
         }
+
+ 
 
         public string ContentProviderEndPoint
         {
             get
             {
-               var configurationvalue = SafeGetConfigSettingAsString(ConfigurationKeys.ContentProviderEndPoint);
-                if(string.IsNullOrEmpty(configurationvalue))
-                    throw new ConfigurationErrorsException("Content Provider endpoint not defined. Configure 'DD4T.ContentProviderEndPoint'.");
-
-                return configurationvalue;
+                if (_contentProviderEndPoint == null)
+                {
+                    var configurationvalue = SafeGetConfigSettingAsString(ConfigurationKeys.ContentProviderEndPoint);
+                    if (string.IsNullOrEmpty(configurationvalue))
+                    {
+                        throw new ConfigurationErrorsException(string.Format("Content Provider endpoint not defined. Configure '{0}'.", ConfigurationKeys.ContentProviderEndPoint));
+                    }
+                    else
+                    {
+                        _contentProviderEndPoint = configurationvalue;
+                    }
+                }
+                return _contentProviderEndPoint;
             }
         }
+       
 
         public string SiteMapPath
         {
             get
             {
-               var configurationvalue = SafeGetConfigSettingAsString(ConfigurationKeys.SitemapPath, ConfigurationKeys.SitemapPathAlt1);
-                if(string.IsNullOrEmpty(configurationvalue))
-                    throw new ConfigurationErrorsException("SiteMapPath not defined. Configure 'DD4T.SitemapPath'.");
-
-                return configurationvalue;
+                if (_siteMapPath == null)
+                {
+                    var configurationvalue = SafeGetConfigSettingAsString(ConfigurationKeys.SitemapPath, ConfigurationKeys.SitemapPathAlt1);
+                    if (string.IsNullOrEmpty(configurationvalue))
+                    {
+                        throw new ConfigurationErrorsException(string.Format("SiteMapPath not defined. Configure '{0}'.", ConfigurationKeys.SitemapPath));
+                    }
+                    else
+                    {
+                        _siteMapPath = configurationvalue;
+                    }
+                }
+                return _siteMapPath;
             }
         }
 
@@ -128,49 +219,81 @@ namespace DD4T.Utils
         {
             get
             {
-                return SafeGetConfigSettingAsInt(ConfigurationKeys.BinaryHandlerCacheExpiration, ConfigurationKeys.BinaryHandlerCacheExpirationAlt1);
-
+                if (_binaryHandlerCacheExpiration == null)
+                {
+                    _binaryHandlerCacheExpiration = new int?(SafeGetConfigSettingAsInt(ConfigurationKeys.BinaryHandlerCacheExpiration, ConfigurationKeys.BinaryHandlerCacheExpirationAlt1));
+                }
+                return _binaryHandlerCacheExpiration.Value;
             }
         }
 
+        
         public string BinaryFileExtensions
         {
             get
             {
-               var configurationvalue = SafeGetConfigSettingAsString(ConfigurationKeys.BinaryFileExtensions ,ConfigurationKeys.BinaryFileExtensionsAlt1 );
-                if(string.IsNullOrEmpty(configurationvalue))
-                    throw new ConfigurationErrorsException("BinaryFileExtensions not defined. Configure 'DD4T.BinaryFileExtensions'.");
-
-                return configurationvalue;
+                if (_binaryFileExtensions == null)
+                {
+                    var configurationvalue = SafeGetConfigSettingAsString(ConfigurationKeys.BinaryFileExtensions, ConfigurationKeys.BinaryFileExtensionsAlt1);
+                    if (string.IsNullOrEmpty(configurationvalue))
+                    {
+                        throw new ConfigurationErrorsException(string.Format("BinaryFileExtensions not defined. Configure '{0}'.", ConfigurationKeys.BinaryFileExtensions));
+                    }
+                    else
+                    {
+                        _binaryFileExtensions = configurationvalue;
+                    }
+                }
+                return _binaryFileExtensions;
             }
         }
+
 
         public string BinaryUrlPattern
         {
             get
             {
-               var configurationvalue = SafeGetConfigSettingAsString(ConfigurationKeys.BinaryUrlPattern );
-                if(string.IsNullOrEmpty(configurationvalue))
-                    throw new ConfigurationErrorsException("BinaryUrlPattern not defined. Configure 'DD4T.BinaryUrlPattern'.");
+                if (_binaryUrlPattern == null)
+                {
 
-                return configurationvalue;
+                    var configurationvalue = SafeGetConfigSettingAsString(ConfigurationKeys.BinaryUrlPattern);
+                    if (string.IsNullOrEmpty(configurationvalue))
+                    {
+                        throw new ConfigurationErrorsException(string.Format("BinaryUrlPattern not defined. Configure '{0}'.", ConfigurationKeys.BinaryUrlPattern));
+                    }
+                    else
+                    {
+                        _binaryUrlPattern = configurationvalue;
+                    }
+                }
+                return _binaryUrlPattern;
             }
         }
-
 
         public bool IncludeLastPublishedDate
         {
             get
             {
-                return SafeGetConfigSettingAsBoolean(ConfigurationKeys.IncludeLastPublishedDate);
+                if (_includeLastPublishedDate == null)
+                {
+                    _includeLastPublishedDate = new bool?(SafeGetConfigSettingAsBoolean(ConfigurationKeys.IncludeLastPublishedDate));
+                }
+                return _includeLastPublishedDate.Value;
             }
         }
+
+    
+
 
         public bool ShowAnchors
         {
             get
             {
-                return SafeGetConfigSettingAsBoolean(ConfigurationKeys.ShowAnchors);
+                if (_showAnchors == null)
+                {
+                    _showAnchors = new bool?(SafeGetConfigSettingAsBoolean(ConfigurationKeys.ShowAnchors));
+                }
+                return _showAnchors.Value;
             }
         }
 
@@ -179,7 +302,11 @@ namespace DD4T.Utils
         {
             get
             {
-                return SafeGetConfigSettingAsBoolean(ConfigurationKeys.LinkToAnchor);
+                if (_linkToAnchor == null)
+                {
+                    _linkToAnchor = new bool?(SafeGetConfigSettingAsBoolean(ConfigurationKeys.LinkToAnchor));
+                }
+                return _linkToAnchor.Value;
             }
         }
 
@@ -187,35 +314,142 @@ namespace DD4T.Utils
         {
             get
             {
-                return SafeGetConfigSettingAsInt(ConfigurationKeys.DefaultCacheSettings);
+                if (_defaultCacheSettings == null)
+                {
+                    _defaultCacheSettings = new int?(SafeGetConfigSettingAsInt(ConfigurationKeys.DefaultCacheSettings));
+                }
+                return _defaultCacheSettings.Value;
             }
         }
 
-
-        public int CacheCallBackInterval
+        public string ViewModelKeyField
+        {
+            get { return SafeGetConfigSettingAsString(ConfigurationKeys.ViewModelKeyFieldName); }
+        }
+        public string ResourcePath
         {
             get
             {
-                return SafeGetConfigSettingAsInt(ConfigurationKeys.CacheSettingCallBackInterval);
+                if (_resourcePath == null)
+                {
+                    _resourcePath = SafeGetConfigSettingAsString(ConfigurationKeys.ResourcePath);
+                }
+                return _resourcePath;
             }
         }
 
-        public string ResourcePath
-        {
-            get { throw new NotImplementedException(); }
-        }
+      
         public bool UseUriAsAnchor
         {
             get
             {
-               return SafeGetConfigSettingAsBoolean(ConfigurationKeys.UseUriAsAnchor );
+                if (_useUriAsAnchor == null)
+                {
+                    _useUriAsAnchor = new bool?(SafeGetConfigSettingAsBoolean(ConfigurationKeys.UseUriAsAnchor));
+                }
+               return _useUriAsAnchor.Value;
             }
+        }
+
+
+
+        public int JMSPort
+        {
+            get
+            {
+                if (_jmsPort == null)
+                {
+                    _jmsPort = new int?(SafeGetConfigSettingAsInt(ConfigurationKeys.JMSPort));
+                }
+                return _jmsPort.Value;
+            }
+        }
+        public int JMSNumberOfRetriesToConnect
+        {
+            get
+            {
+                if (_jmsNumberOfRetriesToConnect == null)
+                {
+                    string configurationvalue = SafeGetConfigSettingAsString(ConfigurationKeys.JMSNumberOfRetriesToConnect);
+                    if (string.IsNullOrEmpty(configurationvalue))
+                    {
+                        _jmsNumberOfRetriesToConnect = new int?(DefaultNumberOfRetriesToConnect);
+                    }
+                    else
+                    {
+                        _jmsNumberOfRetriesToConnect = new int?(SafeGetConfigSettingAsInt(ConfigurationKeys.JMSNumberOfRetriesToConnect));
+                    }
+                }
+                return _jmsNumberOfRetriesToConnect.Value;
+            }
+        }
+        public int JMSSecondsBetweenRetries
+        {
+            get
+            {
+                if (_jmsSecondsBetweenRetries == null)
+                {
+                    string configurationvalue = SafeGetConfigSettingAsString(ConfigurationKeys.JMSSecondsBetweenRetries);
+                    if (string.IsNullOrEmpty(configurationvalue))
+                    {
+                        _jmsSecondsBetweenRetries = new int?(DefaultSecondsBetweenRetries);
+                    }
+                    else
+                    {
+                        _jmsSecondsBetweenRetries = new int?(SafeGetConfigSettingAsInt(ConfigurationKeys.JMSSecondsBetweenRetries));
+                    }
+                }
+                return _jmsSecondsBetweenRetries.Value;
+            }
+        }
+
+        public string JMSHostname
+        {
+            get
+            {
+                if (_jmsHostname == null)
+                {
+                    _jmsHostname = SafeGetConfigSettingAsString(ConfigurationKeys.JMSHostname);
+                }
+                return _jmsHostname;
+            }
+        }
+
+        public string JMSTopic
+        {
+            get
+            {
+                if (_jmsTopic == null)
+                {
+                    _jmsTopic = SafeGetConfigSettingAsString(ConfigurationKeys.JMSTopic);
+                }
+                return _jmsTopic;
+            }
+        }
+
+        private Dictionary<string, int> _expirationPerRegion = new Dictionary<string, int>();
+        public int GetExpirationForCacheRegion(string region)
+        {
+            if (!_expirationPerRegion.ContainsKey(region))
+            {
+                string s = SafeGetConfigSettingAsString(string.Format(ConfigurationKeys.CacheSettingsPerRegion, region));
+                if (string.IsNullOrEmpty(s))
+                {
+                    _expirationPerRegion.Add(region, DefaultCacheSettings);
+                }
+                else
+                {
+                    _expirationPerRegion.Add(region, SafeGetConfigSettingAsInt(string.Format(ConfigurationKeys.CacheSettingsPerRegion, region)));
+                }
+            }
+            return _expirationPerRegion[region];
         }
 
         public ProviderVersion ProviderVersion
         {
             get { throw new NotImplementedException(); }
         }
+
 
         #region private methods
         private static string SafeGetConfigSettingAsString(params string[] keys)
@@ -247,7 +481,12 @@ namespace DD4T.Utils
             Boolean.TryParse(setting, out b);
             return b;
         }
+
+
         #endregion
+
+
+
 
     }
 }
