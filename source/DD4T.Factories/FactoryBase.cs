@@ -42,6 +42,7 @@ namespace DD4T.Factories
         /// <param name="key">Key of the object in the cache</param>
         /// <param name="cachedItem">The object in the cache</param>
         /// <returns></returns>
+        [Obsolete]
         public abstract DateTime GetLastPublishedDateCallBack(string key, object cachedItem);
 
 

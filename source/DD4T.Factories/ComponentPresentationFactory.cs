@@ -126,6 +126,7 @@ namespace DD4T.Factories
             return ComponentPresentationProvider.GetLastPublishedDate(componentUri);
         }
 
+        [Obsolete]
         public override DateTime GetLastPublishedDateCallBack(string key, object cachedItem)
         {
             if (cachedItem == null)

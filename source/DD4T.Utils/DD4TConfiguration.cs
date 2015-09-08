@@ -17,7 +17,6 @@ namespace DD4T.Utils
         public static readonly int DefaultSecondsBetweenRetries = 10;
 
         private int? _defaultCacheSettings;
-        private int? _cacheCallBackInterval;
         private string _resourcePath;
         private bool? _useUriAsAnchor;
         private int? _jmsPort;

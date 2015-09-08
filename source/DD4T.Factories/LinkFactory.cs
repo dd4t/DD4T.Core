@@ -116,6 +116,7 @@ namespace DD4T.Factories
                 return resolvedUrl;
             }
         }
+        [Obsolete]
         public override DateTime GetLastPublishedDateCallBack(string key, object cachedItem)
         {
             throw new NotImplementedException();

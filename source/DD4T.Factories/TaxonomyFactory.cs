@@ -52,7 +52,7 @@ namespace DD4T.Factories
             throw new KeywordNotFoundException();
         }
 
-
+        [Obsolete]
         public override DateTime GetLastPublishedDateCallBack(string key, object cachedItem)
         {
             throw new NotImplementedException();
