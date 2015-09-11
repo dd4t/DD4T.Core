@@ -493,13 +493,13 @@ namespace DD4T.ViewModels.Attributes
                     fieldValue = values;
                 else
                     fieldValue = values.Cast<object>()
-                        .Select(value => BuildModel(factory, BuildModelData(value, field, template)))
+                        .Select(value => BuildModel(factory, BuildModelData(value, field, template), property))
                     .Where(value => value != null);
             }
             return fieldValue;
         }
 
-        protected virtual object BuildModel(IViewModelFactory factory, IModel data)
+        protected virtual object BuildModel(IViewModelFactory factory, IModel data, IModelProperty property)
         {
             object result = null;
             if (ComplexTypeMapping != null)
@@ -508,7 +508,7 @@ namespace DD4T.ViewModels.Attributes
             }
             else
             {
-                var modelType = GetModelType(data, factory);
+                var modelType = GetModelType(data, factory, property);
                 result = modelType != null ? factory.BuildViewModel(modelType, data) : null;
             }
             return result;
@@ -517,7 +517,7 @@ namespace DD4T.ViewModels.Attributes
         public abstract IEnumerable GetRawValues(IField field);
 
         protected abstract IModel BuildModelData(object value, IField field, ITemplate template);
-        protected abstract Type GetModelType(IModel data, IViewModelFactory factory);
+        protected abstract Type GetModelType(IModel data, IViewModelFactory factory, IModelProperty property);
         protected abstract bool ReturnRawData { get; }
 
         public override Type ExpectedReturnType
