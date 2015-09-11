@@ -8,7 +8,6 @@ using System.Text;
 
 namespace DD4T.Utils
 {
-    // TODO: make sure each value is retrieved only once (QS)
     public class DD4TConfiguration : IDD4TConfiguration
     {
         public static readonly string DefaultWelcomeFile = "default.html";
