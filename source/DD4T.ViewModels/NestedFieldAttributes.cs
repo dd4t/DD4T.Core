@@ -109,7 +109,7 @@ namespace DD4T.ViewModels.Attributes
         {
             get
             {
-                return LinkedComponentTypes == null;
+                return false; // return LinkedComponentTypes == null; // If we base our return type on the type of the model property, we never have to return the raw data type
             }
         }
     }
