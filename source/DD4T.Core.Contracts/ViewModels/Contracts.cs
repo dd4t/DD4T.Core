@@ -579,7 +579,7 @@ namespace DD4T.Core.Contracts.ViewModels
         //Anything?
     }
 
-    public interface IRenderable
+    public interface IRenderableViewModel : IViewModel
     {
         IRenderData RenderData { get; set; }
     }
