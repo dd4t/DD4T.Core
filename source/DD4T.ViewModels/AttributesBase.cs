@@ -387,12 +387,12 @@ namespace DD4T.ViewModels.Attributes
                 if (data is IComponentPresentation)
                 {
                     var definedData = data as IComponentPresentation;
-                    schemaRootElementName = definedData.Component.Schema.RootElementName;
+                    schemaRootElementName = definedData.Component.Multimedia == null ? definedData.Component.Schema.RootElementName : definedData.Component.Schema.Title;
                 }
                 else if (data is IComponent)
                 {
                     var definedData = data as IComponent;
-                    schemaRootElementName = definedData.Schema.Title;
+                    schemaRootElementName = definedData.Multimedia == null ? definedData.Schema.RootElementName : definedData.Schema.Title;
                 }
                 else if (data is IEmbeddedFields)
                 {
