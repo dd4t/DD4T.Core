@@ -197,7 +197,10 @@ namespace DD4T.Utils.Caching
         #region IDisposable
         public void Dispose()
         {
-            unsubscriber.Dispose();
+            if (unsubscriber != null)
+            {
+                unsubscriber.Dispose();
+            }
         }
         #endregion
 
