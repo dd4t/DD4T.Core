@@ -8,16 +8,14 @@ using System.Text;
 
 namespace DD4T.Utils
 {
-    // TODO: make sure each value is retrieved only once (QS)
     public class DD4TConfiguration : IDD4TConfiguration
     {
-        public static readonly string DefaultDefaultPage = "default.html";
+        public static readonly string DefaultWelcomeFile = "default.html";
         public static readonly string DefaultDataFormat = "json";
         public static readonly int DefaultNumberOfRetriesToConnect = 10;
         public static readonly int DefaultSecondsBetweenRetries = 10;
 
         private int? _defaultCacheSettings;
-        private int? _cacheCallBackInterval;
         private string _resourcePath;
         private bool? _useUriAsAnchor;
         private int? _jmsPort;
@@ -59,24 +57,24 @@ namespace DD4T.Utils
             }
         }
 
-        private string _defaultPage;
-        public string DefaultPage
+        private string _welcomeFile;
+        public string WelcomeFile
         {
             get
             {
-                if (_defaultPage == null)
+                if (_welcomeFile == null)
                 {
                     var configurationValue = SafeGetConfigSettingAsString(ConfigurationKeys.WelcomeFile, ConfigurationKeys.WelcomeFileAlt1);
                     if (string.IsNullOrEmpty(configurationValue))
                     {
-                        _defaultPage = DefaultDefaultPage;
+                        _welcomeFile = DefaultWelcomeFile;
                     }
                        else 
                     {
-                        _defaultPage = configurationValue;
+                        _welcomeFile = configurationValue;
                     }
                 }
-                return _defaultPage;
+                return _welcomeFile;
             }
         }
 

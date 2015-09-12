@@ -9,7 +9,7 @@ namespace DD4T.ContentModel.Contracts.Configuration
     public interface IDD4TConfiguration
     {
         int PublicationId { get; }
-        string DefaultPage { get; }
+        string WelcomeFile { get; }
         string ComponentPresentationController { get; }
         string ComponentPresentationAction { get; }
         string ActiveWebsite { get; }

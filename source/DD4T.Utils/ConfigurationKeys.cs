@@ -28,15 +28,13 @@ namespace DD4T.Utils
         public const string SelectComponentByOutputFormatAlt1 = "DD4T.SelectComponentByOutputFormat";
         public const string ActiveWebsite = "DD4T.Site.ActiveWebSite";
         public const string ActiveWebsiteAlt1 = "Site.ActiveWebSite";
-        public const string DefaultPage = "DD4T.DefaultPage";
-        public const string DefaultPageAlt1 = "DefaultPage";
         public const string ShowAnchors = "DD4T.ShowAnchors";
         public const string LinkToAnchor = "DD4T.LinkToAnchor";
         public const string UseUriAsAnchor = "DD4T.UseUriAsAnchor";
         public const string PublicationId = "DD4T.PublicationId";
         public const string BinaryUrlPattern = "DD4T.BinaryUrlPattern";
         public const string WelcomeFile = "DD4T.WelcomeFile";
-        public const string WelcomeFileAlt1 = "DefaultPage";
+        public const string WelcomeFileAlt1 = "DD4T.DefaultPage";
         public const string DataFormat = "DD4T.DataFormat";
         public const string ResourcePath = "DD4T.ResourcePath";
         public const string ViewModelKeyFieldName = "DD4T.ViewModels.ViewModelKeyFieldName";

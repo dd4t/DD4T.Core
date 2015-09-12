@@ -66,12 +66,12 @@
     <Compile Include="BaseClasses.cs" />
     <Compile Include="Binding.cs" />
     <Compile Include="BindingImpl.cs" />
-    <Compile Include="Contracts.cs" />
     <Compile Include="Core.cs" />
     <Compile Include="Exceptions.cs" />
     <Compile Include="NestedFieldAttributes.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reflection.cs" />
+    <Compile Include="RenderData.cs" />
     <Compile Include="ViewModelFactory.cs" />
     <Compile Include="XpmRenderer.cs" />
     <Compile Include="XPM\XpmExtensions.cs" />

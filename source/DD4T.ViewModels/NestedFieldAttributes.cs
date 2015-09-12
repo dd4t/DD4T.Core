@@ -40,8 +40,9 @@ namespace DD4T.ViewModels.Attributes
             };
         }
 
-        protected override Type GetModelType(IModel data, IViewModelFactory factory)
+        protected override Type GetModelType(IModel data, IViewModelFactory factory, IModelProperty property)
         {
+            // TODO: read type from model property
             return EmbeddedModelType;
         }
 
@@ -72,6 +73,7 @@ namespace DD4T.ViewModels.Attributes
         {
             return field.LinkedComponentValues;
         }
+        // TODO: remove once reading type from model property works
         public Type[] LinkedComponentTypes //Is there anyway to enforce the types passed to this?
         {
             get;
@@ -88,25 +90,26 @@ namespace DD4T.ViewModels.Attributes
             };
         }
 
-        protected override Type GetModelType(IModel data, IViewModelFactory factory)
+        protected override Type GetModelType(IModel data, IViewModelFactory factory, IModelProperty property)
         {
-            Type result = null;
-            try
-            {
-                result = factory.FindViewModelByAttribute<IContentModelAttribute>(data, LinkedComponentTypes);
-            }
-            catch (ViewModelTypeNotFoundException)
-            {
-                result = null;
-            }
-            return result;
+            return property.ModelType;
+            //Type result = null;
+            //try
+            //{
+            //    result = factory.FindViewModelByAttribute<IContentModelAttribute>(data, LinkedComponentTypes);
+            //}
+            //catch (ViewModelTypeNotFoundException)
+            //{
+            //    result = null;
+            //}
+            //return result;
         }
 
         protected override bool ReturnRawData
         {
             get
             {
-                return LinkedComponentTypes == null;
+                return false; // return LinkedComponentTypes == null; // If we base our return type on the type of the model property, we never have to return the raw data type
             }
         }
     }
@@ -117,6 +120,7 @@ namespace DD4T.ViewModels.Attributes
         {
             return field.Keywords;
         }
+        // TODO: remove once reading type from model property works
         public Type KeywordType { get; set; }
         protected override IModel BuildModelData(object value, IField field, ITemplate template)
         {
@@ -124,9 +128,10 @@ namespace DD4T.ViewModels.Attributes
             return keyword;
         }
 
-        protected override Type GetModelType(IModel data, IViewModelFactory factory)
+        protected override Type GetModelType(IModel data, IViewModelFactory factory, IModelProperty property)
         {
-            return KeywordType;
+            return property.ModelType;
+            //return KeywordType;
         }
 
         protected override bool ReturnRawData

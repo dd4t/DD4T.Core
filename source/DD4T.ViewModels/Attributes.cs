@@ -125,6 +125,41 @@ namespace DD4T.ViewModels.Attributes
             }
         }
     }
+
+    /// <summary>
+    /// The Title of a Keyword field. 
+    /// </summary>
+    public class KeywordTitleFieldAttribute : FieldAttributeBase, ICanBeBoolean
+    {
+        /// <summary>
+        /// The Key of a Keyword field.
+        /// </summary>
+        /// <param name="fieldName">Tridion schema field name</param>
+        //public KeywordKeyFieldAttribute(string fieldName) : base(fieldName) { }
+        public override IEnumerable GetFieldValues(IField field, IModelProperty property, ITemplate template, IViewModelFactory factory)
+        {
+            IEnumerable value = null;
+            var values = field.Keywords;
+            if (IsBooleanValue)
+                value = values.Select(k => { bool b; return bool.TryParse(k.Title, out b) && b; });
+            else value = values.Select(k => k.Title);
+            return value;
+        }
+
+        /// <summary>
+        /// Set to true to parse the Keyword title into a boolean value.
+        /// </summary>
+        public bool IsBooleanValue { get; set; }
+        public override Type ExpectedReturnType
+        {
+            get
+            {
+                return IsBooleanValue ? typeof(bool) : typeof(string);
+            }
+        }
+    }
+
+
     /// <summary>
     /// The Key of a Keyword as a number
     /// </summary>
@@ -363,4 +398,7 @@ namespace DD4T.ViewModels.Attributes
             return result;
         }
     }
+
+   
+
 }

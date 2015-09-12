@@ -4,19 +4,24 @@ using System.Runtime.Caching;
 using DD4T.ContentModel.Contracts.Configuration;
 using DD4T.ContentModel.Contracts.Logging;
 using DD4T.ContentModel.Contracts.Caching;
+using DD4T.ContentModel.Factories;
+using DD4T.ContentModel;
 
 namespace DD4T.Utils.Caching
 {
     /// <summary>
-    /// Default implementation of ICacheAgent, as used by the factories in DD4T.Factories. It uses the System.Runtime.Caching API introduced in .NET 4. This will run in a web environment as well as a windows service, console application or any other type of environment.
+    /// Implementation of ICacheAgent which is connected to the Tridion cache. It will only work if the Tridion object cache is enabled. 
+    /// Note that on each call, the last publish date is retrieved from the JVM in memory (through Juggernet). 
+    /// There are no calls to the database, but the 'bridge' from .NET to Java is crossed every single time. Use with caution!
     /// </summary>
-    public class DefaultCacheAgent : ICacheAgent, IObserver<ICacheEvent>, IDisposable
+    public class TridionBackedCacheAgent : ICacheAgent, IObserver<ICacheEvent>, IDisposable
     {
         private readonly IDD4TConfiguration _configuration;
         private readonly ILogger _logger;
-        private IDisposable unsubscriber;
-       
-        public DefaultCacheAgent(IDD4TConfiguration configuration, ILogger logger)
+        private IPageFactory _pageFactory;
+        private IComponentPresentationFactory _componentPresentationFactory;
+
+        public TridionBackedCacheAgent(IDD4TConfiguration configuration, ILogger logger, IPageFactory pageFactory, IComponentPresentationFactory componentpresentationFactory)
         {
             if (configuration == null)
                 throw new ArgumentNullException("configuration");
@@ -26,6 +31,8 @@ namespace DD4T.Utils.Caching
 
             _logger = logger;
             _configuration = configuration;
+            _pageFactory = pageFactory;
+            _componentPresentationFactory = componentpresentationFactory;
         }
 
         #region properties
@@ -48,7 +55,26 @@ namespace DD4T.Utils.Caching
         /// <returns></returns>
         public object Load(string key)
         {
-            return Cache[key];
+            CacheItem cacheItem = (CacheItem) Cache[key];
+            if (cacheItem == null)
+            {
+                return null;
+            }
+           
+            if (cacheItem.TcmUris != null)
+            {
+                foreach (TcmUri tcmUri in cacheItem.TcmUris)
+                {
+                    DateTime lpd = tcmUri.ItemTypeId == 64 ? _pageFactory.GetLastPublishedDateByUri(tcmUri.ToString()) : _componentPresentationFactory.GetLastPublishedDate(tcmUri.ToString());
+                    if (lpd > cacheItem.LastPublishedDate)
+                    {
+                        // item has been republished or unpublished
+                        Cache.Remove(key);
+                        return null;
+                    }
+                }
+            }
+            return cacheItem.Item;
         }
 
 
@@ -99,27 +125,24 @@ namespace DD4T.Utils.Caching
         /// </remarks>
         public void Store(string key, string region, object item, List<string> dependOnTcmUris)
         {
-            Cache.Add(key, item, FindCacheItemPolicy(key, item, region));
-            if (dependOnTcmUris != null)
+            CacheItem cacheItem;
+            if (item is IPage)
             {
-                foreach (string tcmUri in dependOnTcmUris)
-                {
-                    TcmUri u = new TcmUri(tcmUri);
-                    string lookupkey = string.Format("{0}:{1}", u.PublicationId, u.ItemId);  // Tridion communicates about cache expiry using a key like 6:1120 (pubid:itemid)
-                    IList<string> dependentItems = (IList<string>) Cache[GetDependencyCacheKey(lookupkey)];
-                    if (dependentItems == null)
-                    {
-                        dependentItems = new List<string>();
-                        dependentItems.Add(key);
-                        Cache.Add(GetDependencyCacheKey(lookupkey), dependentItems, DateTimeOffset.MaxValue);
-                        continue;
-                    }
-                    if (!dependentItems.Contains(key))
-                    {
-                        dependentItems.Add(key);
-                    }
-                }
+                cacheItem = new CacheItem (item, ((IPage)item).LastPublishedDate, dependOnTcmUris);
             }
+            else if (item is IComponentPresentation)
+            {
+                cacheItem = new CacheItem (item, ((IComponentPresentation)item).Component.LastPublishedDate, dependOnTcmUris);
+            }
+            else if (item is IComponent)
+            {
+                cacheItem = new CacheItem(item, ((IComponent)item).LastPublishedDate, dependOnTcmUris);
+            }
+            else
+            {
+                cacheItem = new CacheItem (item);
+            }
+            Cache.Add(key, cacheItem, FindCacheItemPolicy(key, item, region));
         }
 
         #endregion
@@ -156,13 +179,11 @@ namespace DD4T.Utils.Caching
         #region IObserver
         public virtual void Subscribe(IObservable<ICacheEvent> provider)
         {
-            unsubscriber = provider.Subscribe(this);
+            throw new NotSupportedException("Operation is not supported by the TridionBackedCacheAgent. To subscribe to the JMSMessageProvider use the DefaultCacheAgent instead.");
         }
 
         public void OnCompleted()
         {
-            _logger.Debug("Called OnCompleted");
-            // todo: see what this does....
         }
 
         public void OnError(Exception error)
@@ -170,39 +191,39 @@ namespace DD4T.Utils.Caching
             throw error;
         }
 
-
-        private static object lockOnDependencyList = new object();
         public void OnNext(ICacheEvent cacheEvent)
         {
-            _logger.Debug("received event with region {0}, uri {1} and type {2}", cacheEvent.RegionPath, cacheEvent.Key, cacheEvent.Type);
-            // get the list of dependent items from the cache
-            // NOTE: locking is not a problem here since this code is always running on a background thread (QS)
-            lock (lockOnDependencyList)
-            {
-                IList<string> dependencies = (IList<string>)Cache[GetDependencyCacheKey(cacheEvent.Key)];
-                if (dependencies != null)
-                {
-                    foreach (var cacheKey in dependencies)
-                    {
-                        Cache.Remove(cacheKey);
-                        _logger.Debug("Removed item from cache (key = {0})", cacheKey);
-
-                    }
-                    Cache.Remove(GetDependencyCacheKey(cacheEvent.Key));
-                }
-            }        
+            // nothing to do
         }
         #endregion
 
         #region IDisposable
         public void Dispose()
         {
-            if (unsubscriber != null)
-            {
-                unsubscriber.Dispose();
-            }
         }
         #endregion
+
+        internal class CacheItem
+        {
+            internal CacheItem(object item)
+            {
+                Item = item;
+                TcmUris = new List<TcmUri>();
+            }
+            internal CacheItem(object item, DateTime lastPublishedDate, List<string> dependentTcmUris)
+            {
+                Item = item;
+                LastPublishedDate = lastPublishedDate;
+                TcmUris = new List<TcmUri>();
+                foreach (var u in dependentTcmUris)
+                {
+                    TcmUris.Add(new TcmUri(u));
+                }
+            }
+            internal object Item { get; private set; }
+            internal DateTime LastPublishedDate { get; private set; }
+            internal List<TcmUri> TcmUris { get; private set; }
+        }
 
     }
 }

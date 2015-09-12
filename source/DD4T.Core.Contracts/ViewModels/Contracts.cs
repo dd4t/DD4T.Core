@@ -578,4 +578,17 @@ namespace DD4T.Core.Contracts.ViewModels
     {
         //Anything?
     }
+
+    public interface IRenderableViewModel : IViewModel
+    {
+        IRenderData RenderData { get; set; }
+    }
+
+    public interface IRenderData
+    {
+        string View { get; set; }
+        string Controller { get; set; }
+        string Action { get; set; }
+        string Region { get; set; }
+    }
 }

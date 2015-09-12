@@ -295,6 +295,7 @@ namespace DD4T.Factories
             return PageProvider.GetLastPublishedDateByUri(uri);
         }
 
+        [Obsolete]
         public override DateTime GetLastPublishedDateCallBack(string key, object cachedItem)
         {
 
