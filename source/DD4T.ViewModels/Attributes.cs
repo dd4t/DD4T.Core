@@ -241,7 +241,7 @@ namespace DD4T.ViewModels.Attributes
     {
         public override IEnumerable GetPropertyValues(IPage page, Type propertyType, IViewModelFactory factory)
         {
-            return component == null ? null : new string[] { page.Title };
+            return page == null ? null : new string[] { page.Title };
         }
         public override Type ExpectedReturnType
         {
