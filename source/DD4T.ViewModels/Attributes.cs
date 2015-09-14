@@ -235,6 +235,20 @@ namespace DD4T.ViewModels.Attributes
         }
     }
     /// <summary>
+    /// The title of the Page (if the view model represents a Page)
+    /// </summary>
+    public class PageTitleAttribute : PageAttributeBase
+    {
+        public override IEnumerable GetPropertyValues(IPage page, Type propertyType, IViewModelFactory factory)
+        {
+            return component == null ? null : new string[] { page.Title };
+        }
+        public override Type ExpectedReturnType
+        {
+            get { return typeof(String); }
+        }
+    }
+    /// <summary>
     /// A DD4T IMultimedia object representing the multimedia data of the model
     /// </summary>
     public class DD4TMultimediaAttribute : ComponentAttributeBase
@@ -256,12 +270,35 @@ namespace DD4T.ViewModels.Attributes
             get { return typeof(IMultimedia); }
         }
     }
+     /// <summary>
+    /// All Component Presentations on a Page
+    /// </summary>
+    public class ComponentPresentationsAttribute : ComponentPresentationsAttributeBase
+    {
+        public override IEnumerable GetPresentationValues(IList<IComponentPresentation> cps, IModelProperty property, IViewModelFactory factory)
+        {
+            return cps.Select(cp =>
+                        {
+                            object model = null;
+                            if (ComplexTypeMapping != null)
+                            {
+                                model = factory.BuildMappedModel(cp, ComplexTypeMapping);
+                            }
+                            else model = factory.BuildViewModel((cp));
+                            return model;
+                        });
+        }
+        public override Type ExpectedReturnType
+        {
+            get { return typeof(IList<IViewModel>); }
+        }
+    }
     /// <summary>
     /// Component Presentations filtered by the DD4T CT Metadata "view" field
     /// </summary>
     public class PresentationsByViewAttribute : ComponentPresentationsAttributeBase
     {
-        public override System.Collections.IEnumerable GetPresentationValues(IList<IComponentPresentation> cps, IModelProperty property, IViewModelFactory factory)
+        public override IEnumerable GetPresentationValues(IList<IComponentPresentation> cps, IModelProperty property, IViewModelFactory factory)
         {
             return cps.Where(cp =>
                     {
@@ -301,7 +338,7 @@ namespace DD4T.ViewModels.Attributes
     /// </summary>
     public class PresentationsByRegionAttribute : ComponentPresentationsAttributeBase
     {
-        public override System.Collections.IEnumerable GetPresentationValues(IList<IComponentPresentation> cps, IModelProperty property, IViewModelFactory factory)
+        public override IEnumerable GetPresentationValues(IList<IComponentPresentation> cps, IModelProperty property, IViewModelFactory factory)
         {
             return cps.Where(cp =>
             {
