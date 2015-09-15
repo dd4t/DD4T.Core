@@ -14,22 +14,18 @@ namespace DD4T.Factories
     [Obsolete("Please use the Tridion.ContentDelivery.Taxonomies.TaxonomyFactory instead")]
     public class TaxonomyFactory : FactoryBase, ITaxonomyFactory
     {
-        private ITaxonomyProvider _taxonomyProvider = null;
-        public ITaxonomyProvider TaxonomyProvider
+        
+        public ITaxonomyProvider TaxonomyProvider { get; set; }
+
+        public TaxonomyFactory(ITaxonomyProvider taxonomyProvider, IFactoryCommonServices factoryCommonServices)
+            :base(factoryCommonServices)
         {
-            get
-            {
-                if (_taxonomyProvider == null)
-                {
-                    _taxonomyProvider = (ITaxonomyProvider)ProviderLoader.LoadProvider<ITaxonomyProvider>(this.PublicationId);
-                }
-                return _taxonomyProvider;
-            }
-            set
-            {
-                _taxonomyProvider = value;
-            }
+            if (taxonomyProvider == null)
+                throw new ArgumentNullException("taxonomyProvider");
+
+            TaxonomyProvider = taxonomyProvider;
         }
+
         public bool TryGetKeyword(string categoryUriToLookIn, string keywordName, out IKeyword keyword)
         {
             keyword = null;
@@ -56,7 +52,7 @@ namespace DD4T.Factories
             throw new KeywordNotFoundException();
         }
 
-
+        [Obsolete]
         public override DateTime GetLastPublishedDateCallBack(string key, object cachedItem)
         {
             throw new NotImplementedException();

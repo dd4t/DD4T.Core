@@ -5,6 +5,7 @@ using System.IO;
 using System.Collections.Generic;
 using DD4T.ContentModel;
 using System.Text;
+using DD4T.ContentModel.Contracts.Serializing;
 
 namespace DD4T.Providers.Test
 {
@@ -14,6 +15,16 @@ namespace DD4T.Providers.Test
     public class TridionPageProvider : BaseProvider, IPageProvider
     {
 
+        public ISerializerService SerializerService
+        {
+            get;
+            set;
+        }
+        public IComponentPresentationProvider ComponentPresentationProvider
+        {
+            get;
+            set;
+        }
 
         #region IPageProvider Members
 
@@ -53,48 +64,15 @@ namespace DD4T.Providers.Test
 
             page.PageTemplate = pt;
 
-            Schema schema = new Schema();
-            schema.Title = Randomizer.AnyString(10);
-
-            Component component = new Component();
-            component.Title = Randomizer.AnyString(30);
-            component.Id = Randomizer.AnyUri(16);
-            component.Schema = schema;
-
-            Field field1 = Randomizer.AnyTextField(6, 120, true);
-            Field field2 = Randomizer.AnyTextField(8, 40, false);
-
-            FieldSet fieldSet = new FieldSet();
-            fieldSet.Add(field1.Name, field1);
-            fieldSet.Add(field2.Name, field2);
-            component.Fields = fieldSet;
-
-            ComponentTemplate ct = new ComponentTemplate();
-            ct.Title = Randomizer.AnyString(20);
-            Field fieldView = new Field();
-            fieldView.Name = "view";
-            fieldView.Values.Add("DefaultComponentView");
-            ct.MetadataFields = new FieldSet();
-            ct.MetadataFields.Add(fieldView.Name, fieldView);
-
-            ComponentPresentation cp = new ComponentPresentation();
-            cp.Component = component;
-            cp.ComponentTemplate = ct;
-
             page.ComponentPresentations = new List<ComponentPresentation>();
-            page.ComponentPresentations.Add(cp);
+
+            string cpString = ComponentPresentationProvider.GetContent("");
+            page.ComponentPresentations.Add(SerializerService.Deserialize<ComponentPresentation>(cpString));
 
             FieldSet metadataFields = new FieldSet();
             page.MetadataFields = metadataFields;
 
-            var serializer = new XmlSerializer(typeof(Page));
-            StringBuilder builder = new StringBuilder();
-            StringWriter writer = new StringWriter(builder);
-            //XmlTextWriter writer = new XmlTextWriter(page.Filename, Encoding.UTF8);
-            //serializer.Serialize(writer, page);
-            serializer.Serialize(writer, page);
-            string pageAsString = builder.ToString();
-            return pageAsString;
+            return SerializerService.Serialize<Page>(page);
         }
 
 

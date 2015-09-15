@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0">
+	<PropertyGroup>
+		<Configuration Condition="'$(Configuration)'==''">Debug</Configuration>
+		<ProductName>DD4T.Core</ProductName>
+
+		<!-- Source Directories -->
+		<BaseDirectory Condition="'$(BaseDirectory)' == ''">$(MSBuildProjectDirectory)</BaseDirectory>
+		<BaseDirectory Condition="!Exists('$(BaseDirectory)\source')">..\..</BaseDirectory>
+
+		<SourceDirectory>$(BaseDirectory)\source</SourceDirectory>
+		
+		<!-- Build Directories -->
+		<BuildOutputDirectory>$(BaseDirectory)\build</BuildOutputDirectory>
+		<BuildBinDirectory>$(BuildOutputDirectory)\bin</BuildBinDirectory>
+		<BuildDocDirectory>$(BuildOutputDirectory)\doc</BuildDocDirectory>
+		<BuildLogDirectory>$(BuildOutputDirectory)\log</BuildLogDirectory>
+		<BuildPackageDirectory>$(BuildOutputDirectory)\package</BuildPackageDirectory>
+		<BuildWorkDirectory>$(BuildOutputDirectory)\work</BuildWorkDirectory>
+		<BuildNuGetDirectory>$(BuildPackageDirectory)\lib</BuildNuGetDirectory>
+		<BuildNuGetFramework40Directory>$(BuildNuGetDirectory)\net40</BuildNuGetFramework40Directory>
+		<BuildNuGetFramework45Directory>$(BuildNuGetDirectory)\net45</BuildNuGetFramework45Directory>
+
+		<NuGetFolder>$(SourceDirectory)\.nuget</NuGetFolder>
+
+		<ConfigurationDirectory>$(BaseDirectory)\configuration</ConfigurationDirectory>
+
+		<!-- NuSpec file for NuGet Package creation -->
+		<NuSpecFileName>$(ProductName).nuspec</NuSpecFileName>
+		<NuSpecFile>$(ConfigurationDirectory)\$(NuSpecFileName)</NuSpecFile>
+	</PropertyGroup>
+	<ItemGroup>
+		<CleanFolders Include="$(BuildOutputDirectory)"/>
+		<CleanFolders Include="TestResults"/>
+		<NuGetStructureFolders Include="$(BuildNugetDirectory);$(BuildNuGetFramework40Directory);$(BuildNuGetFramework45Directory)"/>
+	</ItemGroup>
+
+	<Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets"/>
+
+	<!-- Task for retrieving ProductVersion from an Assembly -->
+	<UsingTask TaskName="GetInformationalVersion" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v12.0.dll">
+		<ParameterGroup>
+			<AssemblyFile ParameterType="System.String" Required="true" />
+			<Version ParameterType="System.String" Output="true" />
+		</ParameterGroup>
+		<Task>
+			<Using Namespace="System.Diagnostics" />
+			<Code Type="Fragment" Language="cs">
+				<![CDATA[
+					Log.LogMessage("Getting version details of assembly " + this.AssemblyFile, MessageImportance.High);
+					this.Version = FileVersionInfo.GetVersionInfo(this.AssemblyFile.Split(';')[0]).ProductVersion;
+					Log.LogMessage("AssemblyVersion: " + this.Version, MessageImportance.High);
+				]]>
+			</Code>
+		</Task>		
+	</UsingTask>
+
+	<!-- Task for generating a new version for local development -->
+	<UsingTask TaskName="GetNewDevVersion" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v12.0.dll">
+		<ParameterGroup>
+			<OldVersion ParameterType="System.String" Required="true" />
+			<NewVersion ParameterType="System.String" Output="true" />
+		</ParameterGroup>
+		<Task>
+			<Using Namespace="System.Diagnostics" />
+			<Code Type="Fragment" Language="cs">
+				<![CDATA[
+					Log.LogMessage("Getting a new version for " + this.OldVersion, MessageImportance.High);
+					Version version = new Version(this.OldVersion.Split('-')[0]);
+					this.NewVersion = version.ToString() + "-build" + DateTime.Now.ToString("yyyyMMddHHmmss");
+					Log.LogMessage("New Version: " + this.NewVersion, MessageImportance.High);
+				]]>
+			</Code>
+		</Task>		
+	</UsingTask>
+
+	<Target Name="CleanUp">
+		<!-- Clean removes all build artifacts to prepare for a new build. -->
+		<RemoveDir Directories="@(CleanFolders)" />
+		<MSBuild Projects="$(SolutionFile)" Targets="Clean" />
+	</Target>
+	<Target Name="Package">
+		<ItemGroup>
+			<PackageFilesCleanup Include="$(BuildPackageDirectory)\**\*.*"/>
+		</ItemGroup>
+		<Delete Files="@(PackageFilesCleanup)" />
+		
+		<MakeDir Directories="@(NuGetStructureFolders)"/>
+
+		<ItemGroup>
+        	<MainPackageFiles Include="$(BuildBinDirectory)\**\*.dll;$(BuildBinDirectory)\**\*.xml;$(BuildBinDirectory)\**\*.pdb" Exclude="$(BuildBinDirectory)\**\*CodeAnalysis*;$(BuildBinDirectory)\**\*Test.dll;$(BuildBinDirectory)\**\*Test.pdb"/>
+        </ItemGroup>
+    	
+    	<!-- Get the productversion from the assemblies -->
+    	<GetInformationalVersion AssemblyFile="@(MainPackageFiles)">
+    		<Output TaskParameter="Version" PropertyName="VersionInfo"/>
+    	</GetInformationalVersion>
+
+    	<GetNewDevVersion OldVersion="$(VersionInfo)" Condition="'$(Configuration)' == 'Debug'">
+    		<Output TaskParameter="NewVersion" PropertyName="VersionInfo"/>
+    	</GetNewDevVersion>
+
+        <ItemGroup>
+        	<NuGetFiles Include="$(NuSpecFile)"/>
+        </ItemGroup>
+
+    	<Copy SourceFiles="@(NuGetFiles)" DestinationFiles="@(NuGetFiles->'$(BuildPackageDirectory)\%(Filename)%(Extension)')"/>
+
+    	<PropertyGroup>
+    		<NuSpecFile>$(BuildPackageDirectory)\$(NuSpecFileName)</NuSpecFile>
+    	</PropertyGroup>
+
+    	<!-- Update version in nuspec file -->
+    	<XmlUpdate XmlFileName="$(NuSpecFile)" XPath="//version" Value="$(VersionInfo)" />
+
+
+		<Copy SourceFiles="@(MainPackageFiles)" DestinationFiles="@(MainPackageFiles->'$(BuildNuGetFramework40Directory)\%(RecursiveDir)%(Filename)%(Extension)')" />
+		<Copy SourceFiles="@(MainPackageFiles)" DestinationFiles="@(MainPackageFiles->'$(BuildNuGetFramework45Directory)\%(RecursiveDir)%(Filename)%(Extension)')" />
+
+    	<!-- Create NuGet package -->
+    	<Exec Command='$(NuGetFolder)\nuget.exe pack "$(NuSpecFile)"' WorkingDirectory="$(BuildPackageDirectory)"/>
+
+    	<Delete Files="$(NuSpecFile)" />
+
+    	<!-- Create ZipPackage -->
+		<Zip Files="@(MainPackageFiles)" ZipFileName="$(BuildPackageDirectory)\$(ProductName).$(VersionInfo).zip" WorkingDirectory="$(BuildBinDirectory)" />
+
+    	<RemoveDir Directories="$(BuildWorkDirectory)" />
+	</Target>
+	
+	<Target Name="BeforeBuild">
+	  <ItemGroup>
+	        <ReferenceNew Include="@(Reference)">
+	           <Private>False</Private>
+	        </ReferenceNew>
+	        <Reference Remove="@(Reference)"/>
+	        <Reference Include="@(ReferenceNew)"/>
+	  </ItemGroup>
+	</Target>
+	
+	<Target Name="Install">
+		<ItemGroup>
+			<NuGetPackage Include="$(BuildPackageDirectory)\**\*.nupkg"/>
+		</ItemGroup>
+		<Copy SourceFiles="@(NuGetPackage)" DestinationFolder="$(NUGET_LOCALREPO)" />
+	</Target>
+</Project>

@@ -12,27 +12,18 @@ namespace DD4T.Factories
     public class BinaryFactory : FactoryBase, IBinaryFactory
     {
         private static IDictionary<string, DateTime> lastPublishedDates = new Dictionary<string, DateTime>();
-        private IBinaryProvider _binaryProvider = null;
-        public IBinaryProvider BinaryProvider
+        public IBinaryProvider BinaryProvider { get; set; }
+
+
+        public BinaryFactory(IBinaryProvider binaryProvider, IFactoryCommonServices factoryCommonServices)
+            : base(factoryCommonServices)
         {
-            get
-            {
-                if (_binaryProvider == null)
-                {
-                    _binaryProvider = (IBinaryProvider)ProviderLoader.LoadProvider<IBinaryProvider>(this.PublicationId);
-                }
-				
-                // If using your own DI you can pass the provider PublicationID yourself
-				// However by not doing so, the below will leverage the configuted PublicationResolver - which could still return 0 if you needed.				
-                if (_binaryProvider.PublicationId == 0)
-                    _binaryProvider.PublicationId = this.PublicationId;
-					
-                return _binaryProvider;
-            }
-            set
-            {
-                _binaryProvider = value;
-            }
+            if (binaryProvider == null)
+                throw new ArgumentNullException("binaryProvider");
+
+            BinaryProvider = binaryProvider;
+            //overriding cacheAgent GetLastPublished property
+            //CacheAgent.GetLastPublishDateCallBack = GetLastPublishedDateCallBack;
         }
 
         #region IBinaryFactory members
@@ -171,7 +162,7 @@ namespace DD4T.Factories
         }
         #endregion
 
-        
+
         public static bool DefaultLoadBinariesAsStream = false;
         private bool _loadBinariesAsStream = DefaultLoadBinariesAsStream;
         public bool LoadBinariesAsStream
@@ -186,12 +177,11 @@ namespace DD4T.Factories
             }
         }
 
+        [Obsolete]
         public override DateTime GetLastPublishedDateCallBack(string key, object cachedItem)
         {
             throw new NotImplementedException();
         }
-
-
 
         public string GetUrlForUri(string uri)
         {
