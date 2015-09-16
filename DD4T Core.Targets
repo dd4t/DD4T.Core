@@ -89,10 +89,11 @@
 
 		<ItemGroup>
         	<MainPackageFiles Include="$(BuildBinDirectory)\**\*.dll;$(BuildBinDirectory)\**\*.xml;$(BuildBinDirectory)\**\*.pdb" Exclude="$(BuildBinDirectory)\**\*CodeAnalysis*;$(BuildBinDirectory)\**\*Test.dll;$(BuildBinDirectory)\**\*Test.pdb"/>
+        	<VersionFiles Include="$(BuildBinDirectory)\$(AssemblyName).dll"/>
         </ItemGroup>
-    	
+    	 
     	<!-- Get the productversion from the assemblies -->
-    	<GetInformationalVersion AssemblyFile="@(MainPackageFiles)">
+    	<GetInformationalVersion AssemblyFile="@(VersionFiles)">
     		<Output TaskParameter="Version" PropertyName="VersionInfo"/>
     	</GetInformationalVersion>
 
