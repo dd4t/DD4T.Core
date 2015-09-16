@@ -1,4 +1,4 @@
-version: 2.0.0.{build}-alpha
+version: 2.0.5-beta
 branches:
   only:
   - master
