@@ -37,15 +37,19 @@
   <ItemGroup>
     <Reference Include="DD4T.ContentModel">
       <HintPath>..\packages\DD4T.Model.2.0.4-beta1\lib\net45\DD4T.ContentModel.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="DD4T.ContentModel.Contracts">
       <HintPath>..\packages\DD4T.Model.2.0.4-beta1\lib\net45\DD4T.ContentModel.Contracts.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="DD4T.ContentModel.XmlSerializers">
       <HintPath>..\packages\DD4T.Model.2.0.4-beta1\lib\net45\DD4T.ContentModel.XmlSerializers.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="DD4T.Serialization">
       <HintPath>..\packages\DD4T.Model.2.0.4-beta1\lib\net45\DD4T.Serialization.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
