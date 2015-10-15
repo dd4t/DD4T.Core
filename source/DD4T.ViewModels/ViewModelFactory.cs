@@ -55,6 +55,7 @@ namespace DD4T.ViewModels
                 }
             }
         }
+
         /// <summary>
         /// Loads View Model Types from an Assembly. Use minimally due to reflection overhead.
         /// </summary>
@@ -69,6 +70,7 @@ namespace DD4T.ViewModels
 
             LoadViewModels(assemblies);
         }
+
         public Type FindViewModelByAttribute<T>(IModel data, Type[] typesToSearch = null) where T : IModelAttribute
         {
             //Anyway to speed this up? Better than just a straight up loop?

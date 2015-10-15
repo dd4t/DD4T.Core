@@ -23,7 +23,7 @@ namespace DD4T.Providers.Test
         {
             Schema schema = new Schema();
             schema.Title = Randomizer.AnyString(10);
-
+            schema.RootElementName = "rootA";
             Component component = new Component();
             component.Title = Randomizer.AnyString(30);
             component.Id = Randomizer.AnyUri(16);
@@ -31,10 +31,31 @@ namespace DD4T.Providers.Test
 
             Field field1 = Randomizer.AnyTextField(6, 120, true);
             Field field2 = Randomizer.AnyTextField(8, 40, false);
-
+            Field headingField = new Field() { Name = "heading", Values = new List<string> { "some heading" }};
+            FieldSet fieldsForLinkedComponent = new FieldSet();
+            fieldsForLinkedComponent.Add(headingField.Name, headingField);
+            Field linkField = new Field()
+            {
+                Name = "link",
+                LinkedComponentValues = new List<Component> 
+                {
+                    new Component() 
+                    {
+                        Title = Randomizer.AnyString(16),
+                        Id = Randomizer.AnyUri(16),
+                        Schema = new Schema()
+                        {
+                            Title = Randomizer.AnyString(10),
+                            RootElementName = "rootB"
+                        },
+                        Fields = fieldsForLinkedComponent
+                    }
+                }
+            };
             FieldSet fieldSet = new FieldSet();
             fieldSet.Add(field1.Name, field1);
             fieldSet.Add(field2.Name, field2);
+            fieldSet.Add(linkField.Name, linkField);
             component.Fields = fieldSet;
             if (uri == "component")
             {

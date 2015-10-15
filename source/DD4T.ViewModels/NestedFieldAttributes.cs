@@ -92,17 +92,20 @@ namespace DD4T.ViewModels.Attributes
 
         protected override Type GetModelType(IModel data, IViewModelFactory factory, IModelProperty property)
         {
-            return property.ModelType;
-            //Type result = null;
-            //try
-            //{
-            //    result = factory.FindViewModelByAttribute<IContentModelAttribute>(data, LinkedComponentTypes);
-            //}
-            //catch (ViewModelTypeNotFoundException)
-            //{
-            //    result = null;
-            //}
-            //return result;
+            if (LinkedComponentTypes.Count() == 0)
+            {
+                return property.ModelType;
+            }
+            Type result = null;
+            try
+            {
+                result = factory.FindViewModelByAttribute<IContentModelAttribute>(data, LinkedComponentTypes);
+            }
+            catch (ViewModelTypeNotFoundException)
+            {
+                result = null;
+            }
+            return result;
         }
 
         protected override bool ReturnRawData
