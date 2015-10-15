@@ -97,7 +97,9 @@
     <Compile Include="Providers\ITaxonomyProvider.cs" />
     <Compile Include="Providers\ProviderVersion.cs" />
     <Compile Include="Querying\IQuery.cs" />
+    <Compile Include="Resolvers\ILinkResolver.cs" />
     <Compile Include="Resolvers\IPublicationResolver.cs" />
+    <Compile Include="Resolvers\IRichTextResolver.cs" />
     <Compile Include="ViewModels\Binding.cs" />
     <Compile Include="ViewModels\Contracts.cs" />
   </ItemGroup>

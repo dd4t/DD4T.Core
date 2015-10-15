@@ -34,6 +34,13 @@ namespace DD4T.ViewModels.Attributes
             get;
             set;
         }
+
+
+        public IViewModelFactory ViewModelFactory
+        {
+            get;
+            set;
+        }
     }
 
     /// <summary>
@@ -410,6 +417,7 @@ namespace DD4T.ViewModels.Attributes
             }
             return result;
         }
+        public IViewModelFactory ViewModelFactory { get; set; }
     }
 
     /// <summary>
@@ -449,6 +457,7 @@ namespace DD4T.ViewModels.Attributes
             }
             return result;
         }
+        public IViewModelFactory ViewModelFactory { get; set; }
     }
 
     /// <summary>
@@ -479,6 +488,7 @@ namespace DD4T.ViewModels.Attributes
             }
             return result;
         }
+        public IViewModelFactory ViewModelFactory { get; set; }
     }
 
     public abstract class NestedModelFieldAttributeBase : FieldAttributeBase

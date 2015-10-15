@@ -436,6 +436,23 @@ namespace DD4T.ViewModels.Attributes
         }
     }
 
-   
+    /// <summary>
+    /// An Attribute for a Property representing the resolved URL for a linked component or linked multimedia component
+    /// </summary> 
+    /// <remarks>Returns the resolved URL only</remarks>
+    public class ResolvedUrlFieldAttribute : FieldAttributeBase
+    {
+        //public ResolvedUrlFieldAttribute(string fieldName) : base(fieldName) { }
+        public override IEnumerable GetFieldValues(IField field, IModelProperty property, ITemplate template, IViewModelFactory factory)
+        {
+            return field.LinkedComponentValues
+                .Select(x => this.ViewModelFactory.LinkResolver.ResolveUrl(x));
+        }
+
+        public override Type ExpectedReturnType
+        {
+            get { return typeof(string); }
+        }
+    }
 
 }

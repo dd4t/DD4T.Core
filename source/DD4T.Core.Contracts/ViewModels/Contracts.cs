@@ -1,4 +1,5 @@
 ﻿using DD4T.ContentModel;
+using DD4T.Core.Contracts.Resolvers;
 using DD4T.Core.Contracts.ViewModels.Binding;
 using System;
 using System.Collections;
@@ -253,6 +254,16 @@ namespace DD4T.Core.Contracts.ViewModels
         /// The associate model resolver for this instance
         /// </summary>
         IViewModelResolver ModelResolver { get; }
+
+        /// <summary>
+        /// Link resolver (used to resolve IDs into hyperlinks)
+        /// </summary>
+        ILinkResolver LinkResolver { get; set; }
+
+        /// <summary>
+        /// Rich text resolver (used to parse the rich text fields and resolve the links in them)
+        /// </summary>
+        IRichTextResolver RichTextResolver { get; set; }
     }
     
    
@@ -441,6 +452,12 @@ namespace DD4T.Core.Contracts.ViewModels
         /// </summary>
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
         IModelMapping ComplexTypeMapping { get; set; } //Anyway to get this dependency on the Binding namespace out?
+
+        /// <summary>
+        /// ViewModelFactory can be used by the attribute to access link and/or rich text resolvers
+        /// </summary>
+        IViewModelFactory ViewModelFactory { get; set; }
+
     }
     /// <summary>
     /// An attribute for a Property representing a Field
@@ -544,6 +561,10 @@ namespace DD4T.Core.Contracts.ViewModels
         /// <param name="key">View Model Key</param>
         /// <returns>True if it matches, false if not</returns>
         bool IsMatch(IModel data, string key);
+        /// <summary>
+        /// ViewModelFactory can be used by the attribute to access link and/or rich text resolvers
+        /// </summary>
+        IViewModelFactory ViewModelFactory { get; set; }
     }
     /// <summary>
     /// An Attribute for identifying a Defined (has a Schema) View Model class

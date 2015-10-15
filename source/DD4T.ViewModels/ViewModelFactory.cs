@@ -1,4 +1,5 @@
 ﻿using DD4T.ContentModel;
+using DD4T.Core.Contracts.Resolvers;
 using DD4T.Core.Contracts.ViewModels;
 using DD4T.Core.Contracts.ViewModels.Binding;
 using DD4T.ViewModels.Binding;
@@ -20,16 +21,21 @@ namespace DD4T.ViewModels
         private readonly IViewModelResolver resolver;
         private readonly IViewModelKeyProvider keyProvider;
 
+        public ILinkResolver LinkResolver { get; set; }
+        public IRichTextResolver RichTextResolver { get; set; }
+
         /// <summary>
         /// New View Model Builder
         /// </summary>
         /// <param name="keyProvider">A View Model Key provider</param>
-        public ViewModelFactory(IViewModelKeyProvider keyProvider, IViewModelResolver resolver)
+        public ViewModelFactory(IViewModelKeyProvider keyProvider, IViewModelResolver resolver, ILinkResolver linkResolver, IRichTextResolver richTextResolver)
         {
             if (keyProvider == null) throw new ArgumentNullException("keyProvider");
             if (resolver == null) throw new ArgumentNullException("resolver");
             this.keyProvider = keyProvider;
             this.resolver = resolver;
+            this.LinkResolver = linkResolver;
+            this.RichTextResolver = richTextResolver;
         }
         /// <summary>
         /// Loads View Model Types from an Assembly. Use minimally due to reflection overhead.
@@ -76,9 +82,14 @@ namespace DD4T.ViewModels
             foreach (var type in typesToSearch)
             {
                 T modelAttr = resolver.GetCustomAttribute<T>(type);
-
-                if (modelAttr != null && modelAttr.IsMatch(data, keyProvider.GetViewModelKey(data)))
-                    return type;
+                if (modelAttr != null)
+                {
+                    modelAttr.ViewModelFactory = this;
+                    if (modelAttr.IsMatch(data, keyProvider.GetViewModelKey(data)))
+                    {
+                        return type;
+                    }
+                }
             }
             throw new ViewModelTypeNotFoundException(data);
         }
@@ -179,8 +190,9 @@ namespace DD4T.ViewModels
             foreach (var prop in props)
             {
                 propAttribute = prop.PropertyAttribute;//prop.GetCustomAttributes(typeof(FieldAttributeBase), true).FirstOrDefault() as FieldAttributeBase;
-                if (propAttribute != null) //It has a FieldAttribute
+                if (propAttribute != null) // this property is an IPropertyAttribute
                 {
+                    propAttribute.ViewModelFactory = this;
 
                     var values = propAttribute.GetPropertyValues(viewModel.ModelData, prop, this); //delegate work to the Property Attribute object itself. Allows for custom attribute types to easily be added
                     if (values != null)
