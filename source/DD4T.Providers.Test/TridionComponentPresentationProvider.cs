@@ -23,7 +23,6 @@ namespace DD4T.Providers.Test
         {
             Schema schema = new Schema();
             schema.Title = Randomizer.AnyString(10);
-
             Component component = new Component();
             component.Title = Randomizer.AnyString(30);
             component.Id = Randomizer.AnyUri(16);
@@ -36,6 +35,21 @@ namespace DD4T.Providers.Test
             fieldSet.Add(field1.Name, field1);
             fieldSet.Add(field2.Name, field2);
             component.Fields = fieldSet;
+
+            if (templateUri == "componentlink")
+            {
+                CustomizeCompomentForComponentLink(component);
+            }
+            if (templateUri == "embedded")
+            {
+                CustomizeCompomentForEmbeddedField(component);
+            }
+            if (templateUri == "keyword")
+            {
+                CustomizeCompomentForKeywordField(component);
+            }
+
+
             if (uri == "component")
             {
                 return SerializerService.Serialize<Component>(component);
@@ -57,6 +71,81 @@ namespace DD4T.Providers.Test
             cp.Conditions = new List<Condition>() { condition };
 
             return SerializerService.Serialize<ComponentPresentation>(cp);
+        }
+
+        private void CustomizeCompomentForKeywordField(Component component)
+        {
+            component.Schema.RootElementName = "hasKeyword";
+            Field headingField = new Field() { Name = "heading", Values = new List<string> { "some heading" } };
+
+            FieldSet metadataFields = new FieldSet();
+            metadataFields.Add(headingField.Name, headingField);
+
+
+            Field keywordField = new Field()
+            {
+                Name = "keyword",
+                KeywordValues = new List<Keyword>() 
+                {
+                    new Keyword()
+                    {
+                        MetadataFields = metadataFields,
+                        Id = Randomizer.AnyUri(1024),
+                        Title = Randomizer.AnyString(33),
+                        Description = Randomizer.AnyString(33)
+                    }                        
+                }
+            };
+            component.Fields.Add(keywordField.Name, keywordField);
+        }
+
+        private void CustomizeCompomentForEmbeddedField(Component component)
+        {
+            component.Schema.RootElementName = "rootEmbedding";
+            Field headingField = new Field() { Name = "heading", Values = new List<string> { "some heading" } };
+            FieldSet embeddedFields = new FieldSet();
+            embeddedFields.Add(headingField.Name, headingField);
+            Field embeddedField = new Field()
+            {
+                Name = "embedded",
+                EmbeddedSchema = new Schema()
+                {
+                    Title = "EmbeddedSchema",
+                    RootElementName = "embeddedRoot",
+                    Id = Randomizer.AnyUri(8)
+                },
+                EmbeddedValues = new List<FieldSet>() 
+                {
+                    embeddedFields
+                }
+            };
+            component.Fields.Add(embeddedField.Name, embeddedField);
+        }
+        private void CustomizeCompomentForComponentLink(Component component)
+        {
+            component.Schema.RootElementName = "rootA";
+            Field headingField = new Field() { Name = "heading", Values = new List<string> { "some heading" } };
+            FieldSet fieldsForLinkedComponent = new FieldSet();
+            fieldsForLinkedComponent.Add(headingField.Name, headingField);
+            Field linkField = new Field()
+            {
+                Name = "link",
+                LinkedComponentValues = new List<Component> 
+                {
+                    new Component() 
+                    {
+                        Title = Randomizer.AnyString(16),
+                        Id = Randomizer.AnyUri(16),
+                        Schema = new Schema()
+                        {
+                            Title = Randomizer.AnyString(10),
+                            RootElementName = "rootB"
+                        },
+                        Fields = fieldsForLinkedComponent
+                    }
+                }
+            };
+            component.Fields.Add(linkField.Name, linkField);
         }
 
         /// <summary>

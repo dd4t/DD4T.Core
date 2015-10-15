@@ -10,7 +10,6 @@ using DD4T.ViewModels.Exceptions;
 using System.Collections;
 using DD4T.ViewModels;
 using DD4T.ContentModel;
-using DD4T.Core.Contracts.ViewModels;
 using DD4T.Core.Contracts.ViewModels.Binding;
 
 namespace DD4T.ViewModels.Attributes

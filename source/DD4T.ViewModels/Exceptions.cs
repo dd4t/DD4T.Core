@@ -29,6 +29,6 @@ namespace DD4T.ViewModels.Exceptions
         public PropertyTypeMismatchException(IModelProperty fieldProperty, IPropertyAttribute fieldAttribute, object fieldValue) : 
             base(String.Format("Type mismatch for property '{0}'. Expected type for '{1}' is {2}. Model Property is of type {3}. Field value is of type {4}."
             , fieldProperty.Name, fieldAttribute.GetType().Name, fieldAttribute.ExpectedReturnType.FullName, fieldProperty.PropertyType.FullName,
-            fieldValue.GetType().FullName)) { }
+            fieldValue == null ? "" : fieldValue.GetType().FullName)) { }
     }
 }
