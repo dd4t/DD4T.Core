@@ -30,7 +30,9 @@ namespace DD4T.ViewModels
             if (resolver == null) throw new ArgumentNullException("resolver");
             this.keyProvider = keyProvider;
             this.resolver = resolver;
+            LoadViewModels(new List<Assembly> { Assembly.GetExecutingAssembly() });
         }
+
         /// <summary>
         /// Loads View Model Types from an Assembly. Use minimally due to reflection overhead.
         /// </summary>
