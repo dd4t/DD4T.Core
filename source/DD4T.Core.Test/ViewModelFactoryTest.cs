@@ -26,6 +26,7 @@ namespace DD4T.Core.Test
         public static void Setup(TestContext context)
         {
             Initialize();
+            ViewModelFactory.LoadViewModels();
         }
 
         [TestMethod]
@@ -35,7 +36,6 @@ namespace DD4T.Core.Test
             IComponentPresentation cp = ComponentPresentationFactory.GetComponentPresentation("", "componentlink");
             Assert.IsNotNull(cp);
 
-            ViewModelFactory.LoadViewModels();
             IViewModel vm = ViewModelFactory.BuildViewModel(cp);
             Assert.IsNotNull(vm);
 
@@ -52,7 +52,6 @@ namespace DD4T.Core.Test
             IComponentPresentation cp = ComponentPresentationFactory.GetComponentPresentation("", "componentlink");
             Assert.IsNotNull(cp);
 
-            ViewModelFactory.LoadViewModels();
             IViewModel vm = ViewModelFactory.BuildViewModel(cp);
             Assert.IsNotNull(vm);
 
@@ -69,7 +68,6 @@ namespace DD4T.Core.Test
             IComponentPresentation cp = ComponentPresentationFactory.GetComponentPresentation("", "embedded");
              Assert.IsNotNull(cp);
 
-            ViewModelFactory.LoadViewModels();
             EmbeddingModel vm = ViewModelFactory.BuildViewModel(cp) as EmbeddingModel;
             Assert.IsNotNull(vm);
 
@@ -86,7 +84,6 @@ namespace DD4T.Core.Test
             IComponentPresentation cp = ComponentPresentationFactory.GetComponentPresentation("", "embedded");
             Assert.IsNotNull(cp);
 
-            ViewModelFactory.LoadViewModels();
             EmbeddingModel vm = ViewModelFactory.BuildViewModel(cp) as EmbeddingModel;
             Assert.IsNotNull(vm);
 
@@ -103,7 +100,6 @@ namespace DD4T.Core.Test
             IComponentPresentation cp = ComponentPresentationFactory.GetComponentPresentation("", "keyword");
             Assert.IsNotNull(cp);
 
-            ViewModelFactory.LoadViewModels();
             KeywordContainingModel vm = ViewModelFactory.BuildViewModel(cp) as KeywordContainingModel;
             Assert.IsNotNull(vm);
 
@@ -120,7 +116,6 @@ namespace DD4T.Core.Test
             IComponentPresentation cp = ComponentPresentationFactory.GetComponentPresentation("", "keyword");
             Assert.IsNotNull(cp);
 
-            ViewModelFactory.LoadViewModels();
             KeywordContainingModel vm = ViewModelFactory.BuildViewModel(cp) as KeywordContainingModel;
             Assert.IsNotNull(vm);
 
