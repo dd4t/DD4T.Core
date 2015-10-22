@@ -275,7 +275,7 @@ namespace DD4T.ViewModels.Attributes
     /// </summary>
     public class ComponentPresentationsAttribute : ComponentPresentationsAttributeBase
     {
-        public override IEnumerable GetPresentationValues(IList<IComponentPresentation> cps, IModelProperty property, IViewModelFactory factory)
+        public override IEnumerable GetPresentationValues(IList<IComponentPresentation> cps, IModelProperty property, IViewModelFactory factory, IContextModel contextModel)
         {
             return cps.Select(cp =>
                         {
@@ -298,7 +298,7 @@ namespace DD4T.ViewModels.Attributes
     /// </summary>
     public class PresentationsByViewAttribute : ComponentPresentationsAttributeBase
     {
-        public override IEnumerable GetPresentationValues(IList<IComponentPresentation> cps, IModelProperty property, IViewModelFactory factory)
+        public override IEnumerable GetPresentationValues(IList<IComponentPresentation> cps, IModelProperty property, IViewModelFactory factory, IContextModel contextModel)
         {
             return cps.Where(cp =>
                     {
@@ -338,7 +338,7 @@ namespace DD4T.ViewModels.Attributes
     /// </summary>
     public class PresentationsByRegionAttribute : ComponentPresentationsAttributeBase
     {
-        public override IEnumerable GetPresentationValues(IList<IComponentPresentation> cps, IModelProperty property, IViewModelFactory factory)
+        public override IEnumerable GetPresentationValues(IList<IComponentPresentation> cps, IModelProperty property, IViewModelFactory factory, IContextModel contextModel)
         {
             return cps.Where(cp =>
             {
@@ -361,7 +361,7 @@ namespace DD4T.ViewModels.Attributes
                         {
                             model = factory.BuildMappedModel(cp, ComplexTypeMapping);
                         }
-                        else model = factory.BuildViewModel((cp));
+                        else model = factory.BuildViewModel(cp, contextModel);
                         return model;
                     });
         }
@@ -371,6 +371,8 @@ namespace DD4T.ViewModels.Attributes
         {
             get { return typeof(IList<IViewModel>); }
         }
+
+      
     }
 
 
@@ -440,19 +442,41 @@ namespace DD4T.ViewModels.Attributes
     /// An Attribute for a Property representing the resolved URL for a linked component or linked multimedia component
     /// </summary> 
     /// <remarks>Returns the resolved URL only</remarks>
-    public class ResolvedUrlFieldAttribute : FieldAttributeBase
+    public class ResolvedUrlFieldAttribute : FieldAttributeBase, ILinkablePropertyAttribute
     {
         //public ResolvedUrlFieldAttribute(string fieldName) : base(fieldName) { }
         public override IEnumerable GetFieldValues(IField field, IModelProperty property, ITemplate template, IViewModelFactory factory)
         {
+            string pageId = string.Empty;
+            if(_contextModel != null)
+                pageId = _contextModel.PageId.ToString();
+
             return field.LinkedComponentValues
-                .Select(x => this.ViewModelFactory.LinkResolver.ResolveUrl(x));
+                .Select(x => {
+                    if (IncludePage && !string.IsNullOrEmpty(pageId))
+                        return factory.LinkResolver.ResolveUrl(x, pageId);
+                    else 
+                        return factory.LinkResolver.ResolveUrl(x);
+                });
         }
+        public IEnumerable GetPropertyValues(IModel modelData, IModelProperty property, IViewModelFactory builder, IContextModel contextModel)
+        {
+            _contextModel = contextModel;
+            return base.GetPropertyValues(modelData, property, builder);
+        }
+        /// <summary>
+        /// Includes pageId to the LinkResolving mechanism of Tridion
+        /// </summary>
+        public bool IncludePage { get; set; }
+
+        private IContextModel _contextModel;
 
         public override Type ExpectedReturnType
         {
             get { return typeof(string); }
         }
+
+    
     }
 
 }

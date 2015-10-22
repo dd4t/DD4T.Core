@@ -1,4 +1,5 @@
 ﻿using DD4T.ContentModel;
+using DD4T.Core.Contracts.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,6 +21,10 @@ namespace DD4T.Core.Contracts.Resolvers
         /// </summary>
         /// <param name="component"></param>
         /// <returns></returns>
-        string ResolveUrl(IComponent component);
+        string ResolveUrl(IComponent component, string pageId = null);
+
+
+        void model(IModel pageId);
+
     }
 }

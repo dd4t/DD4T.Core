@@ -382,4 +382,15 @@ namespace DD4T.ViewModels.Binding
             get { return propertyList; }
         }
     }
+
+    public class ContextModel : IContextModel
+    {
+        TcmUri _pageId = TcmUri.NullUri;
+        public TcmUri PageId 
+        { 
+            get { return _pageId; }
+            set { _pageId = value; }
+        }
+    }
+        
 }

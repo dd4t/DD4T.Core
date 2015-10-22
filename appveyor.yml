@@ -25,3 +25,10 @@ notifications:
     auth_token:
       secure: sPqYbVki+502+OjRT+o3eITyiG8UDZ0Fu4M1fejZxs3O6OKtYu9JCNS9Ssw3/XjL
     channel: development
+deploy:
+- provider: NuGet
+  api_key:
+    secure: QmYvNY2pkxjIhWiI/UwFB/rjAkoNhZpElLZhmXiNVKvasN3qRyvvag0/2ZQD5eFb
+  artifact: /.*\.nupkg/
+  on:
+    branch: develop
