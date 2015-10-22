@@ -13,6 +13,6 @@ namespace DD4T.Core.Contracts.Resolvers
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        object Resolve(string input);
+        object Resolve(string input, string pageUri = null);
     }
 }

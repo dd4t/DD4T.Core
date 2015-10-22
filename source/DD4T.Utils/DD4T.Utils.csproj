@@ -90,7 +90,8 @@
     <Compile Include="Logging\NullLogger.cs" />
     <Compile Include="ExtensionMethods\DD4TConfigurationExtensions.cs" />
     <Compile Include="Properties\SpecificAssemblyInfo.cs" />
-    <Compile Include="Resolver\LinkResolver.cs" />
+    <Compile Include="Resolver\DefaultLinkResolver.cs" />
+    <Compile Include="Resolver\DefaultRichTextResolver.cs" />
     <Compile Include="TcmUri.cs" />
   </ItemGroup>
   <ItemGroup>
