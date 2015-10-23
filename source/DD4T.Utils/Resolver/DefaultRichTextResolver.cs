@@ -54,7 +54,6 @@ namespace DD4T.Utils.Resolver
             {
                 string tcmuri = link.Attributes["xlink:href"].Value;
 
-
                 string linkUrl = string.IsNullOrEmpty(pageUri) ? _linkFactory.ResolveLink(tcmuri) : _linkFactory.ResolveLink(pageUri, tcmuri, TcmUri.NullUri.ToString());
 
                 if (!string.IsNullOrEmpty(linkUrl))

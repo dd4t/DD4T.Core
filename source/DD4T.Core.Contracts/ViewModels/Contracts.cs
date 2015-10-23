@@ -13,13 +13,16 @@ using System.Web;
 namespace DD4T.Core.Contracts.ViewModels
 {
     /// <summary>
-    /// Special Container to store and enable passing context data.
+    /// Special Container to store and enable passing context data during one request.
     /// </summary>
     public interface IContextModel
     {
         TcmUri PageId { get; set; }
     }
 
+    /// <summary>
+    /// Resolve an IModel to a IContextResolver
+    /// </summary>
     public interface IContextResolver
     {
         IContextModel ResolveContextModel(IModel modelData);
@@ -485,7 +488,7 @@ namespace DD4T.Core.Contracts.ViewModels
         /// <param name="model">View Model this Property is in</param>
         /// <param name="propertyType">Actual return type of the Property</param>
         /// <param name="builder">A View Model Builder</param>
-        /// <param name="contextModel">a Class </param>
+        /// <param name="contextModel">Holds the contextData during single request cycle</param>
         /// <returns>Property value</returns>
         IEnumerable GetPropertyValues(IModel modelData, IModelProperty property, IViewModelFactory builder, IContextModel contextModel); //Strongly consider offloading some of the work to IModelProperty -- e.g. IsMultiValue, AddToCollection, etc.
 

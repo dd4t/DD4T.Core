@@ -46,7 +46,7 @@ namespace DD4T.ViewModels
             this._richtTextResolver = richTextResolver;
             this._contextResolver = contextResolver;
 
-            LoadViewModels(new List<Assembly> { Assembly.GetExecutingAssembly() });
+            LoadViewModels(new List<Assembly> { Assembly.GetEntryAssembly() });
         }
 
 
