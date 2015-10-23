@@ -17,7 +17,6 @@ namespace DD4T.Utils.Resolver
         private readonly ILogger _logger;
         private readonly IDD4TConfiguration _configuration;
 
-
         public DefaultLinkResolver(ILinkFactory linkFactory, ILogger logger, IDD4TConfiguration configuration)
         {
             if (linkFactory == null) throw new ArgumentNullException("linkFactory");

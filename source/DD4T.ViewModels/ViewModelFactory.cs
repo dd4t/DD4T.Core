@@ -46,7 +46,10 @@ namespace DD4T.ViewModels
             this._richtTextResolver = richTextResolver;
             this._contextResolver = contextResolver;
 
-            LoadViewModels(new List<Assembly> { Assembly.GetEntryAssembly() });
+            //disabled this functionality because the EntryAssembly doesn't on a web project, and calling assembly is not the Webapllication
+            //Possible fix: refactor the DI binding and pass the assembly as argument into the consturtor!
+            //LoadViewModels(new List<Assembly> { Assembly.GetEntryAssembly() });
+            LoadViewModels();
         }
 
 
@@ -214,6 +217,7 @@ namespace DD4T.ViewModels
                 if (propAttribute != null) // this property is an IPropertyAttribute
                 {
                     IEnumerable values;
+                    //ILinkablePropertyAttribute is implemented, we have to pass context data to property. 
                     if(propAttribute is ILinkablePropertyAttribute)                        
                         values = ((ILinkablePropertyAttribute)propAttribute).GetPropertyValues(viewModel.ModelData, prop, this, contextModel); //delegate work to the Property Attribute object itself. Allows for custom attribute types to easily be added
                     else
