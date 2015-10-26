@@ -481,7 +481,7 @@ namespace DD4T.ViewModels.Attributes
         }
     }
 
-    public abstract class NestedModelFieldAttributeBase : FieldAttributeBase
+    public abstract class NestedModelFieldAttributeBase : FieldAttributeBase, ILinkablePropertyAttribute
     {
         public override IEnumerable GetFieldValues(IField field, IModelProperty property, ITemplate template,IViewModelFactory factory = null)
         {
@@ -499,6 +499,13 @@ namespace DD4T.ViewModels.Attributes
             return fieldValue;
         }
 
+        private IContextModel _contextModel;
+        public IEnumerable GetPropertyValues(IModel modelData, IModelProperty property, IViewModelFactory builder, IContextModel contextModel)
+        {
+            _contextModel = contextModel;
+            return base.GetPropertyValues(modelData, property, builder);
+        }
+
         protected virtual object BuildModel(IViewModelFactory factory, IModel data, IModelProperty property)
         {
             object result = null;
@@ -509,7 +516,7 @@ namespace DD4T.ViewModels.Attributes
             else
             {
                 var modelType = GetModelType(data, factory, property);
-                result = modelType != null ? factory.BuildViewModel(modelType, data) : null;
+                result = modelType != null ? factory.BuildViewModel(modelType, data, _contextModel) : null;
             }
             return result;
         }
@@ -529,5 +536,7 @@ namespace DD4T.ViewModels.Attributes
                 else return typeof(IViewModel);
             }
         }
+
+        
     }
 }
