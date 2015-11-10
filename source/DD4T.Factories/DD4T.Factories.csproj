@@ -45,21 +45,21 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DD4T.ContentModel">
-      <HintPath>..\packages\DD4T.Model.2.0.4-beta1\lib\net45\DD4T.ContentModel.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="DD4T.ContentModel, Version=2.0.5.19, Culture=neutral, PublicKeyToken=4450e3c7f68bf872, processorArchitecture=MSIL">
+      <HintPath>..\packages\DD4T.Model.2.0.5.19-alpha\lib\net45\DD4T.ContentModel.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="DD4T.ContentModel.Contracts">
-      <HintPath>..\packages\DD4T.Model.2.0.4-beta1\lib\net45\DD4T.ContentModel.Contracts.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="DD4T.ContentModel.Contracts, Version=2.0.5.19, Culture=neutral, PublicKeyToken=4450e3c7f68bf872, processorArchitecture=MSIL">
+      <HintPath>..\packages\DD4T.Model.2.0.5.19-alpha\lib\net45\DD4T.ContentModel.Contracts.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="DD4T.ContentModel.XmlSerializers">
-      <HintPath>..\packages\DD4T.Model.2.0.4-beta1\lib\net45\DD4T.ContentModel.XmlSerializers.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="DD4T.ContentModel.XmlSerializers, Version=2.0.5.19, Culture=neutral, PublicKeyToken=4450e3c7f68bf872, processorArchitecture=MSIL">
+      <HintPath>..\packages\DD4T.Model.2.0.5.19-alpha\lib\net45\DD4T.ContentModel.XmlSerializers.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="DD4T.Serialization">
-      <HintPath>..\packages\DD4T.Model.2.0.4-beta1\lib\net45\DD4T.Serialization.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="DD4T.Serialization, Version=2.0.5.19, Culture=neutral, PublicKeyToken=4450e3c7f68bf872, processorArchitecture=MSIL">
+      <HintPath>..\packages\DD4T.Model.2.0.5.19-alpha\lib\net45\DD4T.Serialization.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
