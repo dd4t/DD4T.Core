@@ -27,6 +27,7 @@ namespace DD4T.ContentModel.Contracts.Configuration
         bool ShowAnchors { get; }
         bool LinkToAnchor { get; }
         bool UseUriAsAnchor { get; }
+        bool IsPreview { get; }
         int DefaultCacheSettings { get; }
         string DataFormat { get; }
         string ContentProviderEndPoint { get; }
