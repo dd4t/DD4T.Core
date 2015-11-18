@@ -36,6 +36,7 @@ namespace DD4T.Utils
         private bool? _includeLastPublishedDate;
         private bool? _showAnchors;
         private bool? _linkToAnchor;
+        private bool? _isPreview;
 
         public int PublicationId
         {
@@ -280,8 +281,18 @@ namespace DD4T.Utils
             }
         }
 
-    
 
+        public bool IsPreview
+        {
+            get
+            {
+                if (_isPreview == null)
+                {
+                    _isPreview = new bool?(SafeGetConfigSettingAsBoolean(ConfigurationKeys.IsPreview));
+                }
+                return _isPreview.Value;
+            }
+        }
 
         public bool ShowAnchors
         {
