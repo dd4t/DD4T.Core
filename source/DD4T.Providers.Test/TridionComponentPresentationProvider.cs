@@ -48,7 +48,7 @@ namespace DD4T.Providers.Test
             {
                 CustomizeCompomentForKeywordField(component);
             }
-
+           
 
             if (uri == "component")
             {

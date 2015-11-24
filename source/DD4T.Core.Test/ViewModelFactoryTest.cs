@@ -184,6 +184,7 @@ namespace DD4T.Core.Test
         public string Heading { get; set; }
     }
 
+
     public abstract class TestViewModelBase : ViewModelBase
     {
 
