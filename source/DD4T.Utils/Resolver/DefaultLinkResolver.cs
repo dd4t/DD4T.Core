@@ -28,15 +28,6 @@ namespace DD4T.Utils.Resolver
             _configuration = configuration;
         }
 
-        public string ResolveLink(IComponent component)
-        {
-            _logger.Debug("ResolveUrl - Start resolving url for componentId:{0}", component.Id);
-            string resolvedUrl;
-            resolvedUrl = _linkFactory.ResolveLink(component.Id);
-            _logger.Debug("ResolveUrl - Resolved Url for componentId: {0} = {1}", component.Id, resolvedUrl);
-            return resolvedUrl;
-        }
-
         public string ResolveUrl(IComponent component, string pageId = null)
         {
             _logger.Debug("ResolveUrl - Start resolving url for componentId:{0} and pageId:{0}", 

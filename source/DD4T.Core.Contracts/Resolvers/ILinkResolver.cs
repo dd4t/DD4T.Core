@@ -10,12 +10,7 @@ namespace DD4T.Core.Contracts.Resolvers
 {
     public interface ILinkResolver
     {
-        /// <summary>
-        /// Return hyperlink for this component using dynamic linking. The returned value is a complete HTML snippet.
-        /// </summary>
-        /// <param name="component"></param>
-        /// <returns></returns>
-        string ResolveLink(IComponent component);
+       
         /// <summary>
         /// Return hyperlink for this component using dynamic linking. The returned value is a URL only.
         /// </summary>

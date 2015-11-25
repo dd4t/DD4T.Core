@@ -48,6 +48,7 @@ namespace DD4T.Utils.Resolver
 
             nsmgr.AddNamespace("xhtml", XhtmlNamespaceUri);
             nsmgr.AddNamespace("xlink", XlinkNamespaceUri);
+            doc.PreserveWhitespace = true;
             doc.LoadXml(string.Format("<xhtmlroot>{0}</xhtmlroot>", input));
             // resolve links which haven't been resolved
             foreach (XmlNode link in doc.SelectNodes("//xhtml:a[@xlink:href[starts-with(string(.),'tcm:')]][@xhtml:href='' or not(@xhtml:href)]", nsmgr))
