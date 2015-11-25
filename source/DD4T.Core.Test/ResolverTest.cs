@@ -47,5 +47,29 @@ namespace DD4T.Core.Test
 
         }
 
+        [TestMethod]
+        public void ResolveLink()
+        {
+            IComponentPresentation cp = ComponentPresentationFactory.GetComponentPresentation("", "");
+            Assert.IsNotNull(cp);
+
+            string url = ViewModelFactory.LinkResolver.ResolveUrl(cp.Component);
+
+            Assert.IsNotNull(url);
+            Assert.AreEqual(url, "/this/link/works.html");
+
+        }
+        [TestMethod]
+        public void ResolveLinkWithPageUri()
+        {
+            IComponentPresentation cp = ComponentPresentationFactory.GetComponentPresentation("", "");
+            Assert.IsNotNull(cp);
+
+            string url = ViewModelFactory.LinkResolver.ResolveUrl(cp.Component, "tcm:2-2-64");
+
+            Assert.IsNotNull(url);
+            Assert.AreEqual(url, "/this/link/works/too.html");
+
+        }
     }
 }

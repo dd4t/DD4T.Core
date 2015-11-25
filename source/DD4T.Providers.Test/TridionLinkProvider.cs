@@ -9,12 +9,12 @@ namespace DD4T.Providers.Test
 
         public string ResolveLink(string componentUri)
         {
-            throw new NotImplementedException();
+            return "/this/link/works.html";
         }
 
         public string ResolveLink(string sourcePageUri, string componentUri, string excludeComponentTemplateUri)
         {
-            throw new NotImplementedException();
+            return "/this/link/works/too.html";
         }
         public void Dispose()
         {
