@@ -46,7 +46,6 @@ namespace DD4T.Factories
 
         }
 
-
         private string DataFormat
         {
             get
@@ -54,8 +53,6 @@ namespace DD4T.Factories
                 return Configuration.DataFormat;
             }
         }
-
-
 
         private ISerializerService _serializerService;
         private ISerializerService SerializerService
