@@ -48,8 +48,11 @@ namespace DD4T.Providers.Test
             {
                 CustomizeCompomentForKeywordField(component);
             }
+            if(templateUri == "componentIgnoreCase")
+            {
+                CustomizeCompomentForComponentLinkIgnoreCase(component);
+            }
            
-
             if (uri == "component")
             {
                 return SerializerService.Serialize<Component>(component);
@@ -147,6 +150,34 @@ namespace DD4T.Providers.Test
             };
             component.Fields.Add(linkField.Name, linkField);
         }
+
+        private void CustomizeCompomentForComponentLinkIgnoreCase(Component component)
+        {
+            component.Schema.RootElementName = "RootA";
+            Field headingField = new Field() { Name = "Heading", Values = new List<string> { "some heading" } };
+            FieldSet fieldsForLinkedComponent = new FieldSet();
+            fieldsForLinkedComponent.Add(headingField.Name, headingField);
+            Field linkField = new Field()
+            {
+                Name = "Link",
+                LinkedComponentValues = new List<Component>
+                {
+                    new Component()
+                    {
+                        Title = Randomizer.AnyString(16),
+                        Id = Randomizer.AnyUri(16),
+                        Schema = new Schema()
+                        {
+                            Title = Randomizer.AnyString(10),
+                            RootElementName = "RootB"
+                        },
+                        Fields = fieldsForLinkedComponent
+                    }
+                }
+            };
+            component.Fields.Add(linkField.Name, linkField);
+        }
+
 
         /// <summary>
         /// Returns the Component contents which could be found. Components that couldn't be found don't appear in the list. 
