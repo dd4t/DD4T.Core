@@ -33,6 +33,7 @@ namespace DD4T.Factories
 
             if (LoadBinariesAsStream)
             {
+                LoggerService.Information("retrieving binaries as a stream is obsolete; support will be dropped in future versions of DD4T");
                 binary.BinaryStream = BinaryProvider.GetBinaryStreamByUrl(url);
                 if (binary.BinaryStream == null)
                     return false;
@@ -67,6 +68,7 @@ namespace DD4T.Factories
             binary = new Binary();
             if (LoadBinariesAsStream)
             {
+                LoggerService.Information("retrieving binaries as a stream is obsolete; support will be dropped in future versions of DD4T");
                 binary.BinaryStream = BinaryProvider.GetBinaryStreamByUri(tcmUri);
                 if (binary.BinaryStream == null)
                     return false;
