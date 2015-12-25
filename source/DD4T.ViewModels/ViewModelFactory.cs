@@ -1,4 +1,5 @@
 ﻿using DD4T.ContentModel;
+using DD4T.Core.Contracts.Resolvers;
 using DD4T.Core.Contracts.ViewModels;
 using DD4T.Core.Contracts.ViewModels.Binding;
 using DD4T.ViewModels.Binding;
@@ -17,25 +18,53 @@ namespace DD4T.ViewModels
     {
         private readonly IDictionary<IModelAttribute, Type> viewModels = new Dictionary<IModelAttribute, Type>();
         private readonly HashSet<Assembly> loadedAssemblies = new HashSet<Assembly>();
-        private readonly IViewModelResolver resolver;
-        private readonly IViewModelKeyProvider keyProvider;
+        private readonly IViewModelResolver _resolver;
+        private readonly IViewModelKeyProvider _keyProvider;
+        private readonly ILinkResolver _linkResolver;
+        private readonly IRichTextResolver _richtTextResolver;
+        private readonly IContextResolver _contextResolver;
 
         /// <summary>
         /// New View Model Builder
         /// </summary>
         /// <param name="keyProvider">A View Model Key provider</param>
-        public ViewModelFactory(IViewModelKeyProvider keyProvider, IViewModelResolver resolver)
+        public ViewModelFactory(IViewModelKeyProvider keyProvider,
+                                IViewModelResolver resolver,
+                                ILinkResolver linkResolver,
+                                IRichTextResolver richTextResolver,
+                                IContextResolver contextResolver)
         {
             if (keyProvider == null) throw new ArgumentNullException("keyProvider");
             if (resolver == null) throw new ArgumentNullException("resolver");
-            this.keyProvider = keyProvider;
-            this.resolver = resolver;
-            Assembly entryAssembly = Assembly.GetEntryAssembly();
+            if (linkResolver == null) throw new ArgumentNullException("linkResolver");
+            if (richTextResolver == null) throw new ArgumentNullException("richTextResolver");
+            if (contextResolver == null) throw new ArgumentNullException("contextResolver");
+
+            this._keyProvider = keyProvider;
+            this._resolver = resolver;
+            this._linkResolver = linkResolver;
+            this._richtTextResolver = richTextResolver;
+            this._contextResolver = contextResolver;
+
+            // Trying to find the entry assembly to load view models from.
+            // For web applications, a special trick is needed to do this (see below).
+            Assembly entryAssembly = GetWebEntryAssembly();
+            if (entryAssembly == null)
+            {
+                entryAssembly = Assembly.GetEntryAssembly();
+            }
             if (entryAssembly != null)
             {
                 LoadViewModels(new List<Assembly> { entryAssembly });
             }
         }
+
+
+        public IViewModelResolver ModelResolver { get { return _resolver; } }
+        public ILinkResolver LinkResolver { get { return _linkResolver; } }
+        public IRichTextResolver RichTextResolver { get { return _richtTextResolver; } }
+
+        public IContextResolver ContextResolver { get { return _contextResolver; } }
 
         /// <summary>
         /// Loads View Model Types from an Assembly. Use minimally due to reflection overhead.
@@ -48,17 +77,28 @@ namespace DD4T.ViewModels
                 if (!loadedAssemblies.Contains(assembly))
                 {
                     //Josh Einhorn - Performance Question: Should we incur the memory overhead of storing Assembly objects in the heap or allow same assembly to get processed multiple times?
-                    loadedAssemblies.Add(assembly); 
+                    loadedAssemblies.Add(assembly);
                     IModelAttribute viewModelAttr;
                     foreach (var type in assembly.GetTypes())
                     {
-                        viewModelAttr = resolver.GetCustomAttribute<IModelAttribute>(type);
+                        viewModelAttr = _resolver.GetCustomAttribute<IModelAttribute>(type);
                         if (viewModelAttr != null && !viewModels.ContainsKey(viewModelAttr))
                         {
                             viewModels.Add(viewModelAttr, type);
                         }
                     }
                 }
+            }
+        }
+
+        // This property can be used for detecting which view models are loaded.
+        // Note that it's not part of the interface IViewModelFactory, so you would need
+        // to cast to DD4T.ViewModels.ViewModelFactory before you can use it
+        public IEnumerable<Type> ViewModels
+        {
+            get
+            {
+                return viewModels.Values;
             }
         }
 
@@ -69,9 +109,9 @@ namespace DD4T.ViewModels
         public void LoadViewModels() //We assume we have a singleton of this instance, otherwise we incur a lot of overhead
         {
             var assemblies = AppDomain.CurrentDomain.GetAssemblies()
-                                        .Where(a => !a.GlobalAssemblyCache 
-                                                        && !a.IsDynamic 
-                                                        && !a.ReflectionOnly 
+                                        .Where(a => !a.GlobalAssemblyCache
+                                                        && !a.IsDynamic
+                                                        && !a.ReflectionOnly
                                                         && !a.FullName.StartsWith("Tridion."));
 
             LoadViewModels(assemblies);
@@ -83,10 +123,15 @@ namespace DD4T.ViewModels
             typesToSearch = typesToSearch ?? viewModels.Where(x => x.Key is T).Select(x => x.Value).ToArray();
             foreach (var type in typesToSearch)
             {
-                T modelAttr = resolver.GetCustomAttribute<T>(type);
-
-                if (modelAttr != null && modelAttr.IsMatch(data, keyProvider.GetViewModelKey(data)))
-                    return type;
+                T modelAttr = _resolver.GetCustomAttribute<T>(type);
+                if (modelAttr != null)
+                {
+                    //modelAttr.ViewModelFactory = this;
+                    if (modelAttr.IsMatch(data, _keyProvider.GetViewModelKey(data)))
+                    {
+                        return type;
+                    }
+                }
             }
             throw new ViewModelTypeNotFoundException(data);
         }
@@ -96,7 +141,7 @@ namespace DD4T.ViewModels
             if (property == null) throw new ArgumentNullException("property");
             if (model != null && data != null && property.PropertyAttribute != null)
             {
-                var propertyValue = GetPropertyValue(property,property.PropertyAttribute.GetPropertyValues(data, property, this));
+                var propertyValue = GetPropertyValue(property, property.PropertyAttribute.GetPropertyValues(data, property, this));
                 if (propertyValue != null)
                 {
                     try
@@ -120,50 +165,50 @@ namespace DD4T.ViewModels
 
         public void SetPropertyValue<TModel, TProperty>(TModel model, Expression<Func<TModel, TProperty>> propertyLambda) where TModel : IViewModel
         {
-            var property = resolver.GetModelProperty(model, propertyLambda);
+            var property = _resolver.GetModelProperty(model, propertyLambda);
             SetPropertyValue(model, property);
         }
 
-        public IViewModel BuildViewModel(IModel modelData)
+        public IViewModel BuildViewModel(IModel modelData, IContextModel contextModel = null)
         {
-            return BuildViewModelByAttribute<IModelAttribute>(modelData);
+            return BuildViewModelByAttribute<IModelAttribute>(modelData, contextModel);
         }
 
-        public IViewModel BuildViewModelByAttribute<T>(IModel modelData) where T : IModelAttribute
+        public IViewModel BuildViewModelByAttribute<T>(IModel modelData, IContextModel contextModel = null) where T : IModelAttribute
         {
             IViewModel result = null;
             Type type = FindViewModelByAttribute<T>(modelData);
             if (type != null)
             {
-                result = BuildViewModel(type, modelData);
+                result = BuildViewModel(type, modelData, contextModel);
             }
             return result;
         }
-        public IViewModel BuildViewModel(Type type, IModel modelData)
+        public IViewModel BuildViewModel(Type type, IModel modelData, IContextModel contextModel = null)
         {
             IViewModel viewModel = null;
-            viewModel = resolver.ResolveModel(type, modelData);
+            viewModel = _resolver.ResolveModel(type, modelData);
             viewModel.ModelData = modelData;
-            ProcessViewModel(viewModel, type);
+            ProcessViewModel(viewModel, type, contextModel);
             return viewModel;
         }
 
-        public T BuildViewModel<T>(IModel modelData) where T : IViewModel 
+
+
+        public T BuildViewModel<T>(IModel modelData) where T : IViewModel
         {
             return (T)BuildViewModel(typeof(T), modelData);
         }
 
-        public IViewModelResolver ModelResolver { get { return resolver; } }
-
         public virtual object BuildMappedModel(IModel modelData, IModelMapping mapping)
         {
-            var model = resolver.ResolveInstance(mapping.ModelType);
+            var model = _resolver.ResolveInstance(mapping.ModelType);
             return BuildMappedModel(model, modelData, mapping);
         }
 
         public virtual T BuildMappedModel<T>(IModel modelData, IModelMapping mapping) //where T: class
         {
-            T model = (T)resolver.ResolveInstance(typeof(T));
+            T model = (T)_resolver.ResolveInstance(typeof(T));
             return BuildMappedModel<T>(model, modelData, mapping);
         }
 
@@ -176,21 +221,42 @@ namespace DD4T.ViewModels
             return model;
         }
         #region Private methods
-        
 
-        private void ProcessViewModel(IViewModel viewModel, Type type)
+        // See http://stackoverflow.com/questions/4277692/getentryassembly-for-web-applications
+        static private Assembly GetWebEntryAssembly()
+        {
+            if (System.Web.HttpContext.Current == null ||
+                System.Web.HttpContext.Current.ApplicationInstance == null)
+            {
+                return null;
+            }
+
+            var type = System.Web.HttpContext.Current.ApplicationInstance.GetType();
+            while (type != null && type.Namespace == "ASP")
+            {
+                type = type.BaseType;
+            }
+
+            return type == null ? null : type.Assembly;
+        }
+        private void ProcessViewModel(IViewModel viewModel, Type type, IContextModel contextModel)
         {
             //PropertyInfo[] props = type.GetProperties();
-            var props = resolver.GetModelProperties(type);
+            var props = _resolver.GetModelProperties(type);
             IPropertyAttribute propAttribute;
             object propertyValue = null;
             foreach (var prop in props)
             {
                 propAttribute = prop.PropertyAttribute;//prop.GetCustomAttributes(typeof(FieldAttributeBase), true).FirstOrDefault() as FieldAttributeBase;
-                if (propAttribute != null) //It has a FieldAttribute
+                if (propAttribute != null) // this property is an IPropertyAttribute
                 {
+                    IEnumerable values;
+                    //ILinkablePropertyAttribute is implemented, we have to pass context data to property. 
+                    if (propAttribute is ILinkablePropertyAttribute)
+                        values = ((ILinkablePropertyAttribute)propAttribute).GetPropertyValues(viewModel.ModelData, prop, this, contextModel); //delegate work to the Property Attribute object itself. Allows for custom attribute types to easily be added
+                    else
+                        values = propAttribute.GetPropertyValues(viewModel.ModelData, prop, this); //delegate work to the Property Attribute object itself. Allows for custom attribute types to easily be added
 
-                    var values = propAttribute.GetPropertyValues(viewModel.ModelData, prop, this); //delegate work to the Property Attribute object itself. Allows for custom attribute types to easily be added
                     if (values != null)
                     {
                         try
@@ -208,7 +274,7 @@ namespace DD4T.ViewModels
                 }
             }
         }
-       
+
         private object GetPropertyValue(IModelProperty prop, IEnumerable values)
         {
             object result = null;
@@ -222,7 +288,7 @@ namespace DD4T.ViewModels
             }
             else if (prop.IsCollection)
             {
-                var tempValues = (IEnumerable)resolver.ResolveInstance(prop.PropertyType);
+                var tempValues = (IEnumerable)_resolver.ResolveInstance(prop.PropertyType);
                 foreach (var val in values)
                 {
                     prop.AddToCollection(tempValues, val);
@@ -237,7 +303,7 @@ namespace DD4T.ViewModels
         }
         private string[] GetViewModelKey(IModel model)
         {
-            string key = keyProvider.GetViewModelKey(model);
+            string key = _keyProvider.GetViewModelKey(model);
             return String.IsNullOrEmpty(key) ? null : new string[] { key };
         }
         #endregion
@@ -246,6 +312,6 @@ namespace DD4T.ViewModels
 
 
 
-        
+
     }
 }
