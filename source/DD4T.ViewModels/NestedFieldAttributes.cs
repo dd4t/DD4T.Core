@@ -148,7 +148,7 @@ namespace DD4T.ViewModels.Attributes
         {
             get 
             { 
-                return false; 
+                return false;
             }
         }
     }

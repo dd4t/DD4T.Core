@@ -191,6 +191,8 @@ namespace DD4T.ViewModels
 
         public IFieldSet MetadataFields { get; set; }
 
+        public IDictionary<string, IFieldSet> ExtensionData { get; set; }
+
         //public int PublicationNumber
         //{
         //    //Todo: Sia

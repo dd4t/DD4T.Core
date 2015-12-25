@@ -33,7 +33,7 @@ namespace DD4T.ViewModels.Attributes
             get;
             set;
         }
-    }
+      }
 
     /// <summary>
     /// A Base class for an Attribute identifying a Property that represents a Field
@@ -258,7 +258,7 @@ namespace DD4T.ViewModels.Attributes
         /// <param name="propertyType">Actual return type of the Property</param>
         /// <param name="factory">A View Model factory</param>
         /// <returns>The Property value</returns>
-        public abstract IEnumerable GetPresentationValues(IList<IComponentPresentation> cps, IModelProperty property, IViewModelFactory factory);
+        public abstract IEnumerable GetPresentationValues(IList<IComponentPresentation> cps, IModelProperty property, IViewModelFactory factory, IContextModel contextModel);
 
         public override IEnumerable GetPropertyValues(IModel modelData, IModelProperty property, IViewModelFactory factory)
         {
@@ -266,7 +266,8 @@ namespace DD4T.ViewModels.Attributes
             if (modelData is IPage)
             {
                 var cpModels = (modelData as IPage).ComponentPresentations;
-                result = GetPresentationValues(cpModels, property, factory);
+                var contextModel = factory.ContextResolver.ResolveContextModel(modelData);
+                result = GetPresentationValues(cpModels, property, factory, contextModel);
             }
             return result;
         }
@@ -480,7 +481,7 @@ namespace DD4T.ViewModels.Attributes
         }
     }
 
-    public abstract class NestedModelFieldAttributeBase : FieldAttributeBase
+    public abstract class NestedModelFieldAttributeBase : FieldAttributeBase, ILinkablePropertyAttribute
     {
         public override IEnumerable GetFieldValues(IField field, IModelProperty property, ITemplate template,IViewModelFactory factory = null)
         {
@@ -498,6 +499,13 @@ namespace DD4T.ViewModels.Attributes
             return fieldValue;
         }
 
+        private IContextModel _contextModel;
+        public IEnumerable GetPropertyValues(IModel modelData, IModelProperty property, IViewModelFactory builder, IContextModel contextModel)
+        {
+            _contextModel = contextModel;
+            return base.GetPropertyValues(modelData, property, builder);
+        }
+
         protected virtual object BuildModel(IViewModelFactory factory, IModel data, IModelProperty property)
         {
             object result = null;
@@ -508,7 +516,7 @@ namespace DD4T.ViewModels.Attributes
             else
             {
                 var modelType = GetModelType(data, factory, property);
-                result = modelType != null ? factory.BuildViewModel(modelType, data) : null;
+                result = modelType != null ? factory.BuildViewModel(modelType, data, _contextModel) : null;
             }
             return result;
         }
@@ -528,5 +536,7 @@ namespace DD4T.ViewModels.Attributes
                 else return typeof(IViewModel);
             }
         }
+
+        
     }
 }

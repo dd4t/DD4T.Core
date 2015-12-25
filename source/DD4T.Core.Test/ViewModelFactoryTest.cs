@@ -62,6 +62,24 @@ namespace DD4T.Core.Test
         }
 
         [TestMethod]
+        public void MapFieldsIgnoreCase()
+        {
+
+            IComponentPresentation cp = ComponentPresentationFactory.GetComponentPresentation("", "componentIgnoreCase");
+            Assert.IsNotNull(cp);
+
+            ViewModelFactory.LoadViewModels();
+            IViewModel vm = ViewModelFactory.BuildViewModel(cp);
+            Assert.IsNotNull(vm);
+
+
+            TestViewModelB b = ((TestViewModelA)vm).ConcreteLink[0];
+            Assert.IsNotNull(b);
+
+           /// Assert.IsTrue(b.Heading == "some heading");
+        }
+
+        [TestMethod]
         public void MapConcreteEmbeddedField()
         {
 
@@ -178,6 +196,7 @@ namespace DD4T.Core.Test
         [TextField(IsMetadata=true)]
         public string Heading { get; set; }
     }
+
 
     public abstract class TestViewModelBase : ViewModelBase
     {

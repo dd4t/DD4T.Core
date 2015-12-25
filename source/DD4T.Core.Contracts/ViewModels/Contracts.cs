@@ -1,4 +1,5 @@
 ﻿using DD4T.ContentModel;
+using DD4T.Core.Contracts.Resolvers;
 using DD4T.Core.Contracts.ViewModels.Binding;
 using System;
 using System.Collections;
@@ -11,6 +12,22 @@ using System.Web;
 
 namespace DD4T.Core.Contracts.ViewModels
 {
+    /// <summary>
+    /// Special Container to store and enable passing context data during one request.
+    /// </summary>
+    public interface IContextModel
+    {
+        TcmUri PageId { get; set; }
+    }
+
+    /// <summary>
+    /// Resolve an IModel to a IContextResolver
+    /// </summary>
+    public interface IContextResolver
+    {
+        IContextModel ResolveContextModel(IModel modelData);
+    }
+
     public interface IHaveData //consider making this generic i.e. IHaveData<T> { T BaseData { get; } } -- would require a lot of refactoring
     {
         object BaseData { get; }
@@ -193,9 +210,10 @@ namespace DD4T.Core.Contracts.ViewModels
         /// Builds a View Model, inferring the Type based on the Model Data.
         /// </summary>
         /// <param name="modelData">Model Data</param>
+        /// <param name="contextModel">Context Model</param>
         /// <returns>A View Model</returns>
         /// <remarks>Requires LoadViewModels to have been used.</remarks>
-        IViewModel BuildViewModel(IModel modelData);
+        IViewModel BuildViewModel(IModel modelData, IContextModel contextModel = null);
         /// <summary>
         /// Builds a View Model, inferring the Type based on the Model Data and filtering possible Model Types by an Attribute.
         /// </summary>
@@ -207,14 +225,14 @@ namespace DD4T.Core.Contracts.ViewModels
         /// or Keyword Models to increase performance.
         /// Requires LoadViewModels to have been used.
         /// </remarks>
-        IViewModel BuildViewModelByAttribute<T>(IModel modelData) where T : IModelAttribute;
+        IViewModel BuildViewModelByAttribute<T>(IModel modelData, IContextModel contextModel = null) where T : IModelAttribute;
         /// <summary>
         /// Builds a View Model of the specified type.
         /// </summary>
         /// <param name="type">Specific type of View Model to build - must implement IViewModel</param>
         /// <param name="modelData">Model Data</param>
         /// <returns>View Model</returns>
-        IViewModel BuildViewModel(Type type, IModel modelData); //Does this need to be publicly exposed?
+        IViewModel BuildViewModel(Type type, IModel modelData, IContextModel contextModel = null); //Does this need to be publicly exposed?
         /// <summary>
         /// Builds a View Model of the specified type.
         /// </summary>
@@ -253,6 +271,21 @@ namespace DD4T.Core.Contracts.ViewModels
         /// The associate model resolver for this instance
         /// </summary>
         IViewModelResolver ModelResolver { get; }
+
+        /// <summary>
+        /// Link resolver (used to resolve IDs into hyperlinks)
+        /// </summary>
+        ILinkResolver LinkResolver { get;  }
+
+        /// <summary>
+        /// Rich text resolver (used to parse the rich text fields and resolve the links in them)
+        /// </summary>
+        IRichTextResolver RichTextResolver { get; }
+
+        /// <summary>
+        /// ContextResolver to resolve the context data 
+        /// </summary>
+        IContextResolver ContextResolver { get;  }
     }
     
    
@@ -435,12 +468,30 @@ namespace DD4T.Core.Contracts.ViewModels
         /// <param name="propertyType">Actual return type of the Property</param>
         /// <param name="builder">A View Model Builder</param>
         /// <returns>Property value</returns>
-        IEnumerable GetPropertyValues(IModel modelData, IModelProperty property, IViewModelFactory builder = null); //Strongly consider offloading some of the work to IModelProperty -- e.g. IsMultiValue, AddToCollection, etc.
-        /// <summary>
+        IEnumerable GetPropertyValues(IModel modelData, IModelProperty property, IViewModelFactory builder); //Strongly consider offloading some of the work to IModelProperty -- e.g. IsMultiValue, AddToCollection, etc.
+
+         /// <summary>
         /// Optional mapping if the Property is a Complex Type. This should only set by a Binding Module.
         /// </summary>
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
         IModelMapping ComplexTypeMapping { get; set; } //Anyway to get this dependency on the Binding namespace out?
+
+    }
+    /// <summary>
+    /// a attribute for a property of a view model that is using Tridion component linking feature
+    /// </summary>
+    public interface ILinkablePropertyAttribute : IPropertyAttribute
+    {
+        /// <summary>
+        /// Gets the value for this property based on a View Model data object
+        /// </summary>
+        /// <param name="model">View Model this Property is in</param>
+        /// <param name="propertyType">Actual return type of the Property</param>
+        /// <param name="builder">A View Model Builder</param>
+        /// <param name="contextModel">Holds the contextData during single request cycle</param>
+        /// <returns>Property value</returns>
+        IEnumerable GetPropertyValues(IModel modelData, IModelProperty property, IViewModelFactory builder, IContextModel contextModel); //Strongly consider offloading some of the work to IModelProperty -- e.g. IsMultiValue, AddToCollection, etc.
+
     }
     /// <summary>
     /// An attribute for a Property representing a Field
@@ -544,6 +595,7 @@ namespace DD4T.Core.Contracts.ViewModels
         /// <param name="key">View Model Key</param>
         /// <returns>True if it matches, false if not</returns>
         bool IsMatch(IModel data, string key);
+        
     }
     /// <summary>
     /// An Attribute for identifying a Defined (has a Schema) View Model class

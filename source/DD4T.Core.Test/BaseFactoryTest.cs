@@ -21,6 +21,7 @@ using DD4T.Utils.Resolver;
 using DD4T.Core.Contracts.ViewModels;
 using DD4T.ViewModels;
 using DD4T.ViewModels.Reflection;
+using DD4T.Core.Contracts.Resolvers;
 
 
 namespace DD4T.Core.Test
@@ -71,13 +72,25 @@ namespace DD4T.Core.Test
                 Bind<ILogger>().To<NullLogger>().InSingletonScope();
                 Bind<IFactoryCommonServices>().To<FactoryCommonServices>().InSingletonScope();
                 Bind<IPageFactory>().To<PageFactory>().InSingletonScope();
+                Bind<ILinkFactory>().To<LinkFactory>().InSingletonScope();
                 Bind<IComponentPresentationFactory>().To<ComponentPresentationFactory>().InSingletonScope();
                 Bind<IComponentFactory>().To<ComponentFactory>().InSingletonScope();
                 Bind<IProvidersCommonServices>().To<ProviderCommonServices>().InSingletonScope();
                 Bind<IPageProvider>().To<TridionPageProvider>().InSingletonScope();
+                Bind<ILinkProvider>().To<TridionLinkProvider>().InSingletonScope();
+
                 Bind<IComponentPresentationProvider>().To<TridionComponentPresentationProvider>().InSingletonScope();
                 Bind<ICacheAgent>().To<NullCacheAgent>().InSingletonScope();
                 Bind<ISerializerService>().To<JSONSerializerService>().InSingletonScope();
+
+
+                Bind<ILinkResolver>().To<DefaultLinkResolver>().InSingletonScope();
+                Bind<IRichTextResolver>().To<DefaultRichTextResolver>().InSingletonScope();
+                Bind<IContextResolver>().To<DefaultContextResolver>().InSingletonScope();
+
+
+
+            
             }
         }
     }
