@@ -59,6 +59,7 @@ namespace DD4T.Core.Test
             kernel.Bind<IViewModelFactory>().To<ViewModelFactory>();
             kernel.Bind<IReflectionHelper>().To<ReflectionOptimizer>();
             ViewModelFactory = kernel.Get<IViewModelFactory>();
+            ViewModelFactory.LoadViewModels(new [] { typeof(TestViewModelA).Assembly });
         }
 
 

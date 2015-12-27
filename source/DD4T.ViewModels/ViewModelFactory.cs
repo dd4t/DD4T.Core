@@ -23,14 +23,14 @@ namespace DD4T.ViewModels
         private readonly ILinkResolver _linkResolver;
         private readonly IRichTextResolver _richtTextResolver;
         private readonly IContextResolver _contextResolver;
-        
+
         /// <summary>
         /// New View Model Builder
         /// </summary>
         /// <param name="keyProvider">A View Model Key provider</param>
-        public ViewModelFactory(IViewModelKeyProvider keyProvider, 
-                                IViewModelResolver resolver, 
-                                ILinkResolver linkResolver, 
+        public ViewModelFactory(IViewModelKeyProvider keyProvider,
+                                IViewModelResolver resolver,
+                                ILinkResolver linkResolver,
                                 IRichTextResolver richTextResolver,
                                 IContextResolver contextResolver)
         {
@@ -46,10 +46,17 @@ namespace DD4T.ViewModels
             this._richtTextResolver = richTextResolver;
             this._contextResolver = contextResolver;
 
-            //disabled this functionality because the EntryAssembly doesn't on a web project, and calling assembly is not the Webapllication
-            //Possible fix: refactor the DI binding and pass the assembly as argument into the consturtor!
-            //LoadViewModels(new List<Assembly> { Assembly.GetEntryAssembly() });
-            LoadViewModels();
+            // Trying to find the entry assembly to load view models from.
+            // For web applications, a special trick is needed to do this (see below).
+            Assembly entryAssembly = GetWebEntryAssembly();
+            if (entryAssembly == null)
+            {
+                entryAssembly = Assembly.GetEntryAssembly();
+            }
+            if (entryAssembly != null)
+            {
+                LoadViewModels(new List<Assembly> { entryAssembly });
+            }
         }
 
 
@@ -70,7 +77,7 @@ namespace DD4T.ViewModels
                 if (!loadedAssemblies.Contains(assembly))
                 {
                     //Josh Einhorn - Performance Question: Should we incur the memory overhead of storing Assembly objects in the heap or allow same assembly to get processed multiple times?
-                    loadedAssemblies.Add(assembly); 
+                    loadedAssemblies.Add(assembly);
                     IModelAttribute viewModelAttr;
                     foreach (var type in assembly.GetTypes())
                     {
@@ -84,6 +91,17 @@ namespace DD4T.ViewModels
             }
         }
 
+        // This property can be used for detecting which view models are loaded.
+        // Note that it's not part of the interface IViewModelFactory, so you would need
+        // to cast to DD4T.ViewModels.ViewModelFactory before you can use it
+        public IEnumerable<Type> ViewModels
+        {
+            get
+            {
+                return viewModels.Values;
+            }
+        }
+
         /// <summary>
         /// Loads View Model Types from an Assembly. Use minimally due to reflection overhead.
         /// </summary>
@@ -91,9 +109,9 @@ namespace DD4T.ViewModels
         public void LoadViewModels() //We assume we have a singleton of this instance, otherwise we incur a lot of overhead
         {
             var assemblies = AppDomain.CurrentDomain.GetAssemblies()
-                                        .Where(a => !a.GlobalAssemblyCache 
-                                                        && !a.IsDynamic 
-                                                        && !a.ReflectionOnly 
+                                        .Where(a => !a.GlobalAssemblyCache
+                                                        && !a.IsDynamic
+                                                        && !a.ReflectionOnly
                                                         && !a.FullName.StartsWith("Tridion."));
 
             LoadViewModels(assemblies);
@@ -123,7 +141,7 @@ namespace DD4T.ViewModels
             if (property == null) throw new ArgumentNullException("property");
             if (model != null && data != null && property.PropertyAttribute != null)
             {
-                var propertyValue = GetPropertyValue(property,property.PropertyAttribute.GetPropertyValues(data, property, this));
+                var propertyValue = GetPropertyValue(property, property.PropertyAttribute.GetPropertyValues(data, property, this));
                 if (propertyValue != null)
                 {
                     try
@@ -175,9 +193,9 @@ namespace DD4T.ViewModels
             return viewModel;
         }
 
-       
 
-        public T BuildViewModel<T>(IModel modelData) where T : IViewModel 
+
+        public T BuildViewModel<T>(IModel modelData) where T : IViewModel
         {
             return (T)BuildViewModel(typeof(T), modelData);
         }
@@ -204,7 +222,23 @@ namespace DD4T.ViewModels
         }
         #region Private methods
 
+        // See http://stackoverflow.com/questions/4277692/getentryassembly-for-web-applications
+        static private Assembly GetWebEntryAssembly()
+        {
+            if (System.Web.HttpContext.Current == null ||
+                System.Web.HttpContext.Current.ApplicationInstance == null)
+            {
+                return null;
+            }
 
+            var type = System.Web.HttpContext.Current.ApplicationInstance.GetType();
+            while (type != null && type.Namespace == "ASP")
+            {
+                type = type.BaseType;
+            }
+
+            return type == null ? null : type.Assembly;
+        }
         private void ProcessViewModel(IViewModel viewModel, Type type, IContextModel contextModel)
         {
             //PropertyInfo[] props = type.GetProperties();
@@ -218,7 +252,7 @@ namespace DD4T.ViewModels
                 {
                     IEnumerable values;
                     //ILinkablePropertyAttribute is implemented, we have to pass context data to property. 
-                    if(propAttribute is ILinkablePropertyAttribute)                        
+                    if (propAttribute is ILinkablePropertyAttribute)
                         values = ((ILinkablePropertyAttribute)propAttribute).GetPropertyValues(viewModel.ModelData, prop, this, contextModel); //delegate work to the Property Attribute object itself. Allows for custom attribute types to easily be added
                     else
                         values = propAttribute.GetPropertyValues(viewModel.ModelData, prop, this); //delegate work to the Property Attribute object itself. Allows for custom attribute types to easily be added
@@ -240,7 +274,7 @@ namespace DD4T.ViewModels
                 }
             }
         }
-       
+
         private object GetPropertyValue(IModelProperty prop, IEnumerable values)
         {
             object result = null;
@@ -278,6 +312,6 @@ namespace DD4T.ViewModels
 
 
 
-        
+
     }
 }
