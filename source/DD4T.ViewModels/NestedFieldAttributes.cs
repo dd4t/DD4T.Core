@@ -42,7 +42,11 @@ namespace DD4T.ViewModels.Attributes
 
         protected override Type GetModelType(IModel data, IViewModelFactory factory, IModelProperty property)
         {
-            // TODO: read type from model property
+            if (EmbeddedModelType == null)
+            {
+                return property.ModelType;
+            }
+            
             return EmbeddedModelType;
         }
 
@@ -92,24 +96,27 @@ namespace DD4T.ViewModels.Attributes
 
         protected override Type GetModelType(IModel data, IViewModelFactory factory, IModelProperty property)
         {
-            return property.ModelType;
-            //Type result = null;
-            //try
-            //{
-            //    result = factory.FindViewModelByAttribute<IContentModelAttribute>(data, LinkedComponentTypes);
-            //}
-            //catch (ViewModelTypeNotFoundException)
-            //{
-            //    result = null;
-            //}
-            //return result;
+            if (LinkedComponentTypes == null || LinkedComponentTypes.Count() == 0)
+            {
+                return property.ModelType;
+            }
+            Type result = null;
+            try
+            {
+                result = factory.FindViewModelByAttribute<IContentModelAttribute>(data, LinkedComponentTypes);
+            }
+            catch (ViewModelTypeNotFoundException)
+            {
+                result = null;
+            }
+            return result;
         }
 
         protected override bool ReturnRawData
         {
             get
             {
-                return false; // return LinkedComponentTypes == null; // If we base our return type on the type of the model property, we never have to return the raw data type
+                return false; 
             }
         }
     }
@@ -130,13 +137,19 @@ namespace DD4T.ViewModels.Attributes
 
         protected override Type GetModelType(IModel data, IViewModelFactory factory, IModelProperty property)
         {
-            return property.ModelType;
-            //return KeywordType;
+            if (KeywordType == null)
+            {
+                return property.ModelType;
+            }
+            return KeywordType;
         }
 
         protected override bool ReturnRawData
         {
-            get { return KeywordType == null; }
+            get 
+            { 
+                return false;
+            }
         }
     }
 }

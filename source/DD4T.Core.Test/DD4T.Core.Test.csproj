@@ -38,23 +38,20 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DD4T.ContentModel, Version=2.0.4.0, Culture=neutral, PublicKeyToken=4450e3c7f68bf872, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\DD4T.Model.2.0.4-beta1\lib\net45\DD4T.ContentModel.dll</HintPath>
+    <Reference Include="DD4T.ContentModel, Version=2.0.7.0, Culture=neutral, PublicKeyToken=4450e3c7f68bf872, processorArchitecture=MSIL">
+      <HintPath>..\packages\DD4T.Model.2.0.7\lib\net45\DD4T.ContentModel.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="DD4T.ContentModel.Contracts, Version=2.0.4.0, Culture=neutral, PublicKeyToken=4450e3c7f68bf872, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\DD4T.Model.2.0.4-beta1\lib\net45\DD4T.ContentModel.Contracts.dll</HintPath>
+    <Reference Include="DD4T.ContentModel.Contracts, Version=2.0.7.0, Culture=neutral, PublicKeyToken=4450e3c7f68bf872, processorArchitecture=MSIL">
+      <HintPath>..\packages\DD4T.Model.2.0.7\lib\net45\DD4T.ContentModel.Contracts.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="DD4T.ContentModel.XmlSerializers">
-      <HintPath>..\packages\DD4T.Model.2.0.4-beta1\lib\net45\DD4T.ContentModel.XmlSerializers.dll</HintPath>
+    <Reference Include="DD4T.ContentModel.XmlSerializers, Version=2.0.7.0, Culture=neutral, PublicKeyToken=4450e3c7f68bf872, processorArchitecture=MSIL">
+      <HintPath>..\packages\DD4T.Model.2.0.7\lib\net45\DD4T.ContentModel.XmlSerializers.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="DD4T.Serialization, Version=2.0.4.0, Culture=neutral, PublicKeyToken=4450e3c7f68bf872, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\DD4T.Model.2.0.4-beta1\lib\net45\DD4T.Serialization.dll</HintPath>
+    <Reference Include="DD4T.Serialization, Version=2.0.7.0, Culture=neutral, PublicKeyToken=4450e3c7f68bf872, processorArchitecture=MSIL">
+      <HintPath>..\packages\DD4T.Model.2.0.7\lib\net45\DD4T.Serialization.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
@@ -83,8 +80,10 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="ResolverTest.cs" />
     <Compile Include="ComponentFactoryTest.cs" />
     <Compile Include="BaseFactoryTest.cs" />
+    <Compile Include="ViewModelFactoryTest.cs" />
     <Compile Include="ComponentPresentationFactoryTest.cs" />
     <Compile Include="PageFactoryTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -109,6 +108,10 @@
       <Project>{d2ce08be-7281-4697-adfe-e7a031cb59ec}</Project>
       <Name>DD4T.Utils</Name>
       <Private>True</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\DD4T.ViewModels\DD4T.ViewModels.csproj">
+      <Project>{cc2b55da-ffbc-44b9-ada5-c087876ac199}</Project>
+      <Name>DD4T.ViewModels</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

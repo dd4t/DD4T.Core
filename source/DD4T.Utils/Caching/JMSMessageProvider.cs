@@ -132,12 +132,12 @@ namespace DD4T.Utils.Caching
             ITextMessage message = receivedMsg as ITextMessage;
             if (message == null)
             {
-                Logger.Warning(string.Format("received JMS message with id {0} which is not a text message", receivedMsg.NMSMessageId));
+                Logger.Warning("received JMS message with id {0} which is not a text message", receivedMsg.NMSMessageId);
                 receivedMsg.Acknowledge();
                 return;
             }
 
-            Logger.Debug(string.Format("received text message with id {0} and text {1}", message.NMSMessageId, message.Text));
+            Logger.Debug("received text message with id {0} and text {1}", message.NMSMessageId, message.Text);
 
             try
             {
