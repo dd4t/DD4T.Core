@@ -20,11 +20,6 @@ namespace DD4T.Providers.Test
             return link2;
         }
 
-        public void SetLink1(string newValue)
-        {
-            link1 = newValue;
-        }
-
         public void Dispose()
         {
         }

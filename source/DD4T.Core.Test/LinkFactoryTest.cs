@@ -27,32 +27,35 @@ namespace DD4T.Core.Test
         [TestMethod]
         public void ResolveLink()
         {
+            TridionLinkProvider.link1 = "/something";
             var link = LinkFactory.ResolveLink("tcm:2-123");
            
             Assert.IsNotNull(link);
             Assert.IsFalse(string.IsNullOrEmpty(link));
-            Assert.AreEqual(link, TridionLinkProvider.link1);
+            Assert.AreEqual(link, "/something");
         }
 
         [TestMethod]
         public void ResolveLinkWithTemplateUri()
         {
+            TridionLinkProvider.link2 = "/something";
             var link = LinkFactory.ResolveLink("tcm:2-456-64", "tcm:2-123", "tcm:2-789-32");
 
             Assert.IsNotNull(link);
             Assert.IsFalse(string.IsNullOrEmpty(link));
-            Assert.AreEqual(link, TridionLinkProvider.link2);
+            Assert.AreEqual(link, "/something");
         }
 
         [TestMethod]
         public void GetLinkFromCache()
         {
+            TridionLinkProvider.link1 = "/something";
             var link = LinkFactory.ResolveLink("tcm:2-123");
 
             Assert.IsNotNull(link);
             Assert.IsFalse(string.IsNullOrEmpty(link));
 
-            TridionLinkProvider.link1 = "something else";
+            TridionLinkProvider.link1 = "/something/else";
             var newLink = LinkFactory.ResolveLink("tcm:2-123");
 
             // Note: changing the underlying value of the link shouldn't matter because the LinkFactory should cache the link anyway

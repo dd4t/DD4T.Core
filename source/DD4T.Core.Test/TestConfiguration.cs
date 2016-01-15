@@ -243,6 +243,10 @@ namespace DD4T.Core.Test
        
         public int GetExpirationForCacheRegion(string region)
         {
+            if (region == "ComponentPresentation" || region == "Page")
+            {
+                return 0;
+            }
             return DefaultCacheSettings;
         }
     }

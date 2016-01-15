@@ -63,7 +63,7 @@ namespace DD4T.Core.Test
             //kernel.Bind<ICacheAgent>().To<DefaultCacheAgent>().WhenInjectedInto(typeof(ILinkFactory));
             LinkFactory.CacheAgent = kernel.Get<ICacheAgent>();
             ViewModelFactory = kernel.Get<IViewModelFactory>();
-            ViewModelFactory.LoadViewModels(new [] { typeof(TestViewModelA).Assembly });
+            //ViewModelFactory.LoadViewModels(new [] { typeof(TestViewModelA).Assembly });
         }
 
 
