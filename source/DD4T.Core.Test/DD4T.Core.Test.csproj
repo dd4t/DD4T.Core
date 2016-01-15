@@ -80,9 +80,11 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="LinkFactoryTest.cs" />
     <Compile Include="ResolverTest.cs" />
     <Compile Include="ComponentFactoryTest.cs" />
     <Compile Include="BaseFactoryTest.cs" />
+    <Compile Include="TestConfiguration.cs" />
     <Compile Include="ViewModelFactoryTest.cs" />
     <Compile Include="ComponentPresentationFactoryTest.cs" />
     <Compile Include="PageFactoryTest.cs" />

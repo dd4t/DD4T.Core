@@ -70,20 +70,18 @@ namespace DD4T.Factories
             }
             else
             {
-                //ILinkProvider lp = GetLinkProvider(componentUri);
-                //if (lp == null)
-                //    return string.Empty;
+               
                 string resolvedUrl = LinkProvider.ResolveLink(componentUri);
-                //if (resolvedUrl == null)
-                //{
-                //    //CacheAgent.Store(cacheKey, CacheRegion, CacheValueNull, new List<string>() { String.Format(ComponentFactory.CacheKeyFormatByUri, componentUri) });
-                //    CacheAgent.Store(cacheKey, CacheRegion, CacheValueNull);
-                //}
-                //else
-                //{
-                //    //CacheAgent.Store(cacheKey, CacheRegion, resolvedUrl, new List<string>() { String.Format(ComponentFactory.CacheKeyFormatByUri, componentUri) });
-                //    CacheAgent.Store(cacheKey, CacheRegion, resolvedUrl);
-                //}
+                if (resolvedUrl == null)
+                {
+                    //CacheAgent.Store(cacheKey, CacheRegion, CacheValueNull, new List<string>() { String.Format(ComponentFactory.CacheKeyFormatByUri, componentUri) });
+                    CacheAgent.Store(cacheKey, CacheRegion, CacheValueNull);
+                }
+                else
+                {
+                    //CacheAgent.Store(cacheKey, CacheRegion, resolvedUrl, new List<string>() { String.Format(ComponentFactory.CacheKeyFormatByUri, componentUri) });
+                    CacheAgent.Store(cacheKey, CacheRegion, resolvedUrl);
+                }
                 return resolvedUrl;
             }
         }

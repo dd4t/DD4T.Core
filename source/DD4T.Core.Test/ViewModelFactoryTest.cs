@@ -26,13 +26,12 @@ namespace DD4T.Core.Test
         public static void Setup(TestContext context)
         {
             Initialize();
-            ViewModelFactory.LoadViewModels();
+            ViewModelFactory.LoadViewModels(new[] { typeof(TestViewModelA).Assembly }); 
         }
 
         [TestMethod]
         public void MapAbstractLink()
         {
-            
             IComponentPresentation cp = ComponentPresentationFactory.GetComponentPresentation("", "componentlink");
             Assert.IsNotNull(cp);
 
@@ -48,7 +47,6 @@ namespace DD4T.Core.Test
         [TestMethod]
         public void MapConcreteLink()
         {
-
             IComponentPresentation cp = ComponentPresentationFactory.GetComponentPresentation("", "componentlink");
             Assert.IsNotNull(cp);
 
@@ -64,11 +62,10 @@ namespace DD4T.Core.Test
         [TestMethod]
         public void MapFieldsIgnoreCase()
         {
-
             IComponentPresentation cp = ComponentPresentationFactory.GetComponentPresentation("", "componentIgnoreCase");
             Assert.IsNotNull(cp);
 
-            ViewModelFactory.LoadViewModels();
+            //ViewModelFactory.LoadViewModels();
             IViewModel vm = ViewModelFactory.BuildViewModel(cp);
             Assert.IsNotNull(vm);
 
@@ -82,7 +79,6 @@ namespace DD4T.Core.Test
         [TestMethod]
         public void MapConcreteEmbeddedField()
         {
-
             IComponentPresentation cp = ComponentPresentationFactory.GetComponentPresentation("", "embedded");
              Assert.IsNotNull(cp);
 
@@ -98,7 +94,6 @@ namespace DD4T.Core.Test
         [TestMethod]
         public void MapAbstractEmbeddedField()
         {
-
             IComponentPresentation cp = ComponentPresentationFactory.GetComponentPresentation("", "embedded");
             Assert.IsNotNull(cp);
 
@@ -114,7 +109,6 @@ namespace DD4T.Core.Test
         [TestMethod]
         public void MapAbstractKeywordField()
         {
-
             IComponentPresentation cp = ComponentPresentationFactory.GetComponentPresentation("", "keyword");
             Assert.IsNotNull(cp);
 
@@ -130,7 +124,6 @@ namespace DD4T.Core.Test
         [TestMethod]
         public void MapConcreteKeywordField()
         {
-
             IComponentPresentation cp = ComponentPresentationFactory.GetComponentPresentation("", "keyword");
             Assert.IsNotNull(cp);
 

@@ -53,6 +53,7 @@ namespace DD4T.Core.Test
             IComponentPresentation cp = ComponentPresentationFactory.GetComponentPresentation("", "");
             Assert.IsNotNull(cp);
 
+            TridionLinkProvider.link1 = "/this/link/works.html";
             string url = ViewModelFactory.LinkResolver.ResolveUrl(cp.Component);
 
             Assert.IsNotNull(url);
@@ -65,6 +66,7 @@ namespace DD4T.Core.Test
             IComponentPresentation cp = ComponentPresentationFactory.GetComponentPresentation("", "");
             Assert.IsNotNull(cp);
 
+            TridionLinkProvider.link2 = "/this/link/works/too.html"; 
             string url = ViewModelFactory.LinkResolver.ResolveUrl(cp.Component, "tcm:2-2-64");
 
             Assert.IsNotNull(url);
