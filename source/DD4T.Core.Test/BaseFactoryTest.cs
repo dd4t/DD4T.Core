@@ -33,6 +33,8 @@ namespace DD4T.Core.Test
         protected static IPageFactory PageFactory { get; set; }
         protected static IComponentPresentationFactory ComponentPresentationFactory { get; set; }
         protected static IComponentFactory ComponentFactory { get; set; }
+        protected static ILinkFactory LinkFactory { get; set; }
+        protected static ICacheAgent DefaultCacheAgent { get; set; }
         protected static IViewModelFactory ViewModelFactory { get; set; }
 
 
@@ -46,9 +48,9 @@ namespace DD4T.Core.Test
             PageFactory = kernel.Get<IPageFactory>();
             ComponentPresentationFactory = kernel.Get<IComponentPresentationFactory>();
             ComponentFactory = kernel.Get<IComponentFactory>();
-            PageFactory.CacheAgent = kernel.Get<ICacheAgent>();
+            LinkFactory = kernel.Get<ILinkFactory>();
+            ComponentPresentationFactory.CacheAgent = PageFactory.CacheAgent = kernel.Get<ICacheAgent>();
             PageFactory.PageProvider = kernel.Get<IPageProvider>();
-            ComponentPresentationFactory.CacheAgent = kernel.Get<ICacheAgent>();
             ComponentPresentationFactory.ComponentPresentationProvider = kernel.Get<IComponentPresentationProvider>();
             ((ComponentFactory)ComponentFactory).ComponentPresentationFactory = ComponentPresentationFactory;
             ((TridionPageProvider)PageFactory.PageProvider).SerializerService = kernel.Get<ISerializerService>();
@@ -58,8 +60,10 @@ namespace DD4T.Core.Test
             kernel.Bind<IViewModelResolver>().To<DefaultViewModelResolver>();
             kernel.Bind<IViewModelFactory>().To<ViewModelFactory>();
             kernel.Bind<IReflectionHelper>().To<ReflectionOptimizer>();
+            //kernel.Bind<ICacheAgent>().To<DefaultCacheAgent>().WhenInjectedInto(typeof(ILinkFactory));
+            LinkFactory.CacheAgent = kernel.Get<ICacheAgent>();
             ViewModelFactory = kernel.Get<IViewModelFactory>();
-            ViewModelFactory.LoadViewModels(new [] { typeof(TestViewModelA).Assembly });
+            //ViewModelFactory.LoadViewModels(new [] { typeof(TestViewModelA).Assembly });
         }
 
 
@@ -67,7 +71,7 @@ namespace DD4T.Core.Test
         {
             public override void Load()
             {
-                Bind<IDD4TConfiguration>().To<DD4TConfiguration>().InSingletonScope();
+                Bind<IDD4TConfiguration>().To<TestConfiguration>().InSingletonScope();
                 Bind<IPublicationResolver>().To<DefaultPublicationResolver>().InSingletonScope();
 
                 Bind<ILogger>().To<NullLogger>().InSingletonScope();
@@ -81,7 +85,8 @@ namespace DD4T.Core.Test
                 Bind<ILinkProvider>().To<TridionLinkProvider>().InSingletonScope();
 
                 Bind<IComponentPresentationProvider>().To<TridionComponentPresentationProvider>().InSingletonScope();
-                Bind<ICacheAgent>().To<NullCacheAgent>().InSingletonScope();
+                Bind<ICacheAgent>().To<DefaultCacheAgent>().InSingletonScope();
+               
                 Bind<ISerializerService>().To<JSONSerializerService>().InSingletonScope();
 
 

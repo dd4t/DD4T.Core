@@ -7,15 +7,19 @@ namespace DD4T.Providers.Test
     public class TridionLinkProvider : BaseProvider, ILinkProvider, IDisposable
     {
 
+        public static string link1 = "/this/link/works.html";
+        public static string link2 = "/this/link/works/too.html";
+ 
         public string ResolveLink(string componentUri)
         {
-            return "/this/link/works.html";
+            return link1;
         }
 
         public string ResolveLink(string sourcePageUri, string componentUri, string excludeComponentTemplateUri)
         {
-            return "/this/link/works/too.html";
+            return link2;
         }
+
         public void Dispose()
         {
         }
