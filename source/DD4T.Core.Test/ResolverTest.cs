@@ -22,30 +22,56 @@ namespace DD4T.Core.Test
         public static void Setup(TestContext context)
         {
             Initialize();
+            TridionLinkProvider.link1 = "/something";
         }
 
         [TestMethod]
-        public void ResolveRichText()
+        public void ResolveRichTextKeepWhitespace()
+        {
+            string richtextRaw = "<p xmlns=\"http://www.w3.org/1999/xhtml\" class=\"acme\">Hello <b>world</b> how are you?</p>\r\n<div xmlns=\"http://www.w3.org/1999/xhtml\">Next, we will try a number of <b>bold bold</b> <i>italic</i> and <u>underlined yes underlined</u> words. And a bold word between brackets: (<b>bold</b>).</div>";
+            string resolvedRichText = ResolveRichText(richtextRaw);
+            Assert.IsNotNull(resolvedRichText);
+            Assert.AreEqual(richtextRaw.Replace(" xmlns=\"http://www.w3.org/1999/xhtml\"", ""), resolvedRichText);
+        }
+
+        [TestMethod]
+        public void ResolveRichTextWithLinkToPDF()
+        {
+            string richtextRaw = "<p xmlns=\"http://www.w3.org/1999/xhtml\" class=\"acme\">Hello <b>world</b> how are you?</p>\r\n<div xmlns=\"http://www.w3.org/1999/xhtml\">Next, we will try a number of <b>bold bold</b> <i>italic</i> and <u>underlined yes underlined</u> words. And a bold word between brackets: (<b>bold</b>).</div>";
+            richtextRaw += "<div xmlns=\"http://www.w3.org/1999/xhtml\"><a xlink:href=\"tcm:8-11147\" title=\"Test Attachment\" xlink:title=\"Test Attachment\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" href=\"/en/media/tes_tcm8-11147.pdf\">test atata</a></div>";
+            string resolvedRichText = ResolveRichText(richtextRaw);
+            Assert.IsNotNull(resolvedRichText);
+            Assert.IsTrue(resolvedRichText.Contains("href=\"/en/media/tes_tcm8-11147.pdf\""));
+            Assert.IsFalse(resolvedRichText.Contains("xlink:href=\""));
+
+        }
+        [TestMethod]
+        public void ResolveRichTextWithLinkToComponent()
+        {
+            string richtextRaw = "<p xmlns=\"http://www.w3.org/1999/xhtml\" class=\"acme\">Hello <b>world</b> how are you?</p>\r\n<div xmlns=\"http://www.w3.org/1999/xhtml\">Next, we will try a number of <b>bold bold</b> <i>italic</i> and <u>underlined yes underlined</u> words. And a bold word between brackets: (<b>bold</b>).</div>";
+            richtextRaw += "<div xmlns=\"http://www.w3.org/1999/xhtml\"><a xlink:href=\"tcm:8-11147\" xlink:title=\"Test Link\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">test atata</a></div>";
+            string resolvedRichText = ResolveRichText(richtextRaw);
+            Assert.IsNotNull(resolvedRichText);
+            Assert.IsTrue(resolvedRichText.Contains(" href=\"/something\""));
+            Assert.IsFalse(resolvedRichText.Contains("xlink:href=\""));
+        }
+
+        private string ResolveRichText(string input)
         {
             IComponentPresentation cp = ComponentPresentationFactory.GetComponentPresentation("", "");
-            Assert.IsNotNull(cp);
-
-            string richtextRaw = "<p class=\"acme\">Hello <b>world</b> how are you?</p>\r\n<div>Next, we will try a number of <b>bold bold</b> <i>italic</i> and <u>underlined yes underlined</u> words. And a bold word between brackets: (<b>bold</b>).</div>";
+            
             Field richTextField = new Field()
             {
                 Name = "richtext",
                 Values = new List<string>()
                 {
-                    richtextRaw
+                    input
                 }
             };
             cp.Component.Fields.Add(richTextField.Name, richTextField);
-
-            string resolvedRichText = (string) ViewModelFactory.RichTextResolver.Resolve(cp.Component.Fields["richtext"].Value);
-            Assert.IsNotNull(resolvedRichText);
-            Assert.AreEqual(richtextRaw, resolvedRichText);
-
+            return (string) ViewModelFactory.RichTextResolver.Resolve(cp.Component.Fields["richtext"].Value);
         }
+
 
         [TestMethod]
         public void ResolveLink()
