@@ -53,6 +53,21 @@ namespace DD4T.Utils.Resolver
             // resolve links which haven't been resolved
             foreach (XmlNode link in doc.SelectNodes("//xhtml:a[@xlink:href[starts-with(string(.),'tcm:')]][@xhtml:href='' or not(@xhtml:href)]", nsmgr))
             {
+                bool hasResolvedHref = false;
+                foreach (XmlAttribute href in link.SelectNodes("@*[local-name()='href']"))
+                {
+                    if (href.NamespaceURI == XhtmlNamespaceUri || string.IsNullOrEmpty(href.NamespaceURI))
+                    {
+                        // this link contains BOTH an xlink:href (TCM uri) AND an xhtml:href (resolved link, probably to a binary)
+                        // in that case we will let the pre-resolved hyperlink win
+                        hasResolvedHref = true;
+                        break;
+                    }
+                }
+                if (hasResolvedHref)
+                {
+                    continue;
+                }
                 string tcmuri = link.Attributes["xlink:href"].Value;
 
                 string linkUrl = string.IsNullOrEmpty(pageUri) ? _linkFactory.ResolveLink(tcmuri) : _linkFactory.ResolveLink(pageUri, tcmuri, TcmUri.NullUri.ToString());
@@ -115,10 +130,10 @@ namespace DD4T.Utils.Resolver
         {
             if (!string.IsNullOrEmpty(html))
             {
-                html = html.Replace("xmlns=\"\"", "");
-                html = html.Replace(string.Format("xmlns=\"{0}\"", XhtmlNamespaceUri), "");
-                html = html.Replace(string.Format("xmlns:xhtml=\"{0}\"", XhtmlNamespaceUri), "");
-                html = html.Replace(string.Format("xmlns:xlink=\"{0}\"", XlinkNamespaceUri), "");
+                html = html.Replace(" xmlns=\"\"", "");
+                html = html.Replace(string.Format(" xmlns=\"{0}\"", XhtmlNamespaceUri), "");
+                html = html.Replace(string.Format(" xmlns:xhtml=\"{0}\"", XhtmlNamespaceUri), "");
+                html = html.Replace(string.Format(" xmlns:xlink=\"{0}\"", XlinkNamespaceUri), "");
             }
 
             return html;
