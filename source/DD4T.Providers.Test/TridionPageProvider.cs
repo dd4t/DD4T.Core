@@ -15,6 +15,7 @@ namespace DD4T.Providers.Test
     public class TridionPageProvider : BaseProvider, IPageProvider
     {
 
+        public bool ThrowPageNotFound { get; set; }
         public ISerializerService SerializerService
         {
             get;
@@ -45,10 +46,16 @@ namespace DD4T.Providers.Test
         /// <summary>
         /// Gets the raw string (xml) from the broker db by URL
         /// </summary>
-        /// <param name="Url">URL of the page</param>
+        /// <param name="url">URL of the page</param>
         /// <returns>String with page xml or empty string if no page was found</returns>
-        public string GetContentByUrl(string Url)
+        public string GetContentByUrl(string url)
         {
+
+            if (ThrowPageNotFound)
+            {
+                return string.Empty;
+            }
+
             Page page = new Page();
             page.Title = Randomizer.AnyString(15);
             page.Id = Randomizer.AnyUri(64);
@@ -92,7 +99,7 @@ namespace DD4T.Providers.Test
             return DateTime.Now;
         }
 
-		public DateTime GetLastPublishedDateByUri(string uri) {
+        public DateTime GetLastPublishedDateByUri(string uri) {
             return DateTime.Now;
         }
         #endregion
