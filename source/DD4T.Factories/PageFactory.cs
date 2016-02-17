@@ -30,6 +30,7 @@ namespace DD4T.Factories
         private IPage CacheValueNull;
         //private ICacheAgent _cacheAgent = null;
         public const string CacheRegion = "Page";
+        public const string CacheRegion404 = "Page404";
         public IPageProvider PageProvider { get; set; }
         public ILinkFactory LinkFactory { get; set; }
         public IComponentPresentationFactory ComponentPresentationFactory { get; set; }
@@ -110,7 +111,7 @@ namespace DD4T.Factories
 
                 if (string.IsNullOrEmpty(pageContentFromBroker))
                 {
-                    CacheAgent.Store(cacheKey, CacheRegion, CacheValueNull);
+                    CacheAgent.Store(cacheKey, CacheRegion404, CacheValueNull);
                 }
                 else
                 { 
