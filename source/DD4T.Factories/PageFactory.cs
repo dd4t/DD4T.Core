@@ -25,8 +25,12 @@ namespace DD4T.Factories
 
         private static IDictionary<string, DateTime> lastPublishedDates = new Dictionary<string, DateTime>();
         private static Regex rePageContentByUrl = new Regex("PageContent_([0-9\\-]+)_(.*)");
+
+        const string CacheValueNullTitle = "DD4T-Special-Value-PageNotFound";
+        private IPage CacheValueNull;
         //private ICacheAgent _cacheAgent = null;
         public const string CacheRegion = "Page";
+        public const string CacheRegion404 = "Page404";
         public IPageProvider PageProvider { get; set; }
         public ILinkFactory LinkFactory { get; set; }
         public IComponentPresentationFactory ComponentPresentationFactory { get; set; }
@@ -43,10 +47,11 @@ namespace DD4T.Factories
 
             ComponentPresentationFactory = componentPresentationFactory;
             PageProvider = pageProvider;
+            CacheValueNull = new Page() { Title = CacheValueNullTitle };
 
-        }
+    }
 
-        private string DataFormat
+    private string DataFormat
         {
             get
             {
@@ -89,6 +94,12 @@ namespace DD4T.Factories
 
             if (page != null)
             {
+                if (page.Title == CacheValueNullTitle)
+                {
+                    page = null;
+                    return false;
+                }
+
                 LoggerService.Debug("<<TryFindPage ({0}", LoggingCategory.Performance, url);
                 return true;
             }
@@ -98,8 +109,12 @@ namespace DD4T.Factories
                 string pageContentFromBroker = PageProvider.GetContentByUrl(url);
                 LoggerService.Debug("finished loading page content from provider with url {0}, has value: {1}", LoggingCategory.Performance, url, Convert.ToString(!(string.IsNullOrEmpty(pageContentFromBroker))));
 
-                if (!string.IsNullOrEmpty(pageContentFromBroker))
+                if (string.IsNullOrEmpty(pageContentFromBroker))
                 {
+                    CacheAgent.Store(cacheKey, CacheRegion404, CacheValueNull);
+                }
+                else
+                { 
                     LoggerService.Debug("about to create IPage from content for url {0}", LoggingCategory.Performance, url);
                     page = GetIPageObject(pageContentFromBroker);
                     if (IncludeLastPublishedDate)
@@ -111,6 +126,7 @@ namespace DD4T.Factories
                     LoggerService.Debug("<<TryFindPage ({0}", LoggingCategory.Performance, url);
                     return true;
                 }
+                
             }
 
             LoggerService.Debug("<<TryFindPage ({0}", LoggingCategory.Performance, url);

@@ -9,6 +9,8 @@ namespace DD4T.Core.Test
 {
     class TestConfiguration : IDD4TConfiguration
     {
+        public static int OverridePageExpiration { get; set; }
+        public static int OverrideComponentPresentationExpiration { get; set; }
         public string ActiveWebsite
         {
             get
@@ -243,9 +245,13 @@ namespace DD4T.Core.Test
        
         public int GetExpirationForCacheRegion(string region)
         {
-            if (region == "ComponentPresentation" || region == "Page")
+            if (region == "Page")
             {
-                return 0;
+                return OverridePageExpiration;
+            }
+            if (region == "ComponentPresentation")
+            {
+                return OverrideComponentPresentationExpiration;
             }
             return DefaultCacheSettings;
         }

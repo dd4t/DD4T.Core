@@ -11,6 +11,7 @@ using DD4T.ContentModel.Contracts.Caching;
 using DD4T.ContentModel;
 using DD4T.ContentModel.Contracts.Serializing;
 using DD4T.Serialization;
+using DD4T.ContentModel.Exceptions;
 
 namespace DD4T.Core.Test
 {
@@ -29,6 +30,50 @@ namespace DD4T.Core.Test
             IPage page = PageFactory.FindPage("/index.html");
             Assert.IsNotNull(page);
             Assert.IsFalse(string.IsNullOrEmpty(page.Title));
+        }
+
+        [TestMethod]
+        public void PageNotFound()
+        {
+            ((TridionPageProvider)PageFactory.PageProvider).ThrowPageNotFound = true;
+            try
+            {
+                IPage page = PageFactory.FindPage("/index.html");
+                Assert.Fail("PageFactory did not throw a PageNotFoundException");
+            }
+            catch (PageNotFoundException)
+            {
+                Assert.IsTrue(true);
+            }
+        }
+
+        [TestMethod]
+        public void CacheNullResult()
+        {
+           
+            int configuredPageExpiration = TestConfiguration.OverridePageExpiration;
+            TestConfiguration.OverridePageExpiration = 60;           
+            ((TridionPageProvider)PageFactory.PageProvider).ThrowPageNotFound = true;
+            try
+            {
+                IPage page = PageFactory.FindPage("/test-null-result.html");
+                Assert.Fail("PageFactory did not throw a PageNotFoundException");
+            }
+            catch (PageNotFoundException)
+            {
+            }
+            ((TridionPageProvider)PageFactory.PageProvider).ThrowPageNotFound = false;
+            try
+            {
+                IPage page = PageFactory.FindPage("/test-null-result.html");
+                Assert.Fail("PageFactory did not throw a PageNotFoundException");
+            }
+            catch (PageNotFoundException)
+            {
+                Assert.IsTrue(true);
+            }
+            TestConfiguration.OverridePageExpiration = configuredPageExpiration;           
+
         }
 
     }
