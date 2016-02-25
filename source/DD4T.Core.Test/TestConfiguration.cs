@@ -1,6 +1,7 @@
 ﻿using DD4T.ContentModel.Contracts.Configuration;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,6 +12,7 @@ namespace DD4T.Core.Test
     {
         public static int OverridePageExpiration { get; set; }
         public static int OverrideComponentPresentationExpiration { get; set; }
+        public static int OverrideBinaryExpiration { get; set; }
         public string ActiveWebsite
         {
             get
@@ -242,7 +244,21 @@ namespace DD4T.Core.Test
                 return "index.html";
             }
         }
-       
+
+        public string BinaryFileSystemCachePath
+        {
+            get
+            {
+                string p = Path.Combine(Path.GetTempPath(), "DD4TBinaries");
+                if (!Directory.Exists(p))
+                {
+                    Directory.CreateDirectory(p);
+                }
+                return p;
+                
+            }
+        }
+
         public int GetExpirationForCacheRegion(string region)
         {
             if (region == "Page")
@@ -252,6 +268,10 @@ namespace DD4T.Core.Test
             if (region == "ComponentPresentation")
             {
                 return OverrideComponentPresentationExpiration;
+            }
+            if (region == "Binary")
+            {
+                return OverrideBinaryExpiration;
             }
             return DefaultCacheSettings;
         }

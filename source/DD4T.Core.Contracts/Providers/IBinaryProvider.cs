@@ -13,8 +13,14 @@ namespace DD4T.ContentModel.Contracts.Providers
         byte[] GetBinaryByUrl(string url);
         Stream GetBinaryStreamByUri(string uri);
         Stream GetBinaryStreamByUrl(string url);
-        DateTime GetLastPublishedDateByUrl(string url);
+        [Obsolete("Use GetBinaryMetaByUri instead")]
         DateTime GetLastPublishedDateByUri(string uri);
+        [Obsolete("Use GetBinaryMetaByUrl instead")]
+        DateTime GetLastPublishedDateByUrl(string url);
         string GetUrlForUri(string uri);
+
+        IBinaryMeta GetBinaryMetaByUri(string uri);
+        IBinaryMeta GetBinaryMetaByUrl(string url);
+
     }
 }

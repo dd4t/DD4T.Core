@@ -51,5 +51,7 @@ namespace DD4T.Utils
         // Caching settings
         public const string DefaultCacheSettings = "DD4T.CacheSettings.Default";
         public const string CacheSettingsPerRegion = "DD4T.CacheSettings.{0}";
+        public const string BinaryFileSystemCachePath = "DD4T.BinaryFileSystemCachePath";
+        
     }
 }

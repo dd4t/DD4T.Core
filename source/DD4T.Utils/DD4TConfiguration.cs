@@ -22,6 +22,7 @@ namespace DD4T.Utils
         private int? _jmsNumberOfRetriesToConnect;
         private int? _jmsSecondsBetweenRetries;
         private string _jmsHostname;
+        private string _binaryFileSystemCachePath;
         private string _jmsTopic;
         int? publicationId;
         private string _activeWebsite;
@@ -457,6 +458,18 @@ namespace DD4T.Utils
         public ProviderVersion ProviderVersion
         {
             get { throw new NotImplementedException(); }
+        }
+
+        public string BinaryFileSystemCachePath
+        {
+            get
+            {
+                if (_binaryFileSystemCachePath == null)
+                {
+                    _binaryFileSystemCachePath = SafeGetConfigSettingAsString(ConfigurationKeys.BinaryFileSystemCachePath);
+                }
+                return _binaryFileSystemCachePath;
+            }
         }
 
 
