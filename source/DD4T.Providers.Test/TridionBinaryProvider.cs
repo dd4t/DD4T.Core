@@ -79,6 +79,15 @@ namespace DD4T.Providers.Test
 
         public IBinaryMeta GetBinaryMetaByUri(string uri)
         {
+            if (uri == "nodate")
+            {
+                return new BinaryMeta()
+                {
+                    Id = "tcm:1-2",
+                    VariantId = "variant",
+                    HasLastPublishedDate = false
+                };
+            }
             return new BinaryMeta()
             {
                 Id = uri,
@@ -90,6 +99,16 @@ namespace DD4T.Providers.Test
 
         public IBinaryMeta GetBinaryMetaByUrl(string url)
         {
+            if (url == "nodate")
+            {
+                return new BinaryMeta()
+                {
+                    Id = "tcm:1-2",
+                    VariantId = "variant",
+                    HasLastPublishedDate = false
+                };
+
+            }
             return new BinaryMeta()
             {
                 Id = "tcm:1-2",

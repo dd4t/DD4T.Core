@@ -167,8 +167,43 @@ namespace DD4T.Core.Test
             TestConfiguration.OverrideBinaryExpiration = currentBinaryExpiration;
 
         }
+
         [TestMethod]
-        public void FindBinaryPublishedNoDate()
+        public void FindBinaryPublishedNoDateAndAlreadyOnFS()
+        {
+            ((TridionBinaryProvider)BinaryFactory.BinaryProvider).GeneratedImageWidth = 300;
+            ((TridionBinaryProvider)BinaryFactory.BinaryProvider).GeneratedImageHeight = 400;
+            int currentBinaryExpiration = TestConfiguration.OverrideBinaryExpiration;
+            TestConfiguration.OverrideBinaryExpiration = 0;
+
+            IBinary binary = BinaryFactory.FindBinary("nodate");
+            Assert.IsNotNull(binary);
+            Assert.IsTrue(binary.BinaryData.Length > 100, "byte array is too small, something went wrong");
+            Assert.IsFalse(string.IsNullOrEmpty(binary.Id), "binary.Id is missing");
+            Image img = GetImageFromBytes(binary.BinaryData);
+            Assert.IsTrue(img.Width == 300);
+            Assert.IsTrue(img.Height == 400);
+
+            // change the generated image dimensions in the provider
+            // this should NOT affect the results because the binary should be cached
+            ((TridionBinaryProvider)BinaryFactory.BinaryProvider).GeneratedImageWidth = 400;
+            ((TridionBinaryProvider)BinaryFactory.BinaryProvider).GeneratedImageHeight = 200;
+
+            binary = BinaryFactory.FindBinary("nodate");
+            Assert.IsNotNull(binary);
+            Assert.IsTrue(binary.BinaryData.Length > 100, "byte array is too small, something went wrong");
+            Assert.IsFalse(string.IsNullOrEmpty(binary.Id), "binary.Id is missing");
+            img = GetImageFromBytes(binary.BinaryData);
+            Assert.IsTrue(img.Width == 400);
+            Assert.IsTrue(img.Height == 200);
+
+            ResetImageDimensions();
+            TestConfiguration.OverrideBinaryExpiration = currentBinaryExpiration;
+
+        }
+
+        [TestMethod]
+        public void FindBinaryOnFSInCache()
         {
         }
 
