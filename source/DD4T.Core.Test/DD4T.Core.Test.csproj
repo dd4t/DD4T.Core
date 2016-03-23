@@ -38,30 +38,30 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DD4T.ContentModel, Version=2.0.8.0, Culture=neutral, PublicKeyToken=4450e3c7f68bf872, processorArchitecture=MSIL">
-      <HintPath>..\packages\DD4T.Model.2.0.8-build20160225095319\lib\net45\DD4T.ContentModel.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="DD4T.ContentModel, Version=2.0.7.30, Culture=neutral, PublicKeyToken=4450e3c7f68bf872, processorArchitecture=MSIL">
+      <HintPath>..\packages\DD4T.Model.2.0.7.30-alpha\lib\net45\DD4T.ContentModel.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="DD4T.ContentModel.Contracts, Version=2.0.8.0, Culture=neutral, PublicKeyToken=4450e3c7f68bf872, processorArchitecture=MSIL">
-      <HintPath>..\packages\DD4T.Model.2.0.8-build20160225095319\lib\net45\DD4T.ContentModel.Contracts.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="DD4T.ContentModel.Contracts, Version=2.0.7.30, Culture=neutral, PublicKeyToken=4450e3c7f68bf872, processorArchitecture=MSIL">
+      <HintPath>..\packages\DD4T.Model.2.0.7.30-alpha\lib\net45\DD4T.ContentModel.Contracts.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="DD4T.ContentModel.XmlSerializers, Version=2.0.8.0, Culture=neutral, PublicKeyToken=4450e3c7f68bf872, processorArchitecture=MSIL">
-      <HintPath>..\packages\DD4T.Model.2.0.8-build20160225095319\lib\net45\DD4T.ContentModel.XmlSerializers.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="DD4T.ContentModel.XmlSerializers, Version=2.0.7.30, Culture=neutral, PublicKeyToken=4450e3c7f68bf872, processorArchitecture=MSIL">
+      <HintPath>..\packages\DD4T.Model.2.0.7.30-alpha\lib\net45\DD4T.ContentModel.XmlSerializers.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="DD4T.Serialization, Version=2.0.8.0, Culture=neutral, PublicKeyToken=4450e3c7f68bf872, processorArchitecture=MSIL">
-      <HintPath>..\packages\DD4T.Model.2.0.8-build20160225095319\lib\net45\DD4T.Serialization.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="DD4T.Serialization, Version=2.0.7.30, Culture=neutral, PublicKeyToken=4450e3c7f68bf872, processorArchitecture=MSIL">
+      <HintPath>..\packages\DD4T.Model.2.0.7.30-alpha\lib\net45\DD4T.Serialization.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>False</Private>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Ninject">
       <HintPath>..\packages\Ninject.3.2.2.0\lib\net45-full\Ninject.dll</HintPath>
-      <Private>False</Private>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
@@ -97,22 +97,22 @@
     <ProjectReference Include="..\DD4T.Core.Contracts\DD4T.Core.Contracts.csproj">
       <Project>{f90a1191-cd6e-4016-9005-b28a96f7964e}</Project>
       <Name>DD4T.Core.Contracts</Name>
-      <Private>False</Private>
+      <Private>True</Private>
     </ProjectReference>
     <ProjectReference Include="..\DD4T.Factories\DD4T.Factories.csproj">
       <Project>{9e96efe0-7478-4551-a47a-1f04b9f01df7}</Project>
       <Name>DD4T.Factories</Name>
-      <Private>False</Private>
+      <Private>True</Private>
     </ProjectReference>
     <ProjectReference Include="..\DD4T.Providers.Test\DD4T.Providers.Test.csproj">
       <Project>{899cc432-25d8-4d65-9d98-95d109300127}</Project>
       <Name>DD4T.Providers.Test</Name>
-      <Private>False</Private>
+      <Private>True</Private>
     </ProjectReference>
     <ProjectReference Include="..\DD4T.Utils\DD4T.Utils.csproj">
       <Project>{d2ce08be-7281-4697-adfe-e7a031cb59ec}</Project>
       <Name>DD4T.Utils</Name>
-      <Private>False</Private>
+      <Private>True</Private>
     </ProjectReference>
     <ProjectReference Include="..\DD4T.ViewModels\DD4T.ViewModels.csproj">
       <Project>{cc2b55da-ffbc-44b9-ada5-c087876ac199}</Project>
