@@ -147,8 +147,8 @@ namespace DD4T.Core.Test
             Assert.IsTrue(binary.BinaryData.Length > 100, "byte array is too small, something went wrong");
             Assert.IsFalse(string.IsNullOrEmpty(binary.Id), "binary.Id is missing");
             Image img = GetImageFromBytes(binary.BinaryData);
-            Assert.IsTrue(img.Width == 300);
-            Assert.IsTrue(img.Height == 400);
+            Assert.IsTrue(img.Width == 300, "width is not 300 when image is retrieved for the first time");
+            Assert.IsTrue(img.Height == 400, "height is not 400 when image is retrieved for the first time");
 
             // change the generated image dimensions in the provider
             // this should NOT affect the results because the binary should be cached
@@ -156,12 +156,12 @@ namespace DD4T.Core.Test
             ((TridionBinaryProvider)BinaryFactory.BinaryProvider).GeneratedImageHeight = 200;
 
             binary = BinaryFactory.FindBinary("/media/image2.png");
-            Assert.IsNotNull(binary);
+            Assert.IsNotNull(binary, "binary is null");
             Assert.IsTrue(binary.BinaryData.Length > 100, "byte array is too small, something went wrong");
             Assert.IsFalse(string.IsNullOrEmpty(binary.Id), "binary.Id is missing");
             img = GetImageFromBytes(binary.BinaryData);
-            Assert.IsTrue(img.Width == 400);
-            Assert.IsTrue(img.Height == 200);
+            Assert.IsTrue(img.Width == 400, "width is not 400 when image is retrieved for the second time");
+            Assert.IsTrue(img.Height == 200, "height is not 200 when image is retrieved for the second time");
 
             ResetImageDimensions();
             TestConfiguration.OverrideBinaryExpiration = currentBinaryExpiration;
