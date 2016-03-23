@@ -262,7 +262,13 @@ namespace DD4T.Utils.Caching
             WriteMessage($"WARNING - {category} - {message}", parameters);
         }
 
-        private static string LogFilePath = "C:\\Temp\\DD4T-DEBUG.log";
+        private static string LogFilePath
+        {
+            get
+            {
+                return Path.Combine(Path.GetTempPath(), "DD4T-DEBUG.log");
+            }
+        }
         private void WriteMessage(string message, params object[] parameters)
         {
             var m = string.Format(message, parameters);
