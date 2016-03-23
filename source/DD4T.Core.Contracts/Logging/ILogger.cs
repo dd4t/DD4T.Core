@@ -5,7 +5,7 @@ using System.Text;
 
 namespace DD4T.ContentModel.Contracts.Logging
 {
-    public enum LoggingCategory { General, Controller, View, Model, System, Integration, Performance }
+    public enum LoggingCategory { General, Background, Controller, View, Model, System, Integration, Performance }
     public interface ILogger
     {
         void Debug(string message, params object[] parameters);

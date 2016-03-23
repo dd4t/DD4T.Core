@@ -278,7 +278,7 @@ namespace DD4T.Factories
                 {
                     DeleteFile(physicalPath);
                 }
-                return false;
+                throw e;
             }
         }
 

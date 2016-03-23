@@ -12,6 +12,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using DD4T.ContentModel.Contracts.Configuration;
+using log4net.Config;
 
 namespace DD4T.Utils.Caching
 {
@@ -24,12 +25,14 @@ namespace DD4T.Utils.Caching
         private int NumberOfRetries { get; set; }
         private static TimeSpan ReceiveTimeout = TimeSpan.FromDays(2);
         private List<IObserver<ICacheEvent>> observers;
+        private ILogger _backgroundlogger;
 
         public JMSMessageProvider(ILogger logger, IDD4TConfiguration dd4tConfiguration)
         {
             Logger = logger;
             DD4TConfiguration = dd4tConfiguration;
             observers = new List<IObserver<ICacheEvent>>();
+            _backgroundlogger = new FSLogger();
         }
 
         #region properties
@@ -47,7 +50,7 @@ namespace DD4T.Utils.Caching
         }
         private void DoWork()
         {
-
+            XmlConfigurator.Configure(); // THIS MUST BE REMOVED!!! It creates a dependency on log4net in the core (QS, 4 March 2016)
             try
             {
                 StartConnection();
@@ -96,7 +99,7 @@ namespace DD4T.Utils.Caching
    
                     //IDestination destination = session.GetDestination(Topic);
                     IDestination destination = session.GetTopic(DD4TConfiguration.JMSTopic);
-                    Logger.Debug("connected to JMS server using hostname {0}, port {1} and destination {2}", DD4TConfiguration.JMSHostname, DD4TConfiguration.JMSPort, destination);
+                    _backgroundlogger.Debug("connected to JMS server using hostname {0}, port {1} and destination {2}", LoggingCategory.Background, DD4TConfiguration.JMSHostname, DD4TConfiguration.JMSPort, destination);
  
                     using (IMessageConsumer consumer = session.CreateConsumer(destination))
                     {
@@ -111,7 +114,7 @@ namespace DD4T.Utils.Caching
                         }
                         catch (Exception e)
                         {
-                            Logger.Error("Error receiving messages: {0}", e.ToString());
+                            _backgroundlogger.Error("Error receiving messages: {0}", LoggingCategory.Background, e.ToString());
                         }
                     }
                 }
@@ -132,12 +135,12 @@ namespace DD4T.Utils.Caching
             ITextMessage message = receivedMsg as ITextMessage;
             if (message == null)
             {
-                Logger.Warning("received JMS message with id {0} which is not a text message", receivedMsg.NMSMessageId);
+                _backgroundlogger.Warning("received JMS message with id {0} which is not a text message", receivedMsg.NMSMessageId);
                 receivedMsg.Acknowledge();
                 return;
             }
 
-            Logger.Debug("received text message with id {0} and text {1}", message.NMSMessageId, message.Text);
+            _backgroundlogger.Debug("received text message with id {0} and text {1}", message.NMSMessageId, message.Text);
 
             try
             {
@@ -149,7 +152,7 @@ namespace DD4T.Utils.Caching
             }
             catch (Exception e)
             {
-                Logger.Error("error in invalidation transaction: {0}", e.ToString());
+                _backgroundlogger.Error("error in invalidation transaction: {0}", e.ToString());
                 foreach (IObserver<ICacheEvent> observer in observers)
                 {
                     observer.OnError(e);
@@ -158,7 +161,7 @@ namespace DD4T.Utils.Caching
             finally
             {
                 message.Acknowledge();
-                Logger.Debug(string.Format("acknowledged received message with id {0}", message.NMSMessageId));
+                _backgroundlogger.Debug(string.Format("acknowledged received message with id {0}", message.NMSMessageId));
             }
         }
 

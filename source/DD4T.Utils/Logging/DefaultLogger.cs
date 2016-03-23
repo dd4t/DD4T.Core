@@ -3,6 +3,7 @@ using log4net;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -13,8 +14,8 @@ namespace DD4T.Utils.Logging
         public void Critical(string message, LoggingCategory category, params object[] parameters)
         {
             ILog log = LogManager.GetLogger(category.ToString());
-            //Any idea what to do with the category?
-            log.FatalFormat(message, parameters);
+        //Any idea what to do with the category?
+        log.FatalFormat(message, parameters);
         }
 
         public void Critical(string message, params object[] parameters)
