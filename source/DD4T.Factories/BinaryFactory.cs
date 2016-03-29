@@ -178,7 +178,7 @@ namespace DD4T.Factories
         private bool TryFindBinary(string url, string localPath, bool retrieveData, out IBinary binary)
         {
             string physicalPath = localPath ?? Path.Combine(Configuration.BinaryFileSystemCachePath, Path.GetFileName(url));
-
+            LoggerService.Debug($"Using physical path {physicalPath}");
             binary = new Binary();
 
             if (LoadBinariesAsStream)
