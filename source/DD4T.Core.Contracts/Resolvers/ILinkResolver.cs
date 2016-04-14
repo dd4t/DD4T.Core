@@ -18,5 +18,6 @@ namespace DD4T.Core.Contracts.Resolvers
         /// <returns></returns>
         string ResolveUrl(IComponent component, string pageId = null);
 
+        string ResolveUrl(string tcmUri, string pageId = null);
     }
 }

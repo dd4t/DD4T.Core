@@ -36,6 +36,11 @@ namespace DD4T.Providers.Test
             fieldSet.Add(field2.Name, field2);
             component.Fields = fieldSet;
 
+            if (templateUri == "componentId")
+            {
+                component.Id = "tcm:5-8975";
+                CustomizeCompomentForComponentLink(component);
+            }
             if (templateUri == "componentlink")
             {
                 CustomizeCompomentForComponentLink(component);
