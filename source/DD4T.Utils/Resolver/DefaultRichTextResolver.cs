@@ -35,9 +35,9 @@ namespace DD4T.Utils.Resolver
         {
             //binaryFactory.ThrowIfNull(nameof(binaryFactory));
             //linkFactory.ThrowIfNull(nameof(linkFactory));
-            linkResolver.ThrowIfNull(nameof(linkResolver));
-            logger.ThrowIfNull(nameof(logger));
-            configuration.ThrowIfNull(nameof(configuration));
+            Contract.ThrowIfNull(linkResolver, nameof(linkResolver));
+            Contract.ThrowIfNull(logger, nameof(logger));
+            Contract.ThrowIfNull(configuration, nameof(configuration));
 
             //_binaryFactory = binaryFactory;
             //_linkFactory = linkFactory;
@@ -79,10 +79,10 @@ namespace DD4T.Utils.Resolver
                 //string linkUrl = pageUri.IsNullOrEmpty() ? _linkResolver.ResolveUrl(tcmuri) : _linkFactory.ResolveLink(pageUri, tcmuri, TcmUri.NullUri.ToString());
                 string linkUrl = _linkResolver.ResolveUrl(tcmuri, pageUri);
                 //multimedia component added as component link into a RTF field.
-                if (linkUrl.IsNullOrEmpty())
+                if (string.IsNullOrEmpty(linkUrl))
                     linkUrl = _linkResolver.ResolveUrl(tcmuri);
 
-                if (!linkUrl.IsNullOrEmpty())
+                if (!string.IsNullOrEmpty(linkUrl))
                 {
                     // linkUrl = HttpHelper.AdjustUrlToContext(linkUrl);
                     // add href
@@ -138,7 +138,7 @@ namespace DD4T.Utils.Resolver
         /// <returns>html as a string without namespace references</returns>
         private static string RemoveNamespaceReferences(string html)
         {
-            if (!html.IsNullOrEmpty())
+            if (!string.IsNullOrEmpty(html))
             {
                 html = html.Replace(" xmlns=\"\"", "");
                 html = html.Replace(string.Format(" xmlns=\"{0}\"", XhtmlNamespaceUri), "");

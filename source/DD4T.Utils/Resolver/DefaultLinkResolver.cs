@@ -20,10 +20,10 @@ namespace DD4T.Utils.Resolver
 
         public DefaultLinkResolver(ILinkFactory linkFactory, ILogger logger, IBinaryFactory binaryFactory, IDD4TConfiguration configuration)
         {
-            linkFactory.ThrowIfNull(nameof(linkFactory));
-            binaryFactory.ThrowIfNull(nameof(binaryFactory));
-            logger.ThrowIfNull(nameof(logger));
-            configuration.ThrowIfNull(nameof(configuration));
+            Contract.ThrowIfNull(linkFactory ,nameof(linkFactory));
+            Contract.ThrowIfNull(binaryFactory, nameof(binaryFactory));
+            Contract.ThrowIfNull(logger, nameof(logger));
+            Contract.ThrowIfNull(configuration, nameof(configuration));
 
             _binaryFactory = binaryFactory;
             _linkFactory = linkFactory;
@@ -42,10 +42,10 @@ namespace DD4T.Utils.Resolver
                                tcmUri,
                                string.IsNullOrEmpty(pageId) ? TcmUri.NullUri.ToString() : pageId);
 
-           var resolvedUrl = pageId.IsNullOrEmpty() ? _linkFactory.ResolveLink(tcmUri) : _linkFactory.ResolveLink(pageId, tcmUri, TcmUri.NullUri.ToString());
+           var resolvedUrl = string.IsNullOrEmpty(pageId) ? _linkFactory.ResolveLink(tcmUri) : _linkFactory.ResolveLink(pageId, tcmUri, TcmUri.NullUri.ToString());
 
             //it could be a binary link. let's resolve it as a binaryLink ..
-            if (resolvedUrl.IsNullOrEmpty())
+            if (string.IsNullOrEmpty(resolvedUrl))
                 resolvedUrl = _binaryFactory.GetUrlForUri(tcmUri);
 
             _logger.Debug("ResolveUrl - Resolved Url for componentId: {0} = {1}", tcmUri, resolvedUrl);
