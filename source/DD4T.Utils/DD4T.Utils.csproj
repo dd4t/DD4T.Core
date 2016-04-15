@@ -84,6 +84,7 @@
     <Compile Include="ClassLoader.cs" />
     <Compile Include="ConfigurationKeys.cs" />
     <Compile Include="DD4TConfiguration.cs" />
+    <Compile Include="ExtensionMethods\Contracts.cs" />
     <Compile Include="Logging\DefaultLogger.cs" />
     <Compile Include="Resolver\DefaultPublicationResolver.cs" />
     <Compile Include="Caching\NullCacheAgent.cs" />

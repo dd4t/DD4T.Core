@@ -45,6 +45,22 @@ namespace DD4T.Core.Test
         }
 
         [TestMethod]
+        public void MapComponentId()
+        {
+            IComponentPresentation cp = ComponentPresentationFactory.GetComponentPresentation("", "componentId");
+            Assert.IsNotNull(cp);
+
+            IViewModel vm = ViewModelFactory.BuildViewModel(cp);
+            Assert.IsNotNull(vm);
+
+            TestViewModelA b = (TestViewModelA)vm;
+            Assert.IsNotNull(b);
+
+            Assert.IsTrue(b.Id.ItemId == 8975);
+            Assert.IsTrue(b.Id.PublicationId == 5);
+        }
+
+        [TestMethod]
         public void MapConcreteLink()
         {
             IComponentPresentation cp = ComponentPresentationFactory.GetComponentPresentation("", "componentlink");
@@ -141,6 +157,9 @@ namespace DD4T.Core.Test
     [DD4T.ViewModels.Attributes.ContentModel("rootA", true)]
     public class TestViewModelA : TestViewModelBase, ITestViewModel
     {
+        [ComponentId]
+        public DD4T.ContentModel.TcmUri Id { get; set; }
+
         [LinkedComponentField(LinkedComponentTypes = new[] {  typeof(TestViewModelB)})]
         public List<ITestViewModel> Link { get; set; }
 

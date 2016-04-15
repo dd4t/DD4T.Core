@@ -478,5 +478,34 @@ namespace DD4T.ViewModels.Attributes
 
     
     }
+    /// <summary>
+    /// The TcmUri of the component (TcmUri) 
+    /// </summary>
+    public class ComponentIdAttribute : ComponentAttributeBase
+    {
+        public override IEnumerable GetPropertyValues(IComponent component, IModelProperty property,
+                                                      ITemplate template, IViewModelFactory factory)
+        {
+            return component == null ? null : new TcmUri[] { new TcmUri(component.Id) };
+        }
+        public override Type ExpectedReturnType
+        {
+            get { return typeof(TcmUri); }
+        }
+    }
 
+    /// <summary>
+    /// The TcmUri of the page (TcmUri) 
+    /// </summary>
+    public class PageIdAttribute : PageAttributeBase
+    {
+        public override IEnumerable GetPropertyValues(IPage page, Type propertyType, IViewModelFactory factory)
+        {
+            return page == null ? null : new TcmUri[] { new TcmUri(page.Id) };
+        }
+        public override Type ExpectedReturnType
+        {
+            get { return typeof(TcmUri); }
+        }
+    }
 }

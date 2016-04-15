@@ -24,18 +24,24 @@ namespace DD4T.Utils.Resolver
         private const string XlinkNamespaceUri = "http://www.w3.org/1999/xlink";
 
 
-        private readonly ILinkFactory _linkFactory;
+        //private readonly ILinkFactory _linkFactory;
         private readonly ILogger _logger;
         private readonly IDD4TConfiguration _configuration;
+        private readonly ILinkResolver _linkResolver;
+        //private readonly IBinaryFactory _binaryFactory;
             
 
-        public DefaultRichTextResolver(ILinkFactory linkFactory, ILogger logger, IDD4TConfiguration configuration)
+        public DefaultRichTextResolver(ILinkResolver linkResolver, ILogger logger, IDD4TConfiguration configuration)
         {
-            if (linkFactory == null) throw new ArgumentNullException("linkFactory");
-            if (logger == null) throw new ArgumentNullException("logger");
-            if (configuration == null) throw new ArgumentNullException("configuration");
+            //binaryFactory.ThrowIfNull(nameof(binaryFactory));
+            //linkFactory.ThrowIfNull(nameof(linkFactory));
+            Contract.ThrowIfNull(linkResolver, nameof(linkResolver));
+            Contract.ThrowIfNull(logger, nameof(logger));
+            Contract.ThrowIfNull(configuration, nameof(configuration));
 
-            _linkFactory = linkFactory;
+            //_binaryFactory = binaryFactory;
+            //_linkFactory = linkFactory;
+            _linkResolver = linkResolver;
             _logger = logger;
             _configuration = configuration;
         }
@@ -70,7 +76,11 @@ namespace DD4T.Utils.Resolver
                 }
                 string tcmuri = link.Attributes["xlink:href"].Value;
 
-                string linkUrl = string.IsNullOrEmpty(pageUri) ? _linkFactory.ResolveLink(tcmuri) : _linkFactory.ResolveLink(pageUri, tcmuri, TcmUri.NullUri.ToString());
+                //string linkUrl = pageUri.IsNullOrEmpty() ? _linkResolver.ResolveUrl(tcmuri) : _linkFactory.ResolveLink(pageUri, tcmuri, TcmUri.NullUri.ToString());
+                string linkUrl = _linkResolver.ResolveUrl(tcmuri, pageUri);
+                //multimedia component added as component link into a RTF field.
+                if (string.IsNullOrEmpty(linkUrl))
+                    linkUrl = _linkResolver.ResolveUrl(tcmuri);
 
                 if (!string.IsNullOrEmpty(linkUrl))
                 {
