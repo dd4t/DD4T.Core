@@ -40,6 +40,8 @@ namespace DD4T.Utils
         public const string ViewModelKeyFieldName = "DD4T.ViewModels.ViewModelKeyFieldName";
         public const string ContentProviderEndPoint = "DD4T.ContentProviderEndPoint";
         public const string IsPreview = "DD4T.IsPreview";
+        public const string UseDefaultViewModels = "DD4T.UseDefaultViewModels";
+        
 
         // JMS settings
         public const string JMSHostname = "DD4T.JMS.Hostname";

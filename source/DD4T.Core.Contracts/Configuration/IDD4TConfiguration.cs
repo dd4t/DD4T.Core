@@ -40,6 +40,8 @@ namespace DD4T.ContentModel.Contracts.Configuration
         int JMSPort { get; }
         string JMSTopic { get; }
 
+        bool UseDefaultViewModels { get; }
+
         int GetExpirationForCacheRegion(string region);
     }
 }
