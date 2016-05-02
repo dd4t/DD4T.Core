@@ -21,7 +21,27 @@ namespace DD4T.ViewModels.Exceptions
         //TODO: REfactor to check type and use other overloads
         public ViewModelTypeNotFoundException(IModel data)
             : base(String.Format("Could not find view model for item with Publication ID '{0}'", data))
-        { }
+        {
+
+            if (data is IComponentPresentation)
+            {
+                Identifier = $"ComponentPresentation component.title={((IComponentPresentation)data).Component.Title}, component.id={((IComponentPresentation)data).Component.Id}, component template title={((IComponentPresentation)data).ComponentTemplate.Title}";
+            }
+            else if (data is IPage)
+            {
+                Identifier = $"Page title={((IPage)data).Title}, id={((IPage)data).Id}, page template title={((IPage)data).PageTemplate.Title}";
+            }
+
+            else if (data is ITemplate)
+            {
+                Identifier = $"template title={((ITemplate)data).Title}, id={((ITemplate)data).Id}";
+            }
+        }
+
+        public string Identifier
+        {
+            get; set;
+        }
     }
 
     public class PropertyTypeMismatchException : Exception

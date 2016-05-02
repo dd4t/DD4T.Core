@@ -259,6 +259,14 @@ namespace DD4T.Core.Test
             }
         }
 
+        public bool UseDefaultViewModels
+        {
+            get
+            {
+                return true;
+            }
+        }
+
         public int GetExpirationForCacheRegion(string region)
         {
             if (region == "Page")

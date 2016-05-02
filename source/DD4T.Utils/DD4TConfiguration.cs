@@ -38,6 +38,7 @@ namespace DD4T.Utils
         private bool? _showAnchors;
         private bool? _linkToAnchor;
         private bool? _isPreview;
+        private bool? _useDefaultViewModels;
 
         public int PublicationId
         {
@@ -469,6 +470,23 @@ namespace DD4T.Utils
                     _binaryFileSystemCachePath = SafeGetConfigSettingAsString(ConfigurationKeys.BinaryFileSystemCachePath);
                 }
                 return _binaryFileSystemCachePath;
+            }
+        }
+
+        public bool UseDefaultViewModels
+        {
+            get
+            {
+                if (_useDefaultViewModels == null)
+                {
+                    string setting = SafeGetConfigSettingAsString(ConfigurationKeys.UseDefaultViewModels);
+                    if (string.IsNullOrEmpty(setting))
+                    {
+                        _useDefaultViewModels = true; // the default for this setting is TRUE!
+                    }
+                    _useDefaultViewModels = setting.ToLower() == "yes" || setting.ToLower() == "true";
+                }
+                return _useDefaultViewModels.Value;
             }
         }
 

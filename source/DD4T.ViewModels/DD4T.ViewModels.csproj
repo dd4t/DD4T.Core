@@ -68,6 +68,7 @@
     <Compile Include="BindingImpl.cs" />
     <Compile Include="Core.cs" />
     <Compile Include="DefaultContextResolver.cs" />
+    <Compile Include="Defaults\DefaultPage.cs" />
     <Compile Include="Exceptions.cs" />
     <Compile Include="NestedFieldAttributes.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
