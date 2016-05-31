@@ -76,7 +76,6 @@
     <Compile Include="Caching\CacheKeyFactory.cs" />
     <Compile Include="Caching\TridionBackedCacheAgent.cs" />
     <Compile Include="Caching\DefaultCacheAgent.cs" />
-    <Compile Include="Caching\JMSMessageProvider.cs" />
     <Compile Include="ClassLoader.cs" />
     <Compile Include="ConfigurationKeys.cs" />
     <Compile Include="DD4TConfiguration.cs" />
