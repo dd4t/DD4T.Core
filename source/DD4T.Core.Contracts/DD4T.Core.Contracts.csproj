@@ -71,6 +71,7 @@
     <Compile Include="Caching\IEvent.cs" />
     <Compile Include="Caching\IMessageProvider.cs" />
     <Compile Include="Configuration\IDD4TConfiguration.cs" />
+    <Compile Include="DependencyInjection\IDependencyMapper.cs" />
     <Compile Include="Exceptions\BinaryNotFoundException.cs" />
     <Compile Include="Exceptions\ComponentPresentationNotFoundException.cs" />
     <Compile Include="Exceptions\ComponentNotFoundException.cs" />
