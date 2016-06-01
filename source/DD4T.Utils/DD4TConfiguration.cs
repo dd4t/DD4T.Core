@@ -81,8 +81,7 @@ namespace DD4T.Utils
             }
         }
 
-
-        [Obsolete]
+        
         public string ComponentPresentationController
         {
             get
@@ -91,7 +90,6 @@ namespace DD4T.Utils
             }
         }
 
-        [Obsolete]
         public string ComponentPresentationAction
         {
             get
