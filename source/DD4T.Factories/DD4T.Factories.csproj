@@ -79,6 +79,7 @@
     <Compile Include="ComponentPresentationFactory.cs" />
     <Compile Include="ComponentFactory.cs" />
     <Compile Include="BinaryFactory.cs" />
+    <Compile Include="DependencyMappings.cs" />
     <Compile Include="FactoryCommonServices.cs" />
     <Compile Include="FactoryBase.cs" />
     <Compile Include="LinkFactory.cs" />

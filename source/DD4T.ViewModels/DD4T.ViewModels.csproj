@@ -66,6 +66,7 @@
     <Compile Include="BaseClasses.cs" />
     <Compile Include="Binding.cs" />
     <Compile Include="BindingImpl.cs" />
+    <Compile Include="DependencyMappings.cs" />
     <Compile Include="Core.cs" />
     <Compile Include="DefaultContextResolver.cs" />
     <Compile Include="Defaults\DefaultPage.cs" />
