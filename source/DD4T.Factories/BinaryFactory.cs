@@ -60,7 +60,7 @@ namespace DD4T.Factories
         
         public DateTime FindLastPublishedDate(string url)
         {
-            return BinaryProvider.GetLastPublishedDateByUrl(url);
+            return BinaryProvider.GetBinaryMetaByUrl(url).LastPublishedDate;
         }
 
         public bool TryGetBinary(string tcmUri, out IBinary binary)
