@@ -1,9 +1,11 @@
 ﻿using DD4T.ContentModel.Contracts.Caching;
 using DD4T.ContentModel.Contracts.Configuration;
+using DD4T.ContentModel.Contracts.Logging;
 using DD4T.ContentModel.Contracts.Resolvers;
 using DD4T.Core.Contracts.DependencyInjection;
 using DD4T.Core.Contracts.Resolvers;
 using DD4T.Utils.Caching;
+using DD4T.Utils.Logging;
 using DD4T.Utils.Resolver;
 using System;
 using System.Collections.Generic;
@@ -24,6 +26,7 @@ namespace DD4T.Utils
             mappings.Add(typeof(IPublicationResolver), typeof(DefaultPublicationResolver));
             mappings.Add(typeof(IDD4TConfiguration), typeof(DD4TConfiguration));
             mappings.Add(typeof(ICacheAgent), typeof(DefaultCacheAgent));
+            mappings.Add(typeof(ILogger), typeof(NullLogger));
 
             return mappings;
         }
