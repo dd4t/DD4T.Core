@@ -26,6 +26,7 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -35,20 +36,20 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DD4T.ContentModel, Version=2.0.7.0, Culture=neutral, PublicKeyToken=4450e3c7f68bf872, processorArchitecture=MSIL">
-      <HintPath>..\packages\DD4T.Model.2.0.7\lib\net45\DD4T.ContentModel.dll</HintPath>
+    <Reference Include="DD4T.ContentModel, Version=2.1.0.0, Culture=neutral, PublicKeyToken=4450e3c7f68bf872, processorArchitecture=MSIL">
+      <HintPath>..\packages\DD4T.Model.2.1.0\lib\net45\DD4T.ContentModel.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="DD4T.ContentModel.Contracts, Version=2.0.7.0, Culture=neutral, PublicKeyToken=4450e3c7f68bf872, processorArchitecture=MSIL">
-      <HintPath>..\packages\DD4T.Model.2.0.7\lib\net45\DD4T.ContentModel.Contracts.dll</HintPath>
+    <Reference Include="DD4T.ContentModel.Contracts, Version=2.1.0.0, Culture=neutral, PublicKeyToken=4450e3c7f68bf872, processorArchitecture=MSIL">
+      <HintPath>..\packages\DD4T.Model.2.1.0\lib\net45\DD4T.ContentModel.Contracts.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="DD4T.ContentModel.XmlSerializers, Version=2.0.7.0, Culture=neutral, PublicKeyToken=4450e3c7f68bf872, processorArchitecture=MSIL">
-      <HintPath>..\packages\DD4T.Model.2.0.7\lib\net45\DD4T.ContentModel.XmlSerializers.dll</HintPath>
+    <Reference Include="DD4T.ContentModel.XmlSerializers, Version=2.1.0.0, Culture=neutral, PublicKeyToken=4450e3c7f68bf872, processorArchitecture=MSIL">
+      <HintPath>..\packages\DD4T.Model.2.1.0\lib\net45\DD4T.ContentModel.XmlSerializers.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="DD4T.Serialization, Version=2.0.7.0, Culture=neutral, PublicKeyToken=4450e3c7f68bf872, processorArchitecture=MSIL">
-      <HintPath>..\packages\DD4T.Model.2.0.7\lib\net45\DD4T.Serialization.dll</HintPath>
+    <Reference Include="DD4T.Serialization, Version=2.1.0.0, Culture=neutral, PublicKeyToken=4450e3c7f68bf872, processorArchitecture=MSIL">
+      <HintPath>..\packages\DD4T.Model.2.1.0\lib\net45\DD4T.Serialization.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
@@ -66,8 +67,10 @@
     <Compile Include="BaseClasses.cs" />
     <Compile Include="Binding.cs" />
     <Compile Include="BindingImpl.cs" />
+    <Compile Include="DependencyMappings.cs" />
     <Compile Include="Core.cs" />
     <Compile Include="DefaultContextResolver.cs" />
+    <Compile Include="Defaults\DefaultPage.cs" />
     <Compile Include="Exceptions.cs" />
     <Compile Include="NestedFieldAttributes.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

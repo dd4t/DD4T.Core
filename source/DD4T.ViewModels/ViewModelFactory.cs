@@ -1,8 +1,11 @@
 ﻿using DD4T.ContentModel;
+using DD4T.ContentModel.Contracts.Configuration;
+using DD4T.ContentModel.Contracts.Logging;
 using DD4T.Core.Contracts.Resolvers;
 using DD4T.Core.Contracts.ViewModels;
 using DD4T.Core.Contracts.ViewModels.Binding;
 using DD4T.ViewModels.Binding;
+using DD4T.ViewModels.Defaults;
 using DD4T.ViewModels.Exceptions;
 using System;
 using System.Collections;
@@ -23,6 +26,8 @@ namespace DD4T.ViewModels
         private readonly ILinkResolver _linkResolver;
         private readonly IRichTextResolver _richtTextResolver;
         private readonly IContextResolver _contextResolver;
+        private readonly IDD4TConfiguration _configuration;
+        private readonly ILogger _logger;
 
         /// <summary>
         /// New View Model Builder
@@ -32,19 +37,26 @@ namespace DD4T.ViewModels
                                 IViewModelResolver resolver,
                                 ILinkResolver linkResolver,
                                 IRichTextResolver richTextResolver,
-                                IContextResolver contextResolver)
+                                IContextResolver contextResolver,
+                                IDD4TConfiguration configuration,
+                                ILogger logger
+                                )
         {
             if (keyProvider == null) throw new ArgumentNullException("keyProvider");
             if (resolver == null) throw new ArgumentNullException("resolver");
             if (linkResolver == null) throw new ArgumentNullException("linkResolver");
             if (richTextResolver == null) throw new ArgumentNullException("richTextResolver");
             if (contextResolver == null) throw new ArgumentNullException("contextResolver");
+            if (configuration == null) throw new ArgumentNullException("DD4Tconfiguration");
+            if (logger == null) throw new ArgumentNullException("logger");
 
             this._keyProvider = keyProvider;
             this._resolver = resolver;
             this._linkResolver = linkResolver;
             this._richtTextResolver = richTextResolver;
             this._contextResolver = contextResolver;
+            this._configuration = configuration;
+            this._logger = logger;
 
             // Trying to find the entry assembly to load view models from.
             // For web applications, a special trick is needed to do this (see below).
@@ -119,8 +131,10 @@ namespace DD4T.ViewModels
 
         public Type FindViewModelByAttribute<T>(IModel data, Type[] typesToSearch = null) where T : IModelAttribute
         {
+            _logger.Debug($"called FindViewModelByAttribute with typesToSearch {typesToSearch}");
             //Anyway to speed this up? Better than just a straight up loop?
             typesToSearch = typesToSearch ?? viewModels.Where(x => x.Key is T).Select(x => x.Value).ToArray();
+            _logger.Debug($"using typesToSearch {String.Join(",",typesToSearch.Select(t => t.FullName))}");
             foreach (var type in typesToSearch)
             {
                 T modelAttr = _resolver.GetCustomAttribute<T>(type);
@@ -129,11 +143,22 @@ namespace DD4T.ViewModels
                     //modelAttr.ViewModelFactory = this;
                     if (modelAttr.IsMatch(data, _keyProvider.GetViewModelKey(data)))
                     {
+                        _logger.Debug($"returning type {type.FullName}");
                         return type;
                     }
                 }
             }
-            throw new ViewModelTypeNotFoundException(data);
+            if (_configuration.UseDefaultViewModels)
+            {
+                if (data is IPage)
+                {
+                    _logger.Debug("no viewmodel found, using default page viewmodel " + typeof(DefaultPage).FullName);
+                    return typeof(DefaultPage);
+                }
+            }
+            ViewModelTypeNotFoundException e = new ViewModelTypeNotFoundException(data);
+            _logger.Warning($"Could not find a valid ViewModel for item {e.Identifier}");
+            throw e;
         }
 
         public void SetPropertyValue(object model, IModel data, IModelProperty property)
@@ -178,8 +203,10 @@ namespace DD4T.ViewModels
         {
             IViewModel result = null;
             Type type = FindViewModelByAttribute<T>(modelData);
+
             if (type != null)
             {
+                _logger.Debug("Building ViewModel based on type " + type.FullName);
                 result = BuildViewModel(type, modelData, contextModel);
             }
             return result;

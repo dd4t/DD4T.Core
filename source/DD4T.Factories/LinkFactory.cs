@@ -101,16 +101,14 @@ namespace DD4T.Factories
             else
             {
                 string resolvedUrl = LinkProvider.ResolveLink(sourcePageUri, componentUri, excludeComponentTemplateUri);
-                //if (resolvedUrl == null)
-                //{
-                //    //CacheAgent.Store(cacheKey, CacheRegion, CacheValueNull, new List<string>() { String.Format("ComponentByUri_{0}", componentUri) });
-                //    CacheAgent.Store(cacheKey, CacheRegion, CacheValueNull);
-                //}
-                //else
-                //{
-                //    //CacheAgent.Store(cacheKey, CacheRegion, resolvedUrl, new List<string>() { String.Format("ComponentByUri_{0}", componentUri) });
-                //    CacheAgent.Store(cacheKey, CacheRegion, resolvedUrl);
-                //}
+                if (resolvedUrl == null)
+                {
+                    CacheAgent.Store(cacheKey, CacheRegion, CacheValueNull);
+                }
+                else
+                {
+                    CacheAgent.Store(cacheKey, CacheRegion, resolvedUrl);
+                }
                 return resolvedUrl;
             }
         }

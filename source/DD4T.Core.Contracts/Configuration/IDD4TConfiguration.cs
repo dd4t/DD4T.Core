@@ -23,6 +23,7 @@ namespace DD4T.ContentModel.Contracts.Configuration
         int BinaryHandlerCacheExpiration { get; }
         string BinaryFileExtensions { get; }
         string BinaryUrlPattern { get; }
+        string BinaryFileSystemCachePath { get; }
         bool IncludeLastPublishedDate { get; }
         bool ShowAnchors { get; }
         bool LinkToAnchor { get; }
@@ -38,6 +39,8 @@ namespace DD4T.ContentModel.Contracts.Configuration
         string JMSHostname { get; }
         int JMSPort { get; }
         string JMSTopic { get; }
+
+        bool UseDefaultViewModels { get; }
 
         int GetExpirationForCacheRegion(string region);
     }

@@ -22,6 +22,7 @@ namespace DD4T.Utils
         private int? _jmsNumberOfRetriesToConnect;
         private int? _jmsSecondsBetweenRetries;
         private string _jmsHostname;
+        private string _binaryFileSystemCachePath;
         private string _jmsTopic;
         int? publicationId;
         private string _activeWebsite;
@@ -37,6 +38,7 @@ namespace DD4T.Utils
         private bool? _showAnchors;
         private bool? _linkToAnchor;
         private bool? _isPreview;
+        private bool? _useDefaultViewModels;
 
         public int PublicationId
         {
@@ -79,8 +81,7 @@ namespace DD4T.Utils
             }
         }
 
-
-        [Obsolete]
+        
         public string ComponentPresentationController
         {
             get
@@ -89,7 +90,6 @@ namespace DD4T.Utils
             }
         }
 
-        [Obsolete]
         public string ComponentPresentationAction
         {
             get
@@ -457,6 +457,35 @@ namespace DD4T.Utils
         public ProviderVersion ProviderVersion
         {
             get { throw new NotImplementedException(); }
+        }
+
+        public string BinaryFileSystemCachePath
+        {
+            get
+            {
+                if (_binaryFileSystemCachePath == null)
+                {
+                    _binaryFileSystemCachePath = SafeGetConfigSettingAsString(ConfigurationKeys.BinaryFileSystemCachePath);
+                }
+                return _binaryFileSystemCachePath;
+            }
+        }
+
+        public bool UseDefaultViewModels
+        {
+            get
+            {
+                if (_useDefaultViewModels == null)
+                {
+                    string setting = SafeGetConfigSettingAsString(ConfigurationKeys.UseDefaultViewModels);
+                    if (string.IsNullOrEmpty(setting))
+                    {
+                        _useDefaultViewModels = true; // the default for this setting is TRUE!
+                    }
+                    _useDefaultViewModels = setting.ToLower() == "yes" || setting.ToLower() == "true";
+                }
+                return _useDefaultViewModels.Value;
+            }
         }
 
 

@@ -9,9 +9,9 @@
     <description>DD4T .NET Core</description>
     <releaseNotes>
     </releaseNotes>
-    <tags>SDLTridion Tridion DD4T</tags>
+    <tags>SDLTridion Tridion DD4T DD4T.Core DD4TCore SDLWeb8 SDL web SDLWEB</tags>
     <dependencies>
-      <dependency id="DD4T.Model" version="2.0.7" />
+      <dependency id="DD4T.Model" version="2.1.0" />
     </dependencies>
   </metadata>
 </package>

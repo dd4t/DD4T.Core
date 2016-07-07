@@ -4,6 +4,7 @@ using System.Runtime.Caching;
 using DD4T.ContentModel.Contracts.Configuration;
 using DD4T.ContentModel.Contracts.Logging;
 using DD4T.ContentModel.Contracts.Caching;
+using System.IO;
 
 namespace DD4T.Utils.Caching
 {
@@ -14,8 +15,9 @@ namespace DD4T.Utils.Caching
     {
         private readonly IDD4TConfiguration _configuration;
         private readonly ILogger _logger;
+        private readonly ILogger _backgroundlogger;
         private IDisposable unsubscriber;
-       
+
         public DefaultCacheAgent(IDD4TConfiguration configuration, ILogger logger)
         {
             if (configuration == null)
@@ -25,6 +27,8 @@ namespace DD4T.Utils.Caching
                 throw new ArgumentNullException("logger");
 
             _logger = logger;
+            // add hardcoded file system logger because for some reason log4net does not work on a background thread
+            _backgroundlogger = new FSLogger();
             _configuration = configuration;
         }
 
@@ -106,7 +110,7 @@ namespace DD4T.Utils.Caching
                 {
                     TcmUri u = new TcmUri(tcmUri);
                     string lookupkey = string.Format("{0}:{1}", u.PublicationId, u.ItemId);  // Tridion communicates about cache expiry using a key like 6:1120 (pubid:itemid)
-                    IList<string> dependentItems = (IList<string>) Cache[GetDependencyCacheKey(lookupkey)];
+                    IList<string> dependentItems = (IList<string>)Cache[GetDependencyCacheKey(lookupkey)];
                     if (dependentItems == null)
                     {
                         dependentItems = new List<string>();
@@ -156,6 +160,7 @@ namespace DD4T.Utils.Caching
         #region IObserver
         public virtual void Subscribe(IObservable<ICacheEvent> provider)
         {
+            _logger.Debug($"subscribing to provider {provider.GetType().Name}", LoggingCategory.Background);
             unsubscriber = provider.Subscribe(this);
         }
 
@@ -174,7 +179,7 @@ namespace DD4T.Utils.Caching
         private static object lockOnDependencyList = new object();
         public void OnNext(ICacheEvent cacheEvent)
         {
-            _logger.Debug("received event with region {0}, uri {1} and type {2}", cacheEvent.RegionPath, cacheEvent.Key, cacheEvent.Type);
+            _backgroundlogger.Debug("received event with region {0}, uri {1} and type {2}", LoggingCategory.Background, cacheEvent.RegionPath, cacheEvent.Key, cacheEvent.Type);
             // get the list of dependent items from the cache
             // NOTE: locking is not a problem here since this code is always running on a background thread (QS)
             lock (lockOnDependencyList)
@@ -185,12 +190,12 @@ namespace DD4T.Utils.Caching
                     foreach (var cacheKey in dependencies)
                     {
                         Cache.Remove(cacheKey);
-                        _logger.Debug("Removed item from cache (key = {0})", cacheKey);
+                        _backgroundlogger.Debug("Removed item from cache (key = {0})", LoggingCategory.Background, cacheKey);
 
                     }
                     Cache.Remove(GetDependencyCacheKey(cacheEvent.Key));
                 }
-            }        
+            }
         }
         #endregion
 
@@ -204,5 +209,85 @@ namespace DD4T.Utils.Caching
         }
         #endregion
 
+    }
+    internal class FSLogger : ILogger
+    {
+        public void Critical(string message, params object[] parameters)
+        {
+            WriteMessage($"FATAL - {message}", parameters);
+        }
+
+        public void Critical(string message, LoggingCategory category, params object[] parameters)
+        {
+            WriteMessage($"FATAL - {category} - {message}", parameters);
+        }
+
+        public void Debug(string message, params object[] parameters)
+        {
+            WriteMessage($"DEBUG - {message}", parameters);
+        }
+
+        public void Debug(string message, LoggingCategory category, params object[] parameters)
+        {
+            WriteMessage($"DEBUG - {category} - {message}", parameters);
+        }
+
+        public void Error(string message, params object[] parameters)
+        {
+            WriteMessage($"ERROR - {message}", parameters);
+        }
+
+        public void Error(string message, LoggingCategory category, params object[] parameters)
+        {
+            WriteMessage($"ERROR - {category} - {message}", parameters);
+        }
+
+        public void Information(string message, params object[] parameters)
+        {
+            WriteMessage($"INFO - {message}", parameters);
+        }
+
+        public void Information(string message, LoggingCategory category, params object[] parameters)
+        {
+            WriteMessage($"INFO - {category} - {message}", parameters);
+        }
+
+        public void Warning(string message, params object[] parameters)
+        {
+            WriteMessage($"WARNING - {message}", parameters);
+        }
+
+        public void Warning(string message, LoggingCategory category, params object[] parameters)
+        {
+            WriteMessage($"WARNING - {category} - {message}", parameters);
+        }
+
+        private static string LogFilePath
+        {
+            get
+            {
+                return Path.Combine(Path.GetTempPath(), "DD4T-DEBUG.log");
+            }
+        }
+        private void WriteMessage(string message, params object[] parameters)
+        {
+            var m = string.Format(message, parameters);
+            if (!File.Exists(LogFilePath))
+            {
+                // Create a file to write to.
+                using (StreamWriter sw = File.CreateText(LogFilePath))
+                {
+                    sw.WriteLine(m);
+                }
+                return;
+            }
+
+            // This text is always added, making the file longer over time
+            // if it is not deleted.
+            using (StreamWriter sw = File.AppendText(LogFilePath))
+            {
+                sw.WriteLine(m);
+            }
+        }
     }
 }

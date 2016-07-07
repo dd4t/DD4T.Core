@@ -31,6 +31,7 @@ namespace DD4T.Core.Test
     {
 
         protected static IPageFactory PageFactory { get; set; }
+        protected static IBinaryFactory BinaryFactory { get; set; }
         protected static IComponentPresentationFactory ComponentPresentationFactory { get; set; }
         protected static IComponentFactory ComponentFactory { get; set; }
         protected static ILinkFactory LinkFactory { get; set; }
@@ -46,6 +47,7 @@ namespace DD4T.Core.Test
             kernel.Load("DD4T.Providers.Test");
             kernel.Load("DD4T.ViewModels");
             PageFactory = kernel.Get<IPageFactory>();
+            BinaryFactory = kernel.Get<IBinaryFactory>();
             ComponentPresentationFactory = kernel.Get<IComponentPresentationFactory>();
             ComponentFactory = kernel.Get<IComponentFactory>();
             LinkFactory = kernel.Get<ILinkFactory>();
@@ -77,12 +79,14 @@ namespace DD4T.Core.Test
                 Bind<ILogger>().To<NullLogger>().InSingletonScope();
                 Bind<IFactoryCommonServices>().To<FactoryCommonServices>().InSingletonScope();
                 Bind<IPageFactory>().To<PageFactory>().InSingletonScope();
+                Bind<IBinaryFactory>().To<BinaryFactory>().InSingletonScope();
                 Bind<ILinkFactory>().To<LinkFactory>().InSingletonScope();
                 Bind<IComponentPresentationFactory>().To<ComponentPresentationFactory>().InSingletonScope();
                 Bind<IComponentFactory>().To<ComponentFactory>().InSingletonScope();
                 Bind<IProvidersCommonServices>().To<ProviderCommonServices>().InSingletonScope();
                 Bind<IPageProvider>().To<TridionPageProvider>().InSingletonScope();
                 Bind<ILinkProvider>().To<TridionLinkProvider>().InSingletonScope();
+                Bind<IBinaryProvider>().To<TridionBinaryProvider>().InSingletonScope();
 
                 Bind<IComponentPresentationProvider>().To<TridionComponentPresentationProvider>().InSingletonScope();
                 Bind<ICacheAgent>().To<DefaultCacheAgent>().InSingletonScope();

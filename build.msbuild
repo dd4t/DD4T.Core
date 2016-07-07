@@ -11,11 +11,11 @@
 
 	<Target Name="Clean">
 		<!-- Clean removes all build artifacts to prepare for a new build. -->
-		<MSBuild Projects="$(MSBuildProjectDirectory)\source\DD4T.NET.sln" Targets="Clean" />
+		<MSBuild Projects="$(MSBuildProjectDirectory)\source\DD4T.Core.sln" Targets="Clean" />
 	</Target>
 	<Target Name="Compile">
 		<!-- Build the solution. -->
-		<MSBuild Projects="$(MSBuildProjectDirectory)\source\DD4T.NET.sln" Targets="Build" Properties="Configuration=$(Configuration)" >
+		<MSBuild Projects="$(MSBuildProjectDirectory)\source\DD4T.Core.sln" Targets="Build" Properties="Configuration=$(Configuration)" >
 			<Output ItemName="OutputFiles" TaskParameter="TargetOutputs"/>
         </MSBuild>
 	</Target>

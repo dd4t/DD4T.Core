@@ -48,7 +48,7 @@
 			<Code Type="Fragment" Language="cs">
 				<![CDATA[
 					Log.LogMessage("Getting version details of assembly " + this.AssemblyFile, MessageImportance.High);
-					this.Version = FileVersionInfo.GetVersionInfo(this.AssemblyFile.Split(';')[0]).ProductVersion;
+					this.Version = FileVersionInfo.GetVersionInfo(this.AssemblyFile.Split(';').Where(a => a.Contains("DD4T")).ToList()[0]).ProductVersion;
 					Log.LogMessage("AssemblyVersion: " + this.Version, MessageImportance.High);
 				]]>
 			</Code>
