@@ -13,7 +13,24 @@ using System.Collections;
 
 namespace DD4T.ViewModels.Attributes
 {
-   
+
+    /// <summary>
+    /// A Keyword component field (used for raw key data)
+    /// </summary>
+    public class RawKeywordFieldAttribute : FieldAttributeBase
+    {
+
+        public override IEnumerable GetFieldValues(IField field, IModelProperty property, ITemplate template, IViewModelFactory factory)
+        {
+            return field.Keywords;
+        }
+
+
+        public override Type ExpectedReturnType
+        {
+            get { return typeof(IList<IKeyword>); }
+        }
+    }
 
     /// <summary>
     /// A Multimedia component field
