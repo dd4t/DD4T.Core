@@ -245,6 +245,32 @@ namespace DD4T.ViewModels.Attributes
     }
 
     /// <summary>
+    /// A Base class for an Attribute identifying a Property that represents some part of a Keyword
+    /// </summary>
+    public abstract class KeywordAttributeBase : ModelPropertyAttributeBase, IKeywordAttribute
+    {
+        /// <summary>
+        /// When overriden in a derived class, this gets the value of the Property for a given Page
+        /// </summary>
+        /// <param name="page">Page for the View Model</param>
+        /// <param name="propertyType">Actual return type for the Property</param>
+        /// <param name="factory">View Model factory</param>
+        /// <returns>The Property value</returns>
+        public abstract IEnumerable GetPropertyValues(IKeyword keyword, Type propertyType, IViewModelFactory factory);
+
+        public override IEnumerable GetPropertyValues(IModel modelData, IModelProperty property, IViewModelFactory factory)
+        {
+            IEnumerable result = null;
+            if (modelData is IKeyword)
+            {
+                var keywordModel = modelData as IKeyword;
+                result = this.GetPropertyValues(keywordModel, property.ModelType, factory);
+            }
+            return result;
+        }
+    }
+
+    /// <summary>
     /// A Base class for an Attribute identifying a Property that represents a set of Component Presentations
     /// </summary>
     /// <remarks>The View Model must be a Page</remarks>
