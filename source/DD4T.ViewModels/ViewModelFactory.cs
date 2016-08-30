@@ -316,15 +316,33 @@ namespace DD4T.ViewModels
             else if (prop.IsCollection)
             {
                 var tempValues = (IEnumerable)_resolver.ResolveInstance(prop.PropertyType);
-                foreach (var val in values)
+                Type elementType;
+                if (_resolver.ReflectionHelper.IsGenericCollection(prop.PropertyType, out elementType))
                 {
-                    prop.AddToCollection(tempValues, val);
+                    foreach (var val in values)
+                    {
+                        if (elementType.IsAssignableFrom(val.GetType()))
+                        {
+                            prop.AddToCollection(tempValues, val);
+                        }
+                    }
                 }
+
                 result = tempValues;
             }
             else //it's a single value, just return the first one (should really only be one thing)
             {
-                result = values.Cast<object>().FirstOrDefault();
+                foreach (var val in values)
+                {
+                    if (val == null)
+                        continue;
+
+                    if (prop.PropertyType.IsAssignableFrom(val.GetType()))
+                    {
+                        result = val;
+                        break;
+                    }
+                }
             }
             return result;
         }
