@@ -156,7 +156,7 @@ namespace DD4T.ViewModels
                 }
             }
             ViewModelTypeNotFoundException e = new ViewModelTypeNotFoundException(data);
-            _logger.Warning($"Could not find a valid ViewModel for item {e.Identifier}");
+            _logger.Warning($"Could not find a valid ViewModel for item {e.Message}");
             throw e;
         }
 

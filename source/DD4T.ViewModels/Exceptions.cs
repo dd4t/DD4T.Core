@@ -30,7 +30,10 @@ namespace DD4T.ViewModels.Exceptions
             {
                 //Identifier = $"ComponentPresentation component.title={((IComponentPresentation)data).Component.Title}, component.id={((IComponentPresentation)data).Component.Id}, component template title={((IComponentPresentation)data).ComponentTemplate.Title}";
                 var cp = (IComponentPresentation)data;
-                Identifier = string.Format("schema '{0} - {1}' and Template '{2} = {3}' or default for schema '{0}' in loaded assemblies.", cp.Component.Schema.Title, cp.Component.Schema.Id, cp.ComponentTemplate.Title, cp.ComponentTemplate.Id);
+                if (cp.ComponentTemplate == null)
+                    Identifier = string.Format("schema '{0} - {1}' or default for schema '{0}' in loaded assemblies. Component Template data not available, this should be a embedded or linked component type", cp.Component.Schema.Title, cp.Component.Schema.Id);
+                else
+                    Identifier = string.Format("schema '{0} - {1}' and Template '{2} = {3}' or default for schema '{0}' in loaded assemblies.", cp.Component.Schema.Title, cp.Component.Schema.Id, cp.ComponentTemplate.Title, cp.ComponentTemplate.Id);
             }
             else if (data is IPage)
             {
@@ -66,6 +69,13 @@ namespace DD4T.ViewModels.Exceptions
             base(String.Format("Type mismatch for property '{0}'. Expected type for '{1}' is {2}. Model Property is of type {3}. Field value is of type {4}."
             , fieldProperty.Name, fieldAttribute.GetType().Name, fieldAttribute.ExpectedReturnType.FullName, fieldProperty.PropertyType.FullName,
             fieldValue == null ? "" : fieldValue.GetType().FullName))
+        { }
+    }
+
+    public class InvalidViewModelTypeException : Exception
+    {
+        public InvalidViewModelTypeException(Type type) :
+            base(String.Format("Unable to initiate a type based on an interface. {0}", type.FullName))
         { }
     }
 }
