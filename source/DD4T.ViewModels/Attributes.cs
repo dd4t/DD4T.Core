@@ -776,4 +776,104 @@ namespace DD4T.ViewModels.Attributes
             return result;
         }
     }
+
+    /// <summary>
+    /// The Title of a Keyword viewmodel.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Property, Inherited = true)]
+    public class KeywordTitleAttribute : KeywordAttributeBase
+    {
+        public override IEnumerable GetPropertyValues(IKeyword keyword, IViewModelFactory builder)
+        {
+            return new[] { keyword.Title };
+        }
+
+        public override Type ExpectedReturnType
+        {
+            get
+            {
+                return typeof(string);
+            }
+        }
+    }
+
+    /// <summary>
+    /// The Description of a Keyword viewmodel.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Property, Inherited = true)]
+    public class KeywordDescriptionAttribute : KeywordAttributeBase
+    {
+        public override IEnumerable GetPropertyValues(IKeyword keyword, IViewModelFactory builder)
+        {
+            return new[] { keyword.Description };
+        }
+
+        public override Type ExpectedReturnType
+        {
+            get
+            {
+                return typeof(string);
+            }
+        }
+    }
+
+    /// <summary>
+    /// The Key of a Keyword viewmodel.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Property, Inherited = true)]
+    public class KeywordKeyAttribute : KeywordAttributeBase
+    {
+        public override IEnumerable GetPropertyValues(IKeyword keyword, IViewModelFactory builder)
+        {
+            return new[] { keyword.Key };
+        }
+
+        public override Type ExpectedReturnType
+        {
+            get
+            {
+                return typeof(string);
+            }
+        }
+    }
+
+    /// <summary>
+    /// The Id of a Keyword viewmodel as string.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Property, Inherited = true)]
+    public class KeywordIdAttribute : KeywordAttributeBase
+    {
+        public override IEnumerable GetPropertyValues(IKeyword keyword, IViewModelFactory builder)
+        {
+            return new[] { keyword.Id };
+        }
+
+        public override Type ExpectedReturnType
+        {
+            get
+            {
+                return typeof(string);
+            }
+        }
+    }
+
+    /// <summary>
+    /// The Id of a Keyword viewmodel as tcmuri.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Property, Inherited = true)]
+    public class KeywordIdAsTcmUriAttribute : KeywordAttributeBase
+    {
+        public override IEnumerable GetPropertyValues(IKeyword keyword, IViewModelFactory builder)
+        {
+            return new[] { new TcmUri(keyword.Id) };
+        }
+
+        public override Type ExpectedReturnType
+        {
+            get
+            {
+                return typeof(TcmUri);
+            }
+        }
+    }
 }

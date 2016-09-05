@@ -197,6 +197,37 @@ namespace DD4T.ViewModels.Attributes
     }
 
     /// <summary>
+    /// A Base class for an Attribute identifying a Property that represents some part of a Keyword
+    /// </summary>
+    public abstract class KeywordAttributeBase : ModelPropertyAttributeBase, IKeywordAttribute
+    {
+        public override IEnumerable GetPropertyValues(IModel modelData, IModelProperty property, IViewModelFactory factory)
+        {
+            IEnumerable result = null;
+            if (modelData != null)
+            {
+                if (modelData is IKeyword)
+                {
+                    var keywordData = modelData as IKeyword;
+                    if (keywordData != null)
+                    {
+                        result = this.GetPropertyValues(keywordData, factory);
+                    }
+                }
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// When overriden in a derived class, this gets the value of the Property for a given Keyword
+        /// </summary>
+        /// <param name="keyword">keyword for the View Model</param>
+        /// <param name="factory">View Model factory</param>
+        /// <returns>The Property value</returns>
+        public abstract IEnumerable GetPropertyValues(IKeyword keyword, IViewModelFactory builder);
+    }
+
+    /// <summary>
     ///  A Base class for an Attribute identifying a Property that represents some part of a Template
     /// </summary>
     public abstract class TemplateAttributeBase : ModelPropertyAttributeBase, ITemplateAttribute
