@@ -69,9 +69,6 @@ namespace DD4T.ViewModels.Reflection
                 {
                     if (!modelAttributes.TryGetValue(type, out result))
                     {
-#warning Should be tested
-                        //result = type.GetDefaultMembers().FirstOrDefault().GetCustomAttributes(true).FirstOrDefault() as IModelAttribute;
-                        //result = type.GetCustomAttributes(typeof(T), true).FirstOrDefault() as IModelAttribute;
                         result = type.GetTypeInfo().GetCustomAttributes(true).FirstOrDefault() as IModelAttribute;
                         modelAttributes.Add(type, result);
                     }
@@ -204,8 +201,6 @@ namespace DD4T.ViewModels.Reflection
         private IModelProperty BuildModelProperty(PropertyInfo propertyInfo)
         {
             IModelProperty result = null;
-#warning code changes test!
-            //var propAttribute = propertyInfo.GetCustomAttributes(typeof(IPropertyAttribute), true).FirstOrDefault() as IPropertyAttribute;
             var propAttribute = propertyInfo.GetCustomAttributes(true).FirstOrDefault() as IPropertyAttribute;
             if (propAttribute != null) //only add properties that have the custom attribute
             {

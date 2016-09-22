@@ -1,13 +1,7 @@
 ﻿using DD4T.ContentModel.Contracts.Configuration;
 using DD4T.ContentModel.Contracts.Logging;
-using DD4T.ContentModel.Factories;
 using DD4T.Core.Contracts.Resolvers;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml;
 using System.Xml.Linq;
 
 namespace DD4T.Utils.Resolver
@@ -42,81 +36,52 @@ namespace DD4T.Utils.Resolver
 
         public object Resolve(string input, string pageUri = null)
         {
-#warning re-write logic including XDocument and linq
-            //return input;
-            var doc = XDocument.Parse(string.Format("<xhtmlroot>{0}</xhtmlroot>", input));
+            var document = XElement.Parse(string.Format("<xhtmlroot>{0}</xhtmlroot>", input));
             //XmlNamespaceManager nsmgr = new XmlNamespaceManager(new NameTable());
+            XNamespace xhtml = XNamespace.Get(XhtmlNamespaceUri);
+            XNamespace xlink = XNamespace.Get(XlinkNamespaceUri);
+            foreach (var item in document.Descendants().Where(e => e.Name.NamespaceName.Equals(XhtmlNamespaceUri) && e.Name.LocalName == "a"))
+            {
+                // this link contains BOTH an xlink:href (TCM uri) AND an xhtml:href (resolved link, probably to a binary)
+                // in that case we will let the pre-resolved hyperlink win
+                var xhtmlAttribute = item.Attributes("href").FirstOrDefault();
+                if (xhtmlAttribute == null)
+                    xhtmlAttribute = new XAttribute("href", string.Empty);
 
-            //nsmgr.AddNamespace("xhtml", XhtmlNamespaceUri);
-            //nsmgr.AddNamespace("xlink", XlinkNamespaceUri);
-            //doc.PreserveWhitespace = true;
-            //doc.LoadXml(string.Format("<xhtmlroot>{0}</xhtmlroot>", input));
-            // resolve links which haven't been resolved
-            //foreach (var link in doc.XPathSelectElements("//xhtml:a[@xlink:href[starts-with(string(.),'tcm:')]][@xhtml:href='' or not(@xhtml:href)]", nsmgr))
-            //{
-            //    bool hasResolvedHref = false;
-            //    foreach (var href in link.XPathSelectElements("@*[local-name()='href']"))
-            //    {
-            //        var namespaceUri = href.Attribute("NamespaceURI").Value;
-            //        if (namespaceUri == XhtmlNamespaceUri || string.IsNullOrEmpty(namespaceUri))
-            //        {
-            //            // this link contains BOTH an xlink:href (TCM uri) AND an xhtml:href (resolved link, probably to a binary)
-            //            // in that case we will let the pre-resolved hyperlink win
-            //            hasResolvedHref = true;
-            //            break;
-            //        }
-            //    }
-            //    if (hasResolvedHref)
-            //    {
-            //        continue;
-            //    }
-            //    string tcmuri = link.Attribute("xlink:href").Value;
+                if (!string.IsNullOrEmpty(xhtmlAttribute.Value))
+                    continue;
 
-            //    //string linkUrl = pageUri.IsNullOrEmpty() ? _linkResolver.ResolveUrl(tcmuri) : _linkFactory.ResolveLink(pageUri, tcmuri, TcmUri.NullUri.ToString());
-            //    string linkUrl = _linkResolver.ResolveUrl(tcmuri, pageUri);
-            //    //multimedia component added as component link into a RTF field.
-            //    if (string.IsNullOrEmpty(linkUrl))
-            //        linkUrl = _linkResolver.ResolveUrl(tcmuri);
+                //Find the xlink:href attrubute and if it starts with tcm: resolve the link
+                var xlinkAttribute = item.Attributes(xlink + "href").FirstOrDefault();
+                if (!xlinkAttribute.Value.StartsWith("tcm:"))
+                    continue;
 
-            //    if (!string.IsNullOrEmpty(linkUrl))
-            //    {
-            //        // linkUrl = HttpHelper.AdjustUrlToContext(linkUrl);
-            //        // add href
-            //        //XmlAttribute href = doc.CreateAttribute("xhtml:href");
-            //        //href.Value = linkUrl;
-            //        var href = new XAttribute("xhtml:href", linkUrl);
-            //        link.Add(href);
+                string tcmuri = xlinkAttribute.Value;
 
-            //        // remove all xlink attributes
-            //        foreach (var xlinkAttr in link.XPathSelectElements("//@xlink:*", nsmgr))
-            //            xlinkAttr.Remove90;
-            //    }
-            //    else
-            //    {
-            //        // copy child nodes of link so we keep them
-            //        foreach (XmlNode child in link.ChildNodes)
-            //            link.ParentNode.InsertBefore(child.CloneNode(true), link);
+                string linkUrl = _linkResolver.ResolveUrl(tcmuri, pageUri);
+                //multimedia component added as component link into a RTF field.
+                if (string.IsNullOrEmpty(linkUrl))
+                    linkUrl = _linkResolver.ResolveUrl(tcmuri);
 
-            //        // remove link node
-            //        link.ParentNode.RemoveChild(link);
-            //    }
-            //}
+                if (!string.IsNullOrEmpty(linkUrl))
+                {
+                    xhtmlAttribute.Value = linkUrl;
+                    item.Add(xhtmlAttribute);
+                    // remove all xlink attributes
+                    foreach (var xlinkAttr in item.Attributes().Where(a => a.Name.NamespaceName.Equals(XlinkNamespaceUri)))
+                        xlinkAttr.Remove();
+                }
+            }
 
-            //// remove any additional xlink attribute
-            //foreach (XmlNode node in doc.SelectNodes("//*[@xlink:*]", nsmgr))
-            //{
-            //    foreach (XmlAttribute attr in node.SelectNodes("//@xlink:*", nsmgr))
-            //        node.Attributes.Remove(attr);
-            //}
+            // remove any additional xlink attribute
+            foreach (var item in document.Descendants())
+            {
+                foreach (var xlinkAttr in item.Attributes().Where(a => a.Name.NamespaceName.Equals(XlinkNamespaceUri)))
+                    xlinkAttr.Remove();
+            }
 
-            //// add application context path to images
-            //foreach (XmlElement img in doc.SelectNodes("//*[@src]", nsmgr))
-            //{
-            //    //if (img.GetAttributeNode("src") != null)
-            //    //    img.Attributes["src"].Value = HttpHelper.AdjustUrlToContext(img.Attributes["src"].Value);
-            //}
-
-            //// fix empty anchors by placing the id value as a text node and adding a style attribute with position:absolute and visibility:hidden so the value won't show up
+#warning Is this still needed and use
+            // fix empty anchors by placing the id value as a text node and adding a style attribute with position:absolute and visibility:hidden so the value won't show up
             //foreach (XmlElement anchor in doc.SelectNodes("//xhtml:a[not(node())]", nsmgr))
             //{
             //    XmlAttribute style = doc.CreateAttribute("style");
@@ -125,8 +90,9 @@ namespace DD4T.Utils.Resolver
             //    anchor.InnerText = anchor.Attributes["id"] != null ? anchor.Attributes["id"].Value : "empty";
             //}
 
-            //return RemoveNamespaceReferences(doc.DocumentElement.InnerXml);
-            return string.Empty;
+            //var result = doc2.Descendants().Select(x => x.ToString()).Aggregate(string.Concat);
+            var result = document.Elements().Select(x => x.ToString()).Aggregate(string.Concat);
+            return RemoveNamespaceReferences(result);
         }
 
         /// <summary>
@@ -138,10 +104,10 @@ namespace DD4T.Utils.Resolver
         {
             if (!string.IsNullOrEmpty(html))
             {
-                html = html.Replace(" xmlns=\"\"", "");
-                html = html.Replace(string.Format(" xmlns=\"{0}\"", XhtmlNamespaceUri), "");
-                html = html.Replace(string.Format(" xmlns:xhtml=\"{0}\"", XhtmlNamespaceUri), "");
-                html = html.Replace(string.Format(" xmlns:xlink=\"{0}\"", XlinkNamespaceUri), "");
+                html = html.Replace(" xmlns=\"\"", string.Empty);
+                html = html.Replace(string.Format(" xmlns=\"{0}\"", XhtmlNamespaceUri), string.Empty);
+                html = html.Replace(string.Format(" xmlns:xhtml=\"{0}\"", XhtmlNamespaceUri), string.Empty);
+                html = html.Replace(string.Format(" xmlns:xlink=\"{0}\"", XlinkNamespaceUri), string.Empty);
             }
 
             return html;

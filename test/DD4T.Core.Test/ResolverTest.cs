@@ -16,7 +16,16 @@ namespace DD4T.Core.Test
         [Fact]
         public void ResolveRichTextKeepWhitespace()
         {
-            string richtextRaw = "<p xmlns=\"http://www.w3.org/1999/xhtml\" class=\"acme\">Hello <b>world</b> how are you?</p>\r\n<div xmlns=\"http://www.w3.org/1999/xhtml\">Next, we will try a number of <b>bold bold</b> <i>italic</i> and <u>underlined yes underlined</u> words. And a bold word between brackets: (<b>bold</b>).</div>";
+            string richtextRaw = "<p xmlns=\"http://www.w3.org/1999/xhtml\">Hello <b>world</b> how are you?</p><div xmlns=\"http://www.w3.org/1999/xhtml\">Next, we will try a number of <b>bold bold</b><i>italic</i> and <u>underlined yes underlined</u> words. And a bold word between brackets: (<b>bold</b>).</div>";
+            string resolvedRichText = ResolveRichText(richtextRaw);
+            Assert.NotNull(resolvedRichText);
+            Assert.Equal(richtextRaw.Replace(" xmlns=\"http://www.w3.org/1999/xhtml\"", ""), resolvedRichText);
+        }
+
+        [Fact]
+        public void ResolveRichTextKeepWhitespaceAndKeepHiddenCharacters()
+        {
+            string richtextRaw = "<p xmlns=\"http://www.w3.org/1999/xhtml\">Hello <b>world</b> how are you?</p><div xmlns=\"http://www.w3.org/1999/xhtml\">Next, we will try a number of <b>bold\r\n bold</b><i>italic</i> and <u>underlined yes\r\n underlined</u> words. And a bold word between brackets: (<b>bold</b>).</div>";
             string resolvedRichText = ResolveRichText(richtextRaw);
             Assert.NotNull(resolvedRichText);
             Assert.Equal(richtextRaw.Replace(" xmlns=\"http://www.w3.org/1999/xhtml\"", ""), resolvedRichText);

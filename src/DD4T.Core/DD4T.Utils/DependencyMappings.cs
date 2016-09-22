@@ -24,8 +24,7 @@ namespace DD4T.Utils
             mappings.Add(typeof(ILinkResolver), typeof(DefaultLinkResolver));
             mappings.Add(typeof(IRichTextResolver), typeof(DefaultRichTextResolver));
             mappings.Add(typeof(IPublicationResolver), typeof(DefaultPublicationResolver));
-#warning implement dd4tConfiguration
-            //mappings.Add(typeof(IDD4TConfiguration), typeof(DD4TConfiguration));
+            mappings.Add(typeof(IDD4TConfiguration), typeof(DD4TConfiguration));
             mappings.Add(typeof(ICacheAgent), typeof(DefaultCacheAgent));
             mappings.Add(typeof(ILogger), typeof(NullLogger));
 
