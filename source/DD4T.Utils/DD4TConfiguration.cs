@@ -2,10 +2,7 @@
 using DD4T.ContentModel.Contracts.Providers;
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Configuration;
-using System.Linq;
-using System.Text;
 
 namespace DD4T.Utils
 {
