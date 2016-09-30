@@ -1,6 +1,7 @@
 ﻿using DD4T.ContentModel.Contracts.Configuration;
 using DD4T.ContentModel.Contracts.Providers;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
@@ -72,7 +73,7 @@ namespace DD4T.Utils
                     {
                         _welcomeFile = DefaultWelcomeFile;
                     }
-                       else 
+                    else
                     {
                         _welcomeFile = configurationValue;
                     }
@@ -81,7 +82,7 @@ namespace DD4T.Utils
             }
         }
 
-        
+
         public string ComponentPresentationController
         {
             get
@@ -98,7 +99,7 @@ namespace DD4T.Utils
             }
         }
 
-       
+
         public string ActiveWebsite
         {
             get
@@ -171,7 +172,7 @@ namespace DD4T.Utils
             }
         }
 
- 
+
 
         public string ContentProviderEndPoint
         {
@@ -192,7 +193,7 @@ namespace DD4T.Utils
                 return _contentProviderEndPoint;
             }
         }
-       
+
 
         public string SiteMapPath
         {
@@ -226,7 +227,7 @@ namespace DD4T.Utils
             }
         }
 
-        
+
         public string BinaryFileExtensions
         {
             get
@@ -347,7 +348,7 @@ namespace DD4T.Utils
             }
         }
 
-      
+
         public bool UseUriAsAnchor
         {
             get
@@ -356,7 +357,7 @@ namespace DD4T.Utils
                 {
                     _useUriAsAnchor = new bool?(SafeGetConfigSettingAsBoolean(ConfigurationKeys.UseUriAsAnchor));
                 }
-               return _useUriAsAnchor.Value;
+                return _useUriAsAnchor.Value;
             }
         }
 
@@ -436,19 +437,21 @@ namespace DD4T.Utils
             }
         }
 
-        private Dictionary<string, int> _expirationPerRegion = new Dictionary<string, int>();
+        private ConcurrentDictionary<string, int> _expirationPerRegion = new ConcurrentDictionary<string, int>();
         public int GetExpirationForCacheRegion(string region)
         {
             if (!_expirationPerRegion.ContainsKey(region))
             {
-                string s = SafeGetConfigSettingAsString(string.Format(ConfigurationKeys.CacheSettingsPerRegion, region));
-                if (string.IsNullOrEmpty(s))
+                string cacheSettingePerRegion = string.Format(ConfigurationKeys.CacheSettingsPerRegion, region);
+                string configSetting = SafeGetConfigSettingAsString(cacheSettingePerRegion);
+
+                if (string.IsNullOrEmpty(configSetting))
                 {
-                    _expirationPerRegion.Add(region, DefaultCacheSettings);
+                    _expirationPerRegion.TryAdd(region, DefaultCacheSettings);
                 }
                 else
                 {
-                    _expirationPerRegion.Add(region, SafeGetConfigSettingAsInt(string.Format(ConfigurationKeys.CacheSettingsPerRegion, region)));
+                    _expirationPerRegion.TryAdd(region, SafeGetConfigSettingAsInt(cacheSettingePerRegion));
                 }
             }
             return _expirationPerRegion[region];
