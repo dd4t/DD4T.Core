@@ -525,4 +525,19 @@ namespace DD4T.ViewModels.Attributes
             get { return typeof(TcmUri); }
         }
     }
+
+    /// <summary>
+    /// The TcmUri of the keyword 
+    /// </summary>
+    public class KeywordIdAttribute : KeywordAttributeBase
+    {
+        public override IEnumerable GetPropertyValues(IKeyword keyword, Type propertyType, IViewModelFactory factory)
+        {
+            return keyword == null ? null : new TcmUri[] { new TcmUri(keyword.Id) };
+        }
+        public override Type ExpectedReturnType
+        {
+            get { return typeof(TcmUri); }
+        }
+    }
 }

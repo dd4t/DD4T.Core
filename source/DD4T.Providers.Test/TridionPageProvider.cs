@@ -62,7 +62,14 @@ namespace DD4T.Providers.Test
             page.Filename = Randomizer.AnySafeString(8) + ".html";
 
             PageTemplate pt = new PageTemplate();
-            pt.Title = Randomizer.AnyString(20);
+            if (url.ToLower().Contains("model"))
+            {
+                pt.Title = "Standard";
+            }
+            else
+            {
+                pt.Title = Randomizer.AnyString(20);
+            }
             Field ptfieldView = new Field();
             ptfieldView.Name = "view";
             ptfieldView.Values.Add("Standard");
