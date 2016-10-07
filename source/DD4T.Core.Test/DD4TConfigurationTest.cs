@@ -18,14 +18,13 @@ namespace DD4T.Core.Test
         [ClassInitialize]
         public static void Setup(TestContext context)
         {
-          
+            SetCacheSettings();
         }
 
 
         [TestMethod]
         public void GetSetting()
         {
-            SetCacheSettings();
             DD4TConfiguration _configuration = new DD4TConfiguration();
             string jmsTopic = _configuration.JMSTopic;
             Assert.AreEqual(jmsTopic, "TestJMSTopic");
@@ -34,13 +33,11 @@ namespace DD4T.Core.Test
         [TestMethod]
         public void GetExpirationForCacheRegion()
         {
-            SetCacheSettings();
-            GetExpirationForCacheRegionExecute();
-            ThreadStart work = GetExpirationForCacheRegionExecute;
+           ThreadStart work = GetExpirationForCacheRegionExecute;
             Thread thread1 = new Thread(work);
-//            Thread thread2 = new Thread(work);
+            Thread thread2 = new Thread(work);
             thread1.Start();
-//            thread2.Start();
+            thread2.Start();
 
         }
         private void GetExpirationForCacheRegionExecute()
@@ -54,12 +51,10 @@ namespace DD4T.Core.Test
             Assert.AreEqual(exp4page, 60);
             Assert.AreEqual(exp4component, 61);
             Assert.AreEqual(exp4link, 62);
-
         }
-        private void SetCacheSettings()
+        private static void SetCacheSettings()
         {
             Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-
             config.AppSettings.Settings.Remove(ConfigurationKeys.JMSTopic);
             config.AppSettings.Settings.Remove(string.Format(ConfigurationKeys.CacheSettingsPerRegion, "Page"));
             config.AppSettings.Settings.Remove(string.Format(ConfigurationKeys.CacheSettingsPerRegion, "ComponentPresentation"));
@@ -69,6 +64,7 @@ namespace DD4T.Core.Test
             config.AppSettings.Settings.Add(string.Format(ConfigurationKeys.CacheSettingsPerRegion, "ComponentPresentation"), "61");
             config.AppSettings.Settings.Add(string.Format(ConfigurationKeys.CacheSettingsPerRegion, "Link"), "62");
             config.Save();
+            ConfigurationManager.RefreshSection("appSettings");
         }
     }
 }
