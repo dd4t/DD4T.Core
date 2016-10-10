@@ -1,6 +1,7 @@
 ﻿using DD4T.ContentModel.Contracts.Resolvers;
 using DD4T.Core.Contracts.DependencyInjection;
 using DD4T.Core.Contracts.ViewModels;
+using DD4T.Core.DD4T.Utils.Models;
 using DD4T.ViewModels.Reflection;
 using System;
 using System.Collections.Generic;
@@ -12,48 +13,16 @@ namespace DD4T.ViewModels
 {
     public class DependencyMappings : IDependencyMapper
     {
-        private IDictionary<Type, Type> MappingsForSingleInstance()
+        public TypeDescriptionList TypeDescriptions()
         {
-            var mappings = new Dictionary<Type, Type>();
+            var list = new TypeDescriptionList();
+            list.Add(typeof(IContextResolver), typeof(DefaultContextResolver));
+            list.Add(typeof(IReflectionHelper), typeof(ReflectionOptimizer));
+            list.Add(typeof(IViewModelResolver), typeof(DefaultViewModelResolver));
+            list.Add(typeof(IViewModelFactory), typeof(ViewModelFactory));
+            list.Add(typeof(IViewModelKeyProvider), typeof(WebConfigViewModelKeyProvider));
 
-            mappings.Add(typeof(IContextResolver), typeof(DefaultContextResolver));
-            mappings.Add(typeof(IReflectionHelper), typeof(ReflectionOptimizer));
-            mappings.Add(typeof(IViewModelResolver), typeof(DefaultViewModelResolver));
-            mappings.Add(typeof(IViewModelFactory), typeof(ViewModelFactory));
-            mappings.Add(typeof(IViewModelKeyProvider), typeof(WebConfigViewModelKeyProvider));
-
-            return mappings;
-        }
-        public IDictionary<Type, Type> SingleInstanceMappings
-        {
-            get
-            {
-                return this.MappingsForSingleInstance();
-            }
-        }
-
-        public IDictionary<Type, Type> PerHttpRequestMappings
-        {
-            get
-            {
-                return null;
-            }
-        }
-
-        public IDictionary<Type, Type> PerLifeTimeMappings
-        {
-            get
-            {
-                return null;
-            }
-        }
-
-        public IDictionary<Type, Type> PerDependencyMappings
-        {
-            get
-            {
-                return null;
-            }
+            return list;
         }
     }
 }

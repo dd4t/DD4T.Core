@@ -1,4 +1,5 @@
-﻿using DD4T.ContentModel;
+﻿using DD4T;
+using DD4T.ContentModel;
 using DD4T.ContentModel.Contracts.Logging;
 using DD4T.ContentModel.Contracts.Providers;
 using DD4T.ContentModel.Contracts.Serializing;
@@ -35,11 +36,8 @@ namespace DD4T.Factories
                             IFactoryCommonServices factoryCommonServices)
             : base(factoryCommonServices)
         {
-            if (pageProvider == null)
-                throw new ArgumentNullException("pageProvider");
-
-            if (componentPresentationFactory == null)
-                throw new ArgumentNullException("componentPresentationFactory");
+            Contract.ThrowIfNull(pageProvider, nameof(pageProvider));
+            Contract.ThrowIfNull(componentPresentationFactory, nameof(componentPresentationFactory));
 
             ComponentPresentationFactory = componentPresentationFactory;
             PageProvider = pageProvider;
@@ -50,7 +48,7 @@ namespace DD4T.Factories
         {
             get
             {
-                return Configuration.DataFormat;
+                return Configuration.DataFormat ?? string.Empty;
             }
         }
 
@@ -62,7 +60,7 @@ namespace DD4T.Factories
             {
                 if (_serializerService == null)
                 {
-                    if (DataFormat.ToLower() == "json")
+                    if (DataFormat.Equals("json", StringComparison.CurrentCultureIgnoreCase))
                     {
                         _serializerService = new JSONSerializerService();
                     }

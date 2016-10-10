@@ -1,5 +1,6 @@
 ﻿using DD4T.ContentModel.Factories;
 using DD4T.Core.Contracts.DependencyInjection;
+using DD4T.Core.DD4T.Utils.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,51 +11,17 @@ namespace DD4T.Factories
 {
     public class DependencyMappings : IDependencyMapper
     {
-
-        private IDictionary<Type, Type> MappingsForPerLifeTimeScope()
+        public TypeDescriptionList TypeDescriptions()
         {
-            var mappings = new Dictionary<Type, Type>();
+            var list = new TypeDescriptionList();
+            list.Add(typeof(IFactoryCommonServices), typeof(FactoryCommonServices), LifeCycle.PerLifeTime);
+            list.Add(typeof(IPageFactory), typeof(PageFactory), LifeCycle.PerLifeTime);
+            list.Add(typeof(IComponentPresentationFactory), typeof(ComponentPresentationFactory), LifeCycle.PerLifeTime);
+            list.Add(typeof(IComponentFactory), typeof(ComponentFactory), LifeCycle.PerLifeTime);
+            list.Add(typeof(IBinaryFactory), typeof(BinaryFactory), LifeCycle.PerLifeTime);
+            list.Add(typeof(ILinkFactory), typeof(LinkFactory), LifeCycle.PerLifeTime);
 
-            mappings.Add(typeof(IFactoryCommonServices), typeof(FactoryCommonServices));
-            mappings.Add(typeof(IPageFactory), typeof(PageFactory));
-            mappings.Add(typeof(IComponentPresentationFactory), typeof(ComponentPresentationFactory));
-            mappings.Add(typeof(IComponentFactory), typeof(ComponentFactory));
-            mappings.Add(typeof(IBinaryFactory), typeof(BinaryFactory));
-            mappings.Add(typeof(ILinkFactory), typeof(LinkFactory));
-
-            return mappings;
-        }
-        public IDictionary<Type, Type> SingleInstanceMappings
-        {
-            get
-            {
-                return null;
-            }
-        }
-
-        public IDictionary<Type, Type> PerHttpRequestMappings
-        {
-            get
-            {
-                return null;
-            }
-        }
-
-        public IDictionary<Type, Type> PerLifeTimeMappings
-        {
-            get
-            {
-                return this.MappingsForPerLifeTimeScope();
-            }
-        }
-
-        public IDictionary<Type, Type> PerDependencyMappings
-        {
-            get
-            {
-                return null;
-            }
+            return list;
         }
     }
-
 }

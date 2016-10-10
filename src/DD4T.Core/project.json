@@ -1,5 +1,5 @@
 ﻿{
-  "version": "3.0.0-*",
+  "version": "3.0.2-*",
   "dependencies": {
     "Newtonsoft.Json": "9.0.1",
     "DD4T.Model": "3.0.0",

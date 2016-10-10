@@ -1,4 +1,5 @@
-﻿using DD4T.ContentModel;
+﻿using DD4T;
+using DD4T.ContentModel;
 using DD4T.ContentModel.Contracts.Configuration;
 using DD4T.ContentModel.Contracts.Logging;
 using DD4T.ContentModel.Factories;
@@ -20,7 +21,7 @@ namespace DD4T.Utils.Resolver
 
         public DefaultLinkResolver(ILinkFactory linkFactory, ILogger logger, IBinaryFactory binaryFactory, IDD4TConfiguration configuration)
         {
-            Contract.ThrowIfNull(linkFactory ,nameof(linkFactory));
+            Contract.ThrowIfNull(linkFactory, nameof(linkFactory));
             Contract.ThrowIfNull(binaryFactory, nameof(binaryFactory));
             Contract.ThrowIfNull(logger, nameof(logger));
             Contract.ThrowIfNull(configuration, nameof(configuration));
@@ -42,7 +43,7 @@ namespace DD4T.Utils.Resolver
                                tcmUri,
                                string.IsNullOrEmpty(pageId) ? TcmUri.NullUri.ToString() : pageId);
 
-           var resolvedUrl = string.IsNullOrEmpty(pageId) ? _linkFactory.ResolveLink(tcmUri) : _linkFactory.ResolveLink(pageId, tcmUri, TcmUri.NullUri.ToString());
+            var resolvedUrl = string.IsNullOrEmpty(pageId) ? _linkFactory.ResolveLink(tcmUri) : _linkFactory.ResolveLink(pageId, tcmUri, TcmUri.NullUri.ToString());
 
             //it could be a binary link. let's resolve it as a binaryLink ..
             if (string.IsNullOrEmpty(resolvedUrl))
