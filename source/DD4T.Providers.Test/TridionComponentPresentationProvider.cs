@@ -76,8 +76,9 @@ namespace DD4T.Providers.Test
             cp.ComponentTemplate = ct;
 
             Condition condition = new KeywordCondition() { Keyword = new Keyword() { Id = "tcm:2-123-1024", Key = "test", Title = "Test" }, Operator = NumericalConditionOperator.Equals, Value = 1 };
-            cp.Conditions = new List<Condition>() { condition };
-
+            var targetGroup = new TargetGroup() { Title = "Test", Id = "tcm:2-123-256", Description = "Test target group", Conditions = { condition } };
+            TargetGroupCondition targetGroupCondition = new TargetGroupCondition { TargetGroup = targetGroup, Negate=false };
+            cp.TargetGroupConditions = new List<TargetGroupCondition>() { targetGroupCondition };
             return SerializerService.Serialize<ComponentPresentation>(cp);
         }
 

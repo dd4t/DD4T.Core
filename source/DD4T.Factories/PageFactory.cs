@@ -372,7 +372,7 @@ namespace DD4T.Factories
                         ComponentPresentation dcp = (ComponentPresentation)ComponentPresentationFactory.GetComponentPresentation(cp.Component.Id, cp.ComponentTemplate.Id);
                         cp.Component = dcp.Component;
                         cp.ComponentTemplate = dcp.ComponentTemplate;
-                        cp.Conditions = dcp.Conditions;
+                        // DCPs do not have conditions! cp.Conditions = dcp.Conditions;
                     }
                     catch (ComponentPresentationNotFoundException)
                     {

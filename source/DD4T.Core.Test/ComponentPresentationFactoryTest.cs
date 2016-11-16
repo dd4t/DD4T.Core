@@ -30,7 +30,8 @@ namespace DD4T.Core.Test
             IComponentPresentation cp = ComponentPresentationFactory.GetComponentPresentation("");
             Assert.IsNotNull(cp);
             Assert.IsFalse(string.IsNullOrEmpty(cp.Component.Title) || string.IsNullOrEmpty(cp.ComponentTemplate.Title));
-            Assert.IsNotNull(cp.Conditions[0]);
+            Assert.IsNotNull(cp.TargetGroupConditions);
+            Assert.IsNotNull(cp.TargetGroupConditions[0].TargetGroup.Conditions[0]);
         }
 
         [TestMethod]
