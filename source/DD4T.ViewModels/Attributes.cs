@@ -412,67 +412,22 @@ namespace DD4T.ViewModels.Attributes
     }
 
     /// <summary>
-    /// Field that is parsed into an Enum. Must be a Text field (not Keyword).
-    /// </summary>
-    public class EnumFieldAttribute : FieldAttributeBase
-    {  
-        public override IEnumerable GetFieldValues(IField field, IModelProperty property, ITemplate template, IViewModelFactory factory)
-        {
-            var result = new List<object>();
-            foreach (var value in field.Values)
-            {
-                object parsed;
-                if (EnumTryParse(property.ModelType, value, out parsed))
-                {
-                    result.Add(parsed);
-                }
-            }
-            return result;
-        }
-
-        public override Type ExpectedReturnType
-        {
-            get { return typeof(Enum); }
-        }
-
-        private bool EnumTryParse(Type enumType, object value, out object parsedEnum)
-        {
-            bool result = false;
-            parsedEnum = null;
-            if (value != null)
-            {
-                try
-                {
-                    parsedEnum = Enum.Parse(enumType, value.ToString());
-                    result = true;
-                }
-                catch (Exception)
-                {
-                    result = false;
-                }
-            }
-            return result;
-        }
-    }
-    
-        /// <summary>
-    /// The Key of a Keyword field parsed as Enum.
+    /// Field that is parsed into an Enum. Can be Text field or Keyword (Key is parsed to Enum)
     /// </summary>
     [AttributeUsage(AttributeTargets.Property, Inherited = true)]
-    public class KeywordKeyEnumFieldAttribute : FieldAttributeBase
+    public class EnumFieldAttribute : FieldAttributeBase
     {
-        /// <summary>
-        /// The Key of a Keyword field parsed as Enum.
-        /// </summary>
-        /// <param name="fieldName">Tridion schema field name</param>
         public override IEnumerable GetFieldValues(IField field, IModelProperty property, ITemplate template, IViewModelFactory factory)
         {
-            var key = new List<object>();
-            var keywords = field.Keywords;
-            key = keywords.Select(k => k.Key).ToList<object>();
-
             var result = new List<object>();
-            foreach (var value in key)
+            IEnumerable fields = new List<string>();
+
+            if (field.Value.Any())
+                fields = field.Values;
+            else if (field.Keywords.Any())
+                fields = field.Keywords.Select(f => f.Key);
+
+            foreach (var value in fields)
             {
                 object parsed;
                 if (EnumTryParse(property.ModelType, value, out parsed))
