@@ -104,6 +104,10 @@ namespace DD4T.ViewModels.Attributes
                 {
                     fields = (modelData as IComponentPresentation).Component.Fields;
                 }
+                else if (modelData is IComponent)
+                {
+                    fields = (modelData as IComponent).Fields;
+                }
                 else if (modelData is IEmbeddedFields)
                 {
                     fields = (modelData as IEmbeddedFields).Fields;
