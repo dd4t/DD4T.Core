@@ -18,18 +18,19 @@ using DD4T.Utils.Caching;
 namespace DD4T.Factories
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public class PageFactory : FactoryBase, IPageFactory
     {
-
         private static IDictionary<string, DateTime> lastPublishedDates = new Dictionary<string, DateTime>();
         private static Regex rePageContentByUrl = new Regex("PageContent_([0-9\\-]+)_(.*)");
 
-        const string CacheValueNullTitle = "DD4T-Special-Value-PageNotFound";
+        private const string CacheValueNullTitle = "DD4T-Special-Value-PageNotFound";
         private IPage CacheValueNull;
+
         //private ICacheAgent _cacheAgent = null;
         public const string CacheRegion = "Page";
+
         public const string CacheRegion404 = "Page404";
         public IPageProvider PageProvider { get; set; }
         public ILinkFactory LinkFactory { get; set; }
@@ -48,10 +49,9 @@ namespace DD4T.Factories
             ComponentPresentationFactory = componentPresentationFactory;
             PageProvider = pageProvider;
             CacheValueNull = new Page() { Title = CacheValueNullTitle };
+        }
 
-    }
-
-    private string DataFormat
+        private string DataFormat
         {
             get
             {
@@ -60,6 +60,7 @@ namespace DD4T.Factories
         }
 
         private ISerializerService _serializerService;
+
         private ISerializerService SerializerService
         {
             get
@@ -81,6 +82,7 @@ namespace DD4T.Factories
         }
 
         #region IPageFactory Members
+
         public virtual bool TryFindPage(string url, out IPage page)
         {
             LoggerService.Debug(">>TryFindPage ({0}", LoggingCategory.Performance, url);
@@ -114,7 +116,7 @@ namespace DD4T.Factories
                     CacheAgent.Store(cacheKey, CacheRegion404, CacheValueNull);
                 }
                 else
-                { 
+                {
                     LoggerService.Debug("about to create IPage from content for url {0}", LoggingCategory.Performance, url);
                     page = GetIPageObject(pageContentFromBroker);
                     if (IncludeLastPublishedDate)
@@ -126,7 +128,6 @@ namespace DD4T.Factories
                     LoggerService.Debug("<<TryFindPage ({0}", LoggingCategory.Performance, url);
                     return true;
                 }
-                
             }
 
             LoggerService.Debug("<<TryFindPage ({0}", LoggingCategory.Performance, url);
@@ -178,6 +179,7 @@ namespace DD4T.Factories
             LoggerService.Debug("<<TryFindPageContent ({0}", LoggingCategory.Performance, url);
             return false;
         }
+
         public string FindPageContent(string url)
         {
             string pageContent;
@@ -194,7 +196,6 @@ namespace DD4T.Factories
             page = null;
 
             string cacheKey = String.Format("PageByUri_{0}", tcmUri);
-
 
             page = (IPage)CacheAgent.Load(cacheKey);
             if (page != null)
@@ -248,7 +249,6 @@ namespace DD4T.Factories
                 }
             }
 
-
             return false;
         }
 
@@ -268,9 +268,8 @@ namespace DD4T.Factories
             return true; // TODO: implement
         }
 
-
         /// <summary>
-        /// Returns an IPage object 
+        /// Returns an IPage object
         /// </summary>
         /// <param name="pageStringContent">String to desirialize to an IPage object</param>
         /// <returns>IPage object</returns>
@@ -311,7 +310,6 @@ namespace DD4T.Factories
         [Obsolete]
         public override DateTime GetLastPublishedDateCallBack(string key, object cachedItem)
         {
-
             LoggerService.Debug(">>GetLastPublishedDateCallBack {0}", LoggingCategory.Performance, key);
             if (cachedItem == null)
                 return DateTime.Now; // this will force the item to be removed from the cache
@@ -342,7 +340,6 @@ namespace DD4T.Factories
                 return dt;
             }
 
-
             throw new Exception(string.Format("GetLastPublishedDateCallBack called for unexpected object type '{0}' or with unexpected key '{1}'", cachedItem.GetType(), key));
         }
 
@@ -351,10 +348,10 @@ namespace DD4T.Factories
             return PageProvider.GetAllPublishedPageUrls(includeExtensions, pathStarts);
         }
 
-        #endregion
-
+        #endregion IPageFactory Members
 
         #region private helper methods
+
         private void LoadComponentModelsFromComponentPresentationFactory(IPage page)
         {
             LoggerService.Debug(">>LoadComponentModelsFromComponentPresentationFactory ({0})", LoggingCategory.Performance, page.Id);
@@ -371,7 +368,12 @@ namespace DD4T.Factories
                     {
                         ComponentPresentation dcp = (ComponentPresentation)ComponentPresentationFactory.GetComponentPresentation(cp.Component.Id, cp.ComponentTemplate.Id);
                         cp.Component = dcp.Component;
-                        cp.ComponentTemplate = dcp.ComponentTemplate;
+                        //Fix for backward compatibility. We keep using the template on the page as 1.x version of dd4t doesn't have the componenttemplate data in the dcp
+                        //The title is mandatory in tridion, so it can't be null or empty when successful, the id will still be set by the factory
+                        if (!String.IsNullOrEmpty(dcp.ComponentTemplate.Title))
+                        {
+                            cp.ComponentTemplate = dcp.ComponentTemplate;
+                        }
                         cp.Conditions = dcp.Conditions;
                     }
                     catch (ComponentPresentationNotFoundException)
@@ -391,7 +393,6 @@ namespace DD4T.Factories
         //    string nodeText = richTextField.Value;
         //    XmlDocument tempDocument = new XmlDocument();
         //    tempDocument.LoadXml("<tempRoot>" + nodeText + "</tempRoot>");
-
 
         //    XmlNamespaceManager nsManager = new XmlNamespaceManager(tempDocument.NameTable);
         //    nsManager.AddNamespace("xlink", "http://www.w3.org/1999/xlink");
@@ -427,8 +428,6 @@ namespace DD4T.Factories
         //    }
         //}
 
-        #endregion
-
-
+        #endregion private helper methods
     }
 }
