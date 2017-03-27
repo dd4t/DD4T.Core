@@ -72,6 +72,21 @@ namespace DD4T.Core.Test
 
         }
 
+        [TestMethod]
+
+        public void FindAndStoreBinaryWithoutExtension()
+        {
+
+            string p = Path.Combine(Path.GetTempPath(), "DD4TMockWebRoot");
+            if (!Directory.Exists(p))
+            {
+                Directory.CreateDirectory(p);
+            }
+            bool result = BinaryFactory.FindAndStoreBinary("/media/image", Path.Combine(p, "image"));
+            Assert.IsTrue(result, "FindAndStoreBinary returned false");
+            Assert.IsTrue(File.Exists(Path.Combine(p, "image")), "binary file was not created properly");
+
+        }
 
         [TestMethod]
         public void ResizeImageToWidth()
@@ -252,6 +267,15 @@ namespace DD4T.Core.Test
 
             ResetImageDimensions();
 
+        }
+
+
+        [TestMethod]
+        public void FindBinaryWithoutExtension()
+        {
+            IBinary binary = BinaryFactory.FindBinary("/media/image");
+            Assert.IsNotNull(binary);
+            Assert.IsTrue(binary.BinaryData.Length > 100, "byte array is too small, something went wrong");
         }
 
         private Image GetImageFromBytes(byte[] bytes)

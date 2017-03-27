@@ -13,7 +13,24 @@ using System.Collections;
 
 namespace DD4T.ViewModels.Attributes
 {
-   
+
+    /// <summary>
+    /// A Keyword component field (used for raw key data)
+    /// </summary>
+    public class RawKeywordFieldAttribute : FieldAttributeBase
+    {
+
+        public override IEnumerable GetFieldValues(IField field, IModelProperty property, ITemplate template, IViewModelFactory factory)
+        {
+            return field.Keywords;
+        }
+
+
+        public override Type ExpectedReturnType
+        {
+            get { return typeof(IList<IKeyword>); }
+        }
+    }
 
     /// <summary>
     /// A Multimedia component field
@@ -395,14 +412,22 @@ namespace DD4T.ViewModels.Attributes
     }
 
     /// <summary>
-    /// Field that is parsed into an Enum. Must be a Text field (not Keyword).
+    /// Field that is parsed into an Enum. Can be Text field or Keyword (Key is parsed to Enum)
     /// </summary>
+    [AttributeUsage(AttributeTargets.Property, Inherited = true)]
     public class EnumFieldAttribute : FieldAttributeBase
-    {  
+    {
         public override IEnumerable GetFieldValues(IField field, IModelProperty property, ITemplate template, IViewModelFactory factory)
         {
             var result = new List<object>();
-            foreach (var value in field.Values)
+            IEnumerable fields = new List<string>();
+
+            if (field.Value.Any())
+                fields = field.Values;
+            else if (field.Keywords.Any())
+                fields = field.Keywords.Select(f => f.Key);
+
+            foreach (var value in fields)
             {
                 object parsed;
                 if (EnumTryParse(property.ModelType, value, out parsed))
@@ -502,6 +527,21 @@ namespace DD4T.ViewModels.Attributes
         public override IEnumerable GetPropertyValues(IPage page, Type propertyType, IViewModelFactory factory)
         {
             return page == null ? null : new TcmUri[] { new TcmUri(page.Id) };
+        }
+        public override Type ExpectedReturnType
+        {
+            get { return typeof(TcmUri); }
+        }
+    }
+
+    /// <summary>
+    /// The TcmUri of the keyword 
+    /// </summary>
+    public class KeywordIdAttribute : KeywordAttributeBase
+    {
+        public override IEnumerable GetPropertyValues(IKeyword keyword, Type propertyType, IViewModelFactory factory)
+        {
+            return keyword == null ? null : new TcmUri[] { new TcmUri(keyword.Id) };
         }
         public override Type ExpectedReturnType
         {
