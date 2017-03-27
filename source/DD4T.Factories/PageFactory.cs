@@ -374,7 +374,7 @@ namespace DD4T.Factories
                         {
                             cp.ComponentTemplate = dcp.ComponentTemplate;
                         }
-                        cp.Conditions = dcp.Conditions;
+                        cp.TargetGroupConditions = dcp.TargetGroupConditions;
                     }
                     catch (ComponentPresentationNotFoundException)
                     {
