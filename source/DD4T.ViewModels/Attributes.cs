@@ -417,6 +417,8 @@ namespace DD4T.ViewModels.Attributes
     [AttributeUsage(AttributeTargets.Property, Inherited = true)]
     public class EnumFieldAttribute : FieldAttributeBase
     {
+        public bool RemoveWhitespace { get; set; }
+        
         public override IEnumerable GetFieldValues(IField field, IModelProperty property, ITemplate template, IViewModelFactory factory)
         {
             var result = new List<object>();
@@ -451,7 +453,8 @@ namespace DD4T.ViewModels.Attributes
             {
                 try
                 {
-                    parsedEnum = Enum.Parse(enumType, value.ToString());
+                    string valueToBeParsed = RemoveWhitespace ? RemoveWhitespaceInsideString(value.ToString()) : value.ToString();
+                    parsedEnum = Enum.Parse(enumType, valueToBeParsed);
                     result = true;
                 }
                 catch (Exception)
@@ -460,6 +463,13 @@ namespace DD4T.ViewModels.Attributes
                 }
             }
             return result;
+        }
+
+        private string RemoveWhitespaceInsideString(string input)
+        {
+            return new string(input.ToCharArray()
+                .Where(c => !Char.IsWhiteSpace(c))
+                .ToArray());
         }
     }
 
