@@ -412,15 +412,24 @@ namespace DD4T.ViewModels.Attributes
     }
 
     /// <summary>
-    /// Field that is parsed into an Enum. Must be a Text field (not Keyword).
+    /// Field that is parsed into an Enum. Can be Text field or Keyword (Key is parsed to Enum)
     /// </summary>
+    [AttributeUsage(AttributeTargets.Property, Inherited = true)]
     public class EnumFieldAttribute : FieldAttributeBase
     {
         public bool RemoveWhitespace { get; set; }
+        
         public override IEnumerable GetFieldValues(IField field, IModelProperty property, ITemplate template, IViewModelFactory factory)
         {
             var result = new List<object>();
-            foreach (var value in field.Values)
+            IEnumerable fields = new List<string>();
+
+            if (field.Value.Any())
+                fields = field.Values;
+            else if (field.Keywords.Any())
+                fields = field.Keywords.Select(f => f.Key);
+
+            foreach (var value in fields)
             {
                 object parsed;
                 if (EnumTryParse(property.ModelType, value, out parsed))
