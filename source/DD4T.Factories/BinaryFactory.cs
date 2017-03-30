@@ -16,14 +16,13 @@ namespace DD4T.Factories
     public class BinaryFactory : FactoryBase, IBinaryFactory
     {
         public const string CacheRegion = "Binary";
-        const string CacheValueNullTitle = "DD4T-Special-Value-BinaryNotFound";
+        private const string CacheValueNullTitle = "DD4T-Special-Value-BinaryNotFound";
         private IBinary CacheValueNull;
         private static IDictionary<string, DateTime> lastPublishedDates = new Dictionary<string, DateTime>();
         public IBinaryProvider BinaryProvider { get; set; }
 
-
         public BinaryFactory(IBinaryProvider binaryProvider, IFactoryCommonServices factoryCommonServices)
-            : base(factoryCommonServices) 
+            : base(factoryCommonServices)
         {
             if (binaryProvider == null)
                 throw new ArgumentNullException("binaryProvider");
@@ -32,18 +31,16 @@ namespace DD4T.Factories
         }
 
         #region IBinaryFactory members
+
         public bool FindAndStoreBinary(string url, string physicalPath)
         {
             IBinary binary = new Binary();
             return TryFindBinary(url, physicalPath, false, out binary);
         }
 
-       
         public bool TryFindBinary(string url, out IBinary binary)
         {
             return TryFindBinary(url, null, true, out binary);
-
-         
         }
 
         public IBinary FindBinary(string url)
@@ -56,8 +53,6 @@ namespace DD4T.Factories
             return binary;
         }
 
-
-        
         public DateTime FindLastPublishedDate(string url)
         {
             return BinaryProvider.GetBinaryMetaByUrl(url).LastPublishedDate;
@@ -75,7 +70,6 @@ namespace DD4T.Factories
             }
             else
             {
-
                 binary.BinaryData = BinaryProvider.GetBinaryByUri(tcmUri);
                 if (binary.BinaryData == null || binary.BinaryData.Length == 0)
                     return false;
@@ -169,9 +163,7 @@ namespace DD4T.Factories
             return BinaryProvider.GetBinaryMetaByUri(uri);
         }
 
-
-
-        #endregion
+        #endregion IBinaryFactory members
 
         #region private
 
@@ -181,17 +173,18 @@ namespace DD4T.Factories
             LoggerService.Debug($"Using physical path {physicalPath}");
             binary = new Binary();
 
+            Dimensions dimensions = null;
+
+            string urlWithoutDimensions = StripDimensions(url, out dimensions);
+
             if (LoadBinariesAsStream)
             {
                 LoggerService.Information("retrieving binaries as a stream is obsolete; support will be dropped in future versions of DD4T");
-                binary.BinaryStream = BinaryProvider.GetBinaryStreamByUrl(url);
+                binary.BinaryStream = BinaryProvider.GetBinaryStreamByUrl(urlWithoutDimensions);
                 if (binary.BinaryStream == null)
                     return false;
             }
 
-            Dimensions dimensions = null;
-
-            string urlWithoutDimensions = StripDimensions(url, out dimensions);
             string cacheKey = CacheKeyFactory.GenerateKey(urlWithoutDimensions);
 
             try
@@ -217,7 +210,7 @@ namespace DD4T.Factories
                         if (fileModifiedDate.CompareTo(binaryMeta.LastPublishedDate) >= 0)
                         {
                             LoggerService.Debug("binary {0} is still up to date, no action required", urlWithoutDimensions);
-                            // TODO: load bytes from file system into binary 
+                            // TODO: load bytes from file system into binary
                             if (retrieveData)
                             {
                                 FillBinaryFromLocalFS(binary, physicalPath);
@@ -228,9 +221,8 @@ namespace DD4T.Factories
                     }
                 }
 
-
                 // the normal situation (where a binary is still in Tridion and it is present on the file system already and it is up to date) is now covered
-                // Let's handle the exception situations. 
+                // Let's handle the exception situations.
 
                 byte[] bytes = BinaryProvider.GetBinaryByUrl(urlWithoutDimensions);
                 if (bytes == null || bytes.Length == 0)
@@ -238,9 +230,8 @@ namespace DD4T.Factories
                     throw new BinaryNotFoundException();
                 }
 
-
                 bool fileIsCreated = WriteBinaryToFile(bytes, physicalPath, dimensions);
-                if (! fileIsCreated)
+                if (!fileIsCreated)
                 {
                     LoggerService.Warning($"file '{physicalPath}' could not be created, binary {binary.Id} cannot be returned");
                     return false;
@@ -258,7 +249,6 @@ namespace DD4T.Factories
                 }
                 CopyBinaryMetaToBinary(binaryMeta, binary);
                 return true;
-
             }
             catch (BinaryNotFoundException)
             {
@@ -269,9 +259,8 @@ namespace DD4T.Factories
                     DeleteFile(physicalPath);
                 }
                 return false;
-
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 LoggerService.Warning($"Caught unexpected exception while retrieving binary with url {urlWithoutDimensions} (requested url: {url}. Error message: {e.Message}\r\n{e.StackTrace}");
                 if (File.Exists(physicalPath))
@@ -311,13 +300,11 @@ namespace DD4T.Factories
                 FileInfo fi = new FileInfo(physicalPath);
                 if (fi.Length > 0)
                 {
-
                     return true;
                 }
             }
             return false;
         }
-
 
         /// <summary>
         /// Perform actual write of binary content to file
@@ -372,60 +359,59 @@ namespace DD4T.Factories
 
         internal static byte[] ResizeImageFile(byte[] imageFile, Dimensions dimensions, ImageFormat imageFormat)
         {
+            int targetHeight, targetWidth;
+            using (Image originalImage = Image.FromStream(new MemoryStream(imageFile)))
+            {
+                if (dimensions.Width > 0 && dimensions.Height > 0 && !(dimensions.Width == originalImage.Width && dimensions.Height == originalImage.Height))
+                {
+                    targetWidth = dimensions.Width;
+                    targetHeight = dimensions.Height;
+                }
+                else if (dimensions.Width > 0 && dimensions.Width != originalImage.Width)
+                {
+                    targetWidth = dimensions.Width;
+                    targetHeight = (int)(originalImage.Height * ((float)targetWidth / (float)originalImage.Width));
+                }
+                else if (dimensions.Height > 0 && dimensions.Height != originalImage.Height)
+                {
+                    targetHeight = dimensions.Height;
+                    targetWidth = (int)(originalImage.Width * ((float)targetHeight / (float)originalImage.Height));
+                }
+                else
+                {
+                    //No need to resize the image, return the original bytes.
+                    return imageFile;
+                }
 
-            int targetH, targetW;
-            Image original = Image.FromStream(new MemoryStream(imageFile));
-            if (dimensions.Width > 0 && dimensions.Height > 0 && !(dimensions.Width == original.Width && dimensions.Height == original.Height))
-            {
-                targetW = dimensions.Width;
-                targetH = dimensions.Height;
-            }
-            else if (dimensions.Width > 0 && dimensions.Width != original.Width)
-            {
-                targetW = dimensions.Width;
-                targetH = (int)(original.Height * ((float)targetW / (float)original.Width));
-            }
-            else if (dimensions.Height > 0 && dimensions.Height != original.Height)
-            {
-                targetH = dimensions.Height;
-                targetW = (int)(original.Width * ((float)targetH / (float)original.Height));
-            }
-            else
-            {
-                //No need to resize the image, return the original bytes.
-                return imageFile;
-            }
+                using (ImageAttributes imageAttributes = new ImageAttributes())
+                {
+                    Bitmap bitmapResized = new Bitmap(targetWidth, targetHeight, PixelFormat.Format24bppRgb);
+                    Bitmap bitmapOriginal = new Bitmap(originalImage);
 
-            Image imgPhoto = null;
-            using (MemoryStream memoryStream = new MemoryStream(imageFile))
-            {
-                imgPhoto = Image.FromStream(memoryStream);
-            }
-            if (imgPhoto == null)
-            {
-                throw new Exception("cannot read image, binary data may not represent an image");
-            }
-            // Create a new blank canvas.  The resized image will be drawn on this canvas.
-            Bitmap bmPhoto = new Bitmap(targetW, targetH, PixelFormat.Format24bppRgb);
-            Bitmap bmOriginal = new Bitmap(original);
-            bmPhoto.SetResolution(72, 72);
-            bmPhoto.MakeTransparent(bmOriginal.GetPixel(0, 0));
-            Graphics grPhoto = Graphics.FromImage(bmPhoto);
-            grPhoto.SmoothingMode = SmoothingMode.AntiAlias;
-            grPhoto.InterpolationMode = InterpolationMode.HighQualityBicubic;
-            grPhoto.PixelOffsetMode = PixelOffsetMode.HighQuality;
-            grPhoto.DrawImage(imgPhoto, new Rectangle(0, 0, targetW, targetH), 0, 0, original.Width, original.Height, GraphicsUnit.Pixel);
-            // Save out to memory and then to a file.  We dispose of all objects to make sure the files don't stay locked.
-            using (MemoryStream memoryStream = new MemoryStream())
-            {
-                bmPhoto.Save(memoryStream, imageFormat);
-                original.Dispose();
-                imgPhoto.Dispose();
-                bmPhoto.Dispose();
-                grPhoto.Dispose();
-                return memoryStream.GetBuffer();
+                    imageAttributes.SetWrapMode(WrapMode.TileFlipXY);
+
+                    bitmapResized.SetResolution(72, 72);
+                    bitmapResized.MakeTransparent(bitmapOriginal.GetPixel(0, 0));
+
+                    using (Graphics graphics = Graphics.FromImage(bitmapResized))
+                    {
+                        graphics.CompositingMode = CompositingMode.SourceCopy;
+                        graphics.SmoothingMode = SmoothingMode.AntiAlias;
+                        graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                        graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+                        graphics.DrawImage(bitmapOriginal, new Rectangle(0, 0, targetWidth, targetHeight), 0, 0, originalImage.Width, originalImage.Height, GraphicsUnit.Pixel, imageAttributes);
+
+                        // Save out to memory and then to a file.  We dispose of all objects to make sure the files don't stay locked.
+                        using (MemoryStream memoryStream = new MemoryStream())
+                        {
+                            bitmapResized.Save(memoryStream, imageFormat);
+                            return memoryStream.GetBuffer();
+                        }
+                    }
+                }
             }
         }
+
         private ImageFormat GetImageFormat(string path)
         {
             switch (Path.GetExtension(path).ToLower())
@@ -433,13 +419,16 @@ namespace DD4T.Factories
                 case ".jpg":
                 case ".jpeg":
                     return ImageFormat.Jpeg;
+
                 case ".png":
                     return ImageFormat.Png;
+
                 case ".gif":
                     return ImageFormat.Gif;
             }
             return ImageFormat.Png; // use png as default
         }
+
         private IBinary GetIBinaryObject(byte[] binaryContent, string url)
         {
             IBinary binary = new Binary();
@@ -447,6 +436,7 @@ namespace DD4T.Factories
             binary.Url = url;
             return binary;
         }
+
         private IBinary GetIBinaryObject(Stream binaryStream, string url)
         {
             IBinary binary = new Binary();
@@ -454,11 +444,12 @@ namespace DD4T.Factories
             binary.Url = url;
             return binary;
         }
-        #endregion
 
+        #endregion private
 
         public static bool DefaultLoadBinariesAsStream = false;
         private bool _loadBinariesAsStream = DefaultLoadBinariesAsStream;
+
         public bool LoadBinariesAsStream
         {
             get
@@ -499,13 +490,13 @@ namespace DD4T.Factories
             return path;
         }
 
-
         #region inner class Dimensions
+
         internal class Dimensions
         {
             internal int Width; internal int Height;
         }
-        #endregion
 
+        #endregion inner class Dimensions
     }
 }
