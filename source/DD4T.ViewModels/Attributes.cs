@@ -439,15 +439,25 @@ namespace DD4T.ViewModels.Attributes
     }
 
     /// <summary>
-    /// Field that is parsed into an Enum. Must be a Text field (not Keyword).
+    /// Field that is parsed into an Enum. Can be Text field or Keyword (Key is parsed to Enum)
     /// </summary>
     [AttributeUsage(AttributeTargets.Property, Inherited = true)]
     public class EnumFieldAttribute : FieldAttributeBase
     {
+
+        public bool RemoveWhitespace { get; set; }
+        
         public override IEnumerable GetFieldValues(IField field, IModelProperty property, ITemplate template, IViewModelFactory factory)
         {
             var result = new List<object>();
-            foreach (var value in field.Values)
+            IEnumerable fields = new List<string>();
+
+            if (field.Value.Any())
+                fields = field.Values;
+            else if (field.Keywords.Any())
+                fields = field.Keywords.Select(f => f.Key);
+
+            foreach (var value in fields)
             {
                 object parsed;
                 if (EnumTryParse(property.ModelType, value, out parsed))
@@ -471,7 +481,8 @@ namespace DD4T.ViewModels.Attributes
             {
                 try
                 {
-                    parsedEnum = Enum.Parse(enumType, value.ToString());
+                    string valueToBeParsed = RemoveWhitespace ? RemoveWhitespaceInsideString(value.ToString()) : value.ToString();
+                    parsedEnum = Enum.Parse(enumType, valueToBeParsed);
                     result = true;
                 }
                 catch (Exception)
@@ -480,6 +491,13 @@ namespace DD4T.ViewModels.Attributes
                 }
             }
             return result;
+        }
+
+        private string RemoveWhitespaceInsideString(string input)
+        {
+            return new string(input.ToCharArray()
+                .Where(c => !Char.IsWhiteSpace(c))
+                .ToArray());
         }
     }
 
@@ -783,10 +801,6 @@ namespace DD4T.ViewModels.Attributes
     [AttributeUsage(AttributeTargets.Property, Inherited = true)]
     public class KeywordTitleAttribute : KeywordAttributeBase
     {
-        public override IEnumerable GetPropertyValues(IKeyword keyword, IViewModelFactory builder)
-        {
-            return new[] { keyword.Title };
-        }
 
         public override Type ExpectedReturnType
         {
@@ -794,6 +808,11 @@ namespace DD4T.ViewModels.Attributes
             {
                 return typeof(string);
             }
+        }
+
+        public override IEnumerable GetPropertyValues(IKeyword keyword, Type propertyType, IViewModelFactory factory)
+        {
+            return new[] { keyword.Title };
         }
     }
 
@@ -803,7 +822,7 @@ namespace DD4T.ViewModels.Attributes
     [AttributeUsage(AttributeTargets.Property, Inherited = true)]
     public class KeywordDescriptionAttribute : KeywordAttributeBase
     {
-        public override IEnumerable GetPropertyValues(IKeyword keyword, IViewModelFactory builder)
+        public override IEnumerable GetPropertyValues(IKeyword keyword, Type propertyType, IViewModelFactory builder)
         {
             return new[] { keyword.Description };
         }
@@ -823,7 +842,7 @@ namespace DD4T.ViewModels.Attributes
     [AttributeUsage(AttributeTargets.Property, Inherited = true)]
     public class KeywordKeyAttribute : KeywordAttributeBase
     {
-        public override IEnumerable GetPropertyValues(IKeyword keyword, IViewModelFactory builder)
+        public override IEnumerable GetPropertyValues(IKeyword keyword, Type propertyType, IViewModelFactory builder)
         {
             return new[] { keyword.Key };
         }
@@ -843,7 +862,7 @@ namespace DD4T.ViewModels.Attributes
     [AttributeUsage(AttributeTargets.Property, Inherited = true)]
     public class KeywordIdAttribute : KeywordAttributeBase
     {
-        public override IEnumerable GetPropertyValues(IKeyword keyword, IViewModelFactory builder)
+        public override IEnumerable GetPropertyValues(IKeyword keyword, Type propertyType, IViewModelFactory builder)
         {
             return new[] { keyword.Id };
         }
@@ -863,7 +882,7 @@ namespace DD4T.ViewModels.Attributes
     [AttributeUsage(AttributeTargets.Property, Inherited = true)]
     public class KeywordIdAsTcmUriAttribute : KeywordAttributeBase
     {
-        public override IEnumerable GetPropertyValues(IKeyword keyword, IViewModelFactory builder)
+        public override IEnumerable GetPropertyValues(IKeyword keyword, Type propertyType, IViewModelFactory builder)
         {
             return new[] { new TcmUri(keyword.Id) };
         }
@@ -876,4 +895,7 @@ namespace DD4T.ViewModels.Attributes
             }
         }
     }
+
+    
 }
+

@@ -628,20 +628,21 @@ namespace DD4T.Core.Contracts.ViewModels
         /// <returns>The Property value</returns>
         IEnumerable GetPropertyValues(IPage page, Type propertyType, IViewModelFactory builder = null);
     }
-
     /// <summary>
-    /// An Attribtue for a Property representing some part of a Keyword
+    /// An Attribute for a Property representing some part of a Keyword
     /// </summary>
     public interface IKeywordAttribute : IPropertyAttribute
     {
         /// <summary>
         /// Gets a value for this Property based on a Keyword
         /// </summary>
-        /// <param name="keyword">The keyword for this Model</param>
+        /// <param name="keyword">The Keyword used as input for this Model</param>
+        /// <param name="propertyType">The actual return type of this Property</param>
         /// <param name="builder">A View Model builder</param>
         /// <returns>The Property value</returns>
-        IEnumerable GetPropertyValues(IKeyword keyword, IViewModelFactory builder);
+        IEnumerable GetPropertyValues(IKeyword keyword, Type propertyType, IViewModelFactory builder = null);
     }
+
 
     /// <summary>
     /// An Attribute for identifying a View Model class

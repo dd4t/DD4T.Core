@@ -20,7 +20,7 @@ namespace DD4T.Factories
     /// </summary>
     public class ComponentPresentationFactory : FactoryBase, IComponentPresentationFactory
     {
-       public const string CacheRegion = "ComponentPresentation";
+        public const string CacheRegion = "ComponentPresentation";
         public IComponentPresentationProvider ComponentPresentationProvider { get; set; }
 
         public ComponentPresentationFactory(IComponentPresentationProvider componentPresentationProvider, IFactoryCommonServices factoryCommonServices)
@@ -164,8 +164,16 @@ namespace DD4T.Factories
         public bool TryGetComponentPresentation(out IComponentPresentation cp, string componentUri, string templateUri = "")
         {
             cp = null;
-           
-            string cacheKey = CacheKeyFactory.GenerateKeyFromUri(componentUri, CacheRegion);
+
+            string[] cacheUris = { componentUri };
+
+            if (!String.IsNullOrEmpty(templateUri))
+            {
+                cacheUris = new string[] { componentUri, templateUri };
+            }
+
+            string cacheKey = CacheKeyFactory.GenerateKey(CacheRegion, cacheUris);
+
             cp = (IComponentPresentation)CacheAgent.Load(cacheKey);
 
             if (cp != null)
@@ -174,8 +182,8 @@ namespace DD4T.Factories
                 return true;
             }
 
-            string content = !String.IsNullOrEmpty(templateUri) ? 
-                                        ComponentPresentationProvider.GetContent(componentUri, templateUri) : 
+            string content = !String.IsNullOrEmpty(templateUri) ?
+                                        ComponentPresentationProvider.GetContent(componentUri, templateUri) :
                                         ComponentPresentationProvider.GetContent(componentUri);
 
             if (string.IsNullOrEmpty(content))

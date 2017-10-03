@@ -152,6 +152,49 @@ namespace DD4T.Core.Test
             Assert.IsTrue(km.Heading == "some heading");
         }
 
+
+        [TestMethod]
+        public void PageId()
+        {
+            IPage page = PageFactory.FindPage("/page-which-matches-a-model");
+            TestPageModel model = ViewModelFactory.BuildViewModel(page) as TestPageModel;
+            Assert.IsNotNull(model.PageId, "PageId is not set");
+        }
+
+        [TestMethod]
+        public void ComponentId()
+        {
+            IComponentPresentation cp = ComponentPresentationFactory.GetComponentPresentation("", "componentlink");
+            TestViewModelA model = ViewModelFactory.BuildViewModel(cp) as TestViewModelA;
+            Assert.IsNotNull(model.Id, "ComponentId is not set");
+        }
+
+        [TestMethod]
+        public void KeywordId()
+        {
+            IComponentPresentation cp = ComponentPresentationFactory.GetComponentPresentation("", "keyword");
+            Assert.IsNotNull(cp);
+
+            KeywordContainingModel vm = ViewModelFactory.BuildViewModel(cp) as KeywordContainingModel;
+            Assert.IsNotNull(vm);
+
+            KeywordModel km = vm.ConcreteKeyword;
+            Assert.IsNotNull(km);
+
+            Assert.IsNotNull(km.KeywordId, "KeywordId is not set");
+
+        }
+
+    }
+
+
+
+    [PageViewModel(TemplateTitle = "Standard")]
+    public class TestPageModel : TestViewModelBase
+    {
+        [PageId]
+        public DD4T.ContentModel.TcmUri PageId { get; set; }
+
     }
 
     [DD4T.ViewModels.Attributes.ContentModel("rootA", true)]
@@ -205,6 +248,10 @@ namespace DD4T.Core.Test
     [ContentModel("keyword", false)]
     public class KeywordModel : ViewModelBase
     {
+        [KeywordId]
+        public DD4T.ContentModel.TcmUri KeywordId { get; set; }
+
+
         [TextField(IsMetadata=true)]
         public string Heading { get; set; }
     }
