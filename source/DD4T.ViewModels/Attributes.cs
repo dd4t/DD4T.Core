@@ -7,6 +7,7 @@ using DD4T.ViewModels.Reflection;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -864,7 +865,13 @@ namespace DD4T.ViewModels.Attributes
     {
         public override IEnumerable GetPropertyValues(IKeyword keyword, Type propertyType, IViewModelFactory builder)
         {
-            return new[] { keyword.Id };
+            IEnumerable value;
+            if (propertyType == typeof(TcmUri))
+                value = new[] {new TcmUri(keyword.Id)};
+            else
+                value = new[] {keyword.Id};
+
+            return value;
         }
 
         public override Type ExpectedReturnType
@@ -876,26 +883,5 @@ namespace DD4T.ViewModels.Attributes
         }
     }
 
-    /// <summary>
-    /// The Id of a Keyword viewmodel as tcmuri.
-    /// </summary>
-    [AttributeUsage(AttributeTargets.Property, Inherited = true)]
-    public class KeywordIdAsTcmUriAttribute : KeywordAttributeBase
-    {
-        public override IEnumerable GetPropertyValues(IKeyword keyword, Type propertyType, IViewModelFactory builder)
-        {
-            return new[] { new TcmUri(keyword.Id) };
-        }
-
-        public override Type ExpectedReturnType
-        {
-            get
-            {
-                return typeof(TcmUri);
-            }
-        }
-    }
-
-    
-}
+  }
 
