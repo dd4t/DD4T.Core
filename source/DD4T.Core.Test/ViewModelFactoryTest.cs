@@ -170,7 +170,7 @@ namespace DD4T.Core.Test
         }
 
         [TestMethod]
-        public void KeywordId()
+        public void KeywordIdAsTcmUri()
         {
             IComponentPresentation cp = ComponentPresentationFactory.GetComponentPresentation("", "keyword");
             Assert.IsNotNull(cp);
@@ -184,6 +184,8 @@ namespace DD4T.Core.Test
             Assert.IsNotNull(km.KeywordId, "KeywordId is not set");
 
         }
+
+        
 
     }
 
@@ -245,16 +247,22 @@ namespace DD4T.Core.Test
         public ViewModelBase Keyword { get; set; }
     }
 
+   
+
     [ContentModel("keyword", false)]
     public class KeywordModel : ViewModelBase
     {
         [KeywordId]
         public DD4T.ContentModel.TcmUri KeywordId { get; set; }
 
+        [KeywordId]
+        public string KeywordIdAsString { get; set; }
 
         [TextField(IsMetadata=true)]
         public string Heading { get; set; }
     }
+
+    
 
 
     public abstract class TestViewModelBase : ViewModelBase
