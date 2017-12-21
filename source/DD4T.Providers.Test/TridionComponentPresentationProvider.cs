@@ -49,7 +49,7 @@ namespace DD4T.Providers.Test
             {
                 CustomizeCompomentForEmbeddedField(component);
             }
-            if (templateUri == "keyword")
+            if (templateUri == "keyword" || templateUri == "hasKeywordIdAsString")
             {
                 CustomizeCompomentForKeywordField(component);
             }
