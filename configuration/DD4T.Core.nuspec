@@ -11,7 +11,7 @@
     </releaseNotes>
     <tags>SDLTridion Tridion DD4T DD4T.Core DD4TCore SDLWeb8 SDL web SDLWEB</tags>
     <dependencies>
-      <dependency id="DD4T.Model" version="2.2.1" />
+      <dependency id="DD4T.Model" version="2.2.2" />
     </dependencies>
   </metadata>
 </package>
