@@ -255,20 +255,17 @@ namespace DD4T.Factories
             catch (BinaryNotFoundException)
             {
                 LoggerService.Debug("Binary with url {0} not found", urlWithoutDimensions);
+
                 // binary does not exist in Tridion, it should be removed from the local file system too
-                if (File.Exists(physicalPath))
-                {
-                    DeleteFile(physicalPath);
-                }
+                DeleteFile(physicalPath);
                 return false;
             }
             catch (Exception e)
             {
                 LoggerService.Warning($"Caught unexpected exception while retrieving binary with url {urlWithoutDimensions} (requested url: {url}. Error message: {e.Message}\r\n{e.StackTrace}");
-                if (File.Exists(physicalPath))
-                {
-                    DeleteFile(physicalPath);
-                }
+
+                // in case of error, the binary should be removed from the local file system too
+                DeleteFile(physicalPath);
                 throw e;
             }
         }
@@ -295,9 +292,10 @@ namespace DD4T.Factories
                 {
                     Directory.CreateDirectory(tempLocationToDeleteFile);
                 }
-                var movedPhysicalPath = $"{tempLocationToDeleteFile}{Path.GetFileName(physicalPath)}";
+                string uniqueName = Guid.NewGuid().ToString();
+                var movedPhysicalPath = $"{tempLocationToDeleteFile}{uniqueName}";
                 try
-                {
+                {                    
                     File.Move(physicalPath, movedPhysicalPath); //moving file as it happens during request
                     File.Delete(movedPhysicalPath); //File got unpublished / File does not exists
                 }
