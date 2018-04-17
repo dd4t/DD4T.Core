@@ -9,8 +9,9 @@ using DD4T.ContentModel.Factories;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Drawing.Drawing2D;
-using System.Linq;
 using System.Text.RegularExpressions;
+using System.Linq;
+using System.Web;
 
 namespace DD4T.Factories
 {
@@ -254,20 +255,17 @@ namespace DD4T.Factories
             catch (BinaryNotFoundException)
             {
                 LoggerService.Debug("Binary with url {0} not found", urlWithoutDimensions);
+
                 // binary does not exist in Tridion, it should be removed from the local file system too
-                if (File.Exists(physicalPath))
-                {
-                    DeleteFile(physicalPath);
-                }
+                DeleteFile(physicalPath);
                 return false;
             }
             catch (Exception e)
             {
                 LoggerService.Warning($"Caught unexpected exception while retrieving binary with url {urlWithoutDimensions} (requested url: {url}. Error message: {e.Message}\r\n{e.StackTrace}");
-                if (File.Exists(physicalPath))
-                {
-                    DeleteFile(physicalPath);
-                }
+
+                // in case of error, the binary should be removed from the local file system too
+                DeleteFile(physicalPath);
                 throw e;
             }
         }
@@ -289,32 +287,46 @@ namespace DD4T.Factories
             if (File.Exists(physicalPath))
             {
                 LoggerService.Debug("requested binary {0} no longer exists in broker. Removing...", physicalPath);
-                File.Delete(physicalPath); // file got unpublished
+                var tempLocationToDeleteFile = $"{HttpContext.Current.Server.MapPath("/")}App_Data\\Temp\\"; //storing the file inside appdata as cannot be requested
+                if (!Directory.Exists(tempLocationToDeleteFile))
+                {
+                    Directory.CreateDirectory(tempLocationToDeleteFile);
+                }
+                string uniqueName = Guid.NewGuid().ToString();
+                var movedPhysicalPath = $"{tempLocationToDeleteFile}{uniqueName}";
+                try
+                {                    
+                    File.Move(physicalPath, movedPhysicalPath); //moving file as it happens during request
+                    File.Delete(movedPhysicalPath); //File got unpublished / File does not exists
+                }
+                catch (Exception e)
+                {
+                    LoggerService.Error("Exception occurred {0}\r\n{1}", e.Message, e.StackTrace);
+                }
+                RemoveEmptyDirectories(Path.GetDirectoryName(physicalPath));
                 LoggerService.Debug("done ({0})", physicalPath);
-                RemoveEmptyDirectories(Path.GetDirectoryName(physicalPath)); // cleanup the empty directories too
             }
         }
 
         private void RemoveEmptyDirectories(string path)
         {
-            if(Path.GetPathRoot(path).Equals(Path.GetDirectoryName(path))) // if we are at the root then let's end the recursive call
+            try
             {
-                return;
-            }
-            if (IsDirectoryEmpty(path))
-            {
-                try
+                if (Path.GetPathRoot(path).Equals(path)) // if we are at the root then let's end the recursive call
+                {
+                    return;
+                }
+                if (IsDirectoryEmpty(path))
                 {
                     Directory.Delete(path);
                     RemoveEmptyDirectories(Path.GetDirectoryName(path)); // recursive call with parent folder as argument
                 }
-                catch (Exception ex)
-                {
-                    LoggerService.Debug("cleanup of folder {0} failed with error: {1}", path, ex.Message);
-                }
+            }
+            catch (Exception e)
+            {
+                LoggerService.Error("Exception occurred {0}\r\n{1}", e.Message, e.StackTrace);
             }
         }
-
         private bool IsDirectoryEmpty(string path)
         {
             return !Directory.EnumerateFileSystemEntries(path).Any();
