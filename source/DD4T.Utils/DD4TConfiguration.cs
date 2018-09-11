@@ -19,6 +19,7 @@ namespace DD4T.Utils
         private int? _jmsPort;
         private int? _jmsNumberOfRetriesToConnect;
         private int? _jmsSecondsBetweenRetries;
+        private string _jmsUrl;
         private string _jmsHostname;
         private string _binaryFileSystemCachePath;
         private string _jmsTopic;
@@ -419,6 +420,18 @@ namespace DD4T.Utils
                     _jmsHostname = SafeGetConfigSettingAsString(ConfigurationKeys.JMSHostname);
                 }
                 return _jmsHostname;
+            }
+        }
+
+        public string JMSUrl
+        {
+            get
+            {
+                if (_jmsUrl == null)
+                {
+                    _jmsUrl = SafeGetConfigSettingAsString(ConfigurationKeys.JMSUrl);
+                }
+                return _jmsUrl;
             }
         }
 

@@ -44,6 +44,7 @@ namespace DD4T.Utils
         
 
         // JMS settings
+        public const string JMSUrl = "DD4T.JMS.Url";
         public const string JMSHostname = "DD4T.JMS.Hostname";
         public const string JMSPort = "DD4T.JMS.Port";
         public const string JMSTopic = "DD4T.JMS.Topic";
