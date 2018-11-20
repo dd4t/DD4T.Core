@@ -109,6 +109,14 @@ namespace DD4T.Core.Test
             }
         }
 
+        public string JMSUrl
+        {
+            get
+            {
+                return string.Empty;
+            }
+        }
+
         public int JMSNumberOfRetriesToConnect
         {
             get

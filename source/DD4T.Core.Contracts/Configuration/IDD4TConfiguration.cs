@@ -37,6 +37,7 @@ namespace DD4T.ContentModel.Contracts.Configuration
         int JMSNumberOfRetriesToConnect { get; }
         int JMSSecondsBetweenRetries { get; }
         string JMSHostname { get; }
+        string JMSUrl { get; }
         int JMSPort { get; }
         string JMSTopic { get; }
 
