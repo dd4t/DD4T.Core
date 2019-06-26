@@ -118,12 +118,16 @@ namespace DD4T.Factories
                 else
                 {
                     LoggerService.Debug("about to create IPage from content for url {0}", LoggingCategory.Performance, url);
-                    page = GetIPageObject(pageContentFromBroker);
+                    IList<string> indirectDependencies = new List<string>();
+                    page = GetIPageObject(pageContentFromBroker, out indirectDependencies);
                     if (IncludeLastPublishedDate)
                         ((Page)page).LastPublishedDate = PageProvider.GetLastPublishedDateByUrl(url);
                     LoggerService.Debug("finished creating IPage from content for url {0}", LoggingCategory.Performance, url);
                     LoggerService.Debug("about to store page in cache with key {0}", LoggingCategory.Performance, cacheKey);
-                    CacheAgent.Store(cacheKey, CacheRegion, page, new List<string> { page.Id });
+
+                    List<string> dependencies = indirectDependencies == null ? new List<string>()  : indirectDependencies as List<string>;
+                    dependencies.Add(page.Id);
+                    CacheAgent.Store(cacheKey, CacheRegion, page, dependencies);
                     LoggerService.Debug("finished storing page in cache with key {0}", LoggingCategory.Performance, cacheKey);
                     LoggerService.Debug("<<TryFindPage ({0}", LoggingCategory.Performance, url);
                     return true;
@@ -275,6 +279,14 @@ namespace DD4T.Factories
         /// <returns>IPage object</returns>
         public IPage GetIPageObject(string pageStringContent)
         {
+            IList<string> dependencies = null;
+            return GetIPageObject(pageStringContent, out dependencies);
+        }
+
+
+        private IPage GetIPageObject(string pageStringContent, out IList<string> dependencies)
+        {
+           
             LoggerService.Debug(">>GetIPageObject(string length {0})", LoggingCategory.Performance, Convert.ToString(pageStringContent.Length));
 
             LoggerService.Debug("GetIPageObject: about to deserialize", LoggingCategory.Performance);
@@ -288,7 +300,7 @@ namespace DD4T.Factories
                 cp.OrderOnPage = orderOnPage++;
             }
             LoggerService.Debug("GetIPageObject: about to load DCPs", LoggingCategory.Performance);
-            LoadComponentModelsFromComponentPresentationFactory(page);
+            LoadComponentModelsFromComponentPresentationFactory(page, out dependencies);
             LoggerService.Debug("GetIPageObject: finished loading DCPs", LoggingCategory.Performance);
             LoggerService.Debug("<<GetIPageObject(string length {0})", LoggingCategory.Performance, Convert.ToString(pageStringContent.Length));
             return page;
@@ -352,10 +364,10 @@ namespace DD4T.Factories
 
         #region private helper methods
 
-        private void LoadComponentModelsFromComponentPresentationFactory(IPage page)
+        private void LoadComponentModelsFromComponentPresentationFactory(IPage page, out IList<string> dependencies)
         {
             LoggerService.Debug(">>LoadComponentModelsFromComponentPresentationFactory ({0})", LoggingCategory.Performance, page.Id);
-
+            dependencies = new List<string>();
             foreach (DD4T.ContentModel.ComponentPresentation cp in page.ComponentPresentations)
             {
                 if (cp.Component == null)
@@ -375,6 +387,13 @@ namespace DD4T.Factories
                             cp.ComponentTemplate = dcp.ComponentTemplate;
                         }
                         cp.TargetGroupConditions = dcp.TargetGroupConditions;
+
+                        // QS, 2019-06-26
+                        // add dependencies on the combined ID of the component and the component template
+                        // if the DCP is(un)published, the page which embeds it is automatically dropped from the cache
+                        dependencies.Add(dcp.Component.Id);
+                        LoggerService.Debug($"adding dependency from page {page.Id} on component {dcp.Component.Id}");
+
                     }
                     catch (ComponentPresentationNotFoundException)
                     {
@@ -429,5 +448,6 @@ namespace DD4T.Factories
         //}
 
         #endregion private helper methods
+
     }
 }

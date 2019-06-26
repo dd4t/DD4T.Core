@@ -247,7 +247,7 @@ namespace DD4T.Core.Test
             ICacheEvent cacheEvent = new CacheEvent()
             {
                 Key = "1:2",
-                RegionPath = "Binaries",
+                RegionPath = "/some/path/that/includes/ItemMeta",
                 Type = 0
             };
             messageProvider.BroadcastCacheEvent(cacheEvent);
