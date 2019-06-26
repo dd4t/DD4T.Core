@@ -214,7 +214,8 @@ namespace DD4T.Utils.Caching
                         continue;
                     }
                     _logger.Debug($"{prefix} Found dependency in the cache with key {cacheKey} of type {Cache[cacheKey].GetType()}");
-                    if (Cache[cacheKey] is IComponentPresentation payloadAsCp)
+                    var payloadAsCp = Cache[cacheKey] as IComponentPresentation;
+                    if (payloadAsCp != null)
                     {
                         var dependentCacheKey = ConvertTcmUriToCacheKey(payloadAsCp.Component.Id);
                         if (dependentCacheKey != key)
@@ -222,7 +223,8 @@ namespace DD4T.Utils.Caching
                             RemoveWithDependencies(dependentCacheKey, depth + 1);
                         }
                     }
-                    if (Cache[cacheKey] is IPage payloadAsPage)
+                    var payloadAsPage = Cache[cacheKey] as IPage;
+                    if (payloadAsPage != null)
                     {
                         var dependentCacheKey = ConvertTcmUriToCacheKey(payloadAsPage.Id);
                         if (dependentCacheKey != key)
