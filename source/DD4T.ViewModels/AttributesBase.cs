@@ -106,11 +106,23 @@ namespace DD4T.ViewModels.Attributes
                 }
                 else if (modelData is IComponent)
                 {
+                    if (((IComponent)modelData).ComponentType == ComponentType.Multimedia)
+                    {
+                        fields = (modelData as IComponent).MetadataFields;
+                    }
                     fields = (modelData as IComponent).Fields;
+                }
+                else if (modelData is IPage)
+                {
+                    fields = (modelData as IPage).MetadataFields;
                 }
                 else if (modelData is IEmbeddedFields)
                 {
                     fields = (modelData as IEmbeddedFields).Fields;
+                }
+                else if (modelData is IKeyword)
+                {
+                    fields = (modelData as IKeyword).MetadataFields;
                 }
                 if (String.IsNullOrEmpty(FieldName)) FieldName = GetFieldName(property.Name); //Convention over configuration by default -- Field name = Property name
 
