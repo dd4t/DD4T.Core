@@ -110,7 +110,10 @@ namespace DD4T.ViewModels.Attributes
                     {
                         fields = (modelData as IComponent).MetadataFields;
                     }
-                    fields = (modelData as IComponent).Fields;
+                    else
+                    {
+                        fields = (modelData as IComponent).Fields;
+                    }
                 }
                 else if (modelData is IPage)
                 {
