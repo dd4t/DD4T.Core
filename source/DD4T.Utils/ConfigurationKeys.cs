@@ -41,6 +41,7 @@ namespace DD4T.Utils
         public const string ContentProviderEndPoint = "DD4T.ContentProviderEndPoint";
         public const string IsPreview = "DD4T.IsPreview";
         public const string UseDefaultViewModels = "DD4T.UseDefaultViewModels";
+        public const string UDPEnabled = "DD4T.UDPEnabled";
         
 
         // JMS settings

@@ -81,6 +81,7 @@
     <Compile Include="LinkFactoryTest.cs" />
     <Compile Include="BinaryFactoryTest.cs" />
     <Compile Include="MockMessageProvider.cs" />
+    <Compile Include="CacheAgentTest.cs" />
     <Compile Include="ResolverTest.cs" />
     <Compile Include="ComponentFactoryTest.cs" />
     <Compile Include="BaseFactoryTest.cs" />

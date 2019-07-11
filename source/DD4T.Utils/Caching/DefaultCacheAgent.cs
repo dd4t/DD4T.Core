@@ -18,6 +18,10 @@ namespace DD4T.Utils.Caching
         private readonly ILogger _logger;
         private IDisposable unsubscriber;
 
+        private static readonly string LEGACY_CACHE_KEY_FORMAT = "{0}:{1}";
+        private static readonly string UDP_CACHE_KEY_FORMAT = "1:{0}:{1}";
+
+
         public DefaultCacheAgent(IDD4TConfiguration configuration, ILogger logger)
         {
             if (configuration == null)
@@ -36,6 +40,19 @@ namespace DD4T.Utils.Caching
             get
             {
                 return MemoryCache.Default;
+            }
+        }
+
+
+        /// <summary>
+        /// Returns the format of the cache key. This changed with the introduction of UDP in SDL Web 8.5
+        /// Before, the key looked like 14:1120 (pubid:itemid), since UDP the key looks like 1:14:1120, where 1 represents Tridion Sites (and 2 stands for Tridion Docs)
+        /// </summary>
+        public string CacheKeyFormat
+        {
+            get
+            {
+                return _configuration.UDPEnabled ? UDP_CACHE_KEY_FORMAT : LEGACY_CACHE_KEY_FORMAT;
             }
         }
 
@@ -107,7 +124,7 @@ namespace DD4T.Utils.Caching
                 foreach (string tcmUri in dependOnTcmUris)
                 {
                     TcmUri u = new TcmUri(tcmUri);
-                    string lookupkey = string.Format("{0}:{1}", u.PublicationId, u.ItemId);  // Tridion communicates about cache expiry using a key like 6:1120 (pubid:itemid)
+                    string lookupkey = string.Format(CacheKeyFormat, u.PublicationId, u.ItemId);  
                     IList<string> dependentItems = (IList<string>)Cache[GetDependencyCacheKey(lookupkey)];
                     if (dependentItems == null)
                     {
