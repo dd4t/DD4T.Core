@@ -123,8 +123,7 @@ namespace DD4T.Utils.Caching
             {
                 foreach (string tcmUri in dependOnTcmUris)
                 {
-                    TcmUri u = new TcmUri(tcmUri);
-                    string lookupkey = string.Format(CacheKeyFormat, u.PublicationId, u.ItemId);  
+                    string lookupkey = ConvertTcmUriToCacheKey(tcmUri);  
                     IList<string> dependentItems = (IList<string>)Cache[GetDependencyCacheKey(lookupkey)];
                     if (dependentItems == null)
                     {
@@ -260,8 +259,9 @@ namespace DD4T.Utils.Caching
         private string ConvertTcmUriToCacheKey(string id)
         {
             var uri = new TcmUri(id);
-            return $"{uri.PublicationId}:{uri.ItemId}";
+            return string.Format(CacheKeyFormat, uri.PublicationId, uri.ItemId);
         }
+
         #endregion
 
         #region IDisposable

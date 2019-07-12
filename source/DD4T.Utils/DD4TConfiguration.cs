@@ -496,7 +496,10 @@ namespace DD4T.Utils
                     {
                         _useDefaultViewModels = true; // the default for this setting is TRUE!
                     }
-                    _useDefaultViewModels = setting.ToLower() == "yes" || setting.ToLower() == "true";
+                    else
+                    {
+                        _useDefaultViewModels = setting.ToLower() == "yes" || setting.ToLower() == "true";
+                    }
                 }
                 return _useDefaultViewModels.Value;
             }
@@ -514,7 +517,10 @@ namespace DD4T.Utils
                     {
                         _udpEnabled = true; // the default for this setting is TRUE!
                     }
-                    _udpEnabled = setting.ToLower() == "yes" || setting.ToLower() == "true";
+                    else
+                    {
+                        _udpEnabled = setting.ToLower() == "yes" || setting.ToLower() == "true";
+                    }
                 }
                 return _udpEnabled.Value;
             }
