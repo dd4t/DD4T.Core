@@ -42,8 +42,7 @@ namespace DD4T.Core.Test
             Directory.CreateDirectory(config.BinaryFileSystemCachePath);
 
             TestConfiguration.OverrideBinaryExpiration = 60;
-
-
+            TestConfiguration.OverrideUdpEnabled = true; // otherwise cache invalidation would fail
         }
 
         [TestMethod]
@@ -244,12 +243,7 @@ namespace DD4T.Core.Test
             Assert.IsTrue(img.Width == 320);
             Assert.IsTrue(img.Height == 110);
 
-            ICacheEvent cacheEvent = new CacheEvent()
-            {
-                Key = "1:2",
-                RegionPath = "/some/path/that/includes/ItemMeta",
-                Type = 0
-            };
+            var cacheEvent = CacheAgentTest.GenerateCacheEvent(new TcmUri("tcm:1-2"));
             messageProvider.BroadcastCacheEvent(cacheEvent);
 
             // change the generated image dimensions in the provider

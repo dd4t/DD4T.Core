@@ -42,6 +42,7 @@ namespace DD4T.ContentModel.Contracts.Configuration
         string JMSTopic { get; }
 
         bool UseDefaultViewModels { get; }
+        bool UDPEnabled { get; }
 
         int GetExpirationForCacheRegion(string region);
     }

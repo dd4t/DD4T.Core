@@ -35,7 +35,7 @@ namespace DD4T.Core.Test
         protected static IComponentPresentationFactory ComponentPresentationFactory { get; set; }
         protected static IComponentFactory ComponentFactory { get; set; }
         protected static ILinkFactory LinkFactory { get; set; }
-        protected static ICacheAgent DefaultCacheAgent { get; set; }
+        protected static ICacheAgent CacheAgent { get; set; }
         protected static IViewModelFactory ViewModelFactory { get; set; }
 
 
@@ -51,6 +51,7 @@ namespace DD4T.Core.Test
             ComponentPresentationFactory = kernel.Get<IComponentPresentationFactory>();
             ComponentFactory = kernel.Get<IComponentFactory>();
             LinkFactory = kernel.Get<ILinkFactory>();
+            CacheAgent = kernel.Get<ICacheAgent>();
             ComponentPresentationFactory.CacheAgent = PageFactory.CacheAgent = kernel.Get<ICacheAgent>();
             PageFactory.PageProvider = kernel.Get<IPageProvider>();
             ComponentPresentationFactory.ComponentPresentationProvider = kernel.Get<IComponentPresentationProvider>();

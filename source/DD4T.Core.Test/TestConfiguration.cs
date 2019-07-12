@@ -13,6 +13,7 @@ namespace DD4T.Core.Test
         public static int OverridePageExpiration { get; set; }
         public static int OverrideComponentPresentationExpiration { get; set; }
         public static int OverrideBinaryExpiration { get; set; }
+        public static bool OverrideUdpEnabled { get; set; } = true;
         public string ActiveWebsite
         {
             get
@@ -272,6 +273,14 @@ namespace DD4T.Core.Test
             get
             {
                 return true;
+            }
+        }
+
+        public bool UDPEnabled
+        {
+            get
+            {
+                return OverrideUdpEnabled;
             }
         }
 

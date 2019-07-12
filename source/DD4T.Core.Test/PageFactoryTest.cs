@@ -38,7 +38,7 @@ namespace DD4T.Core.Test
             ((TridionPageProvider)PageFactory.PageProvider).ThrowPageNotFound = true;
             try
             {
-                IPage page = PageFactory.FindPage("/index.html");
+                IPage page = PageFactory.FindPage("/index-page-not-found.html");
                 Assert.Fail("PageFactory did not throw a PageNotFoundException");
             }
             catch (PageNotFoundException)
