@@ -111,10 +111,9 @@ namespace DD4T.Factories
             string pageContentFromBroker = PageProvider.GetContentByUrl(url);
             LoggerService.Debug("finished loading page content from provider with url {0}, has value: {1}", LoggingCategory.Performance, url, Convert.ToString(!(string.IsNullOrEmpty(pageContentFromBroker))));
 
-            var dependencies = new List<string>() {page.Id};
             if (string.IsNullOrEmpty(pageContentFromBroker))
             {
-                CacheAgent.Store(cacheKey, CacheRegion404, CacheValueNull, dependencies);
+                CacheAgent.Store(cacheKey, CacheRegion404, CacheValueNull);
             }
             else
             {
@@ -126,6 +125,7 @@ namespace DD4T.Factories
                 LoggerService.Debug("finished creating IPage from content for url {0}", LoggingCategory.Performance, url);
                 LoggerService.Debug("about to store page in cache with key {0}", LoggingCategory.Performance, cacheKey);
 
+                var dependencies = new List<string>() { page.Id };
                 dependencies.AddRange(indirectDependencies);
                 CacheAgent.Store(cacheKey, CacheRegion, page, dependencies);
                 LoggerService.Debug("finished storing page in cache with key {0}", LoggingCategory.Performance, cacheKey);
