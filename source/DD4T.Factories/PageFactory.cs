@@ -107,30 +107,30 @@ namespace DD4T.Factories
             }
             else
             {
-                LoggerService.Debug("about to load page content from provider with url {0}", LoggingCategory.Performance, url);
-                string pageContentFromBroker = PageProvider.GetContentByUrl(url);
-                LoggerService.Debug("finished loading page content from provider with url {0}, has value: {1}", LoggingCategory.Performance, url, Convert.ToString(!(string.IsNullOrEmpty(pageContentFromBroker))));
+            LoggerService.Debug("about to load page content from provider with url {0}", LoggingCategory.Performance, url);
+            string pageContentFromBroker = PageProvider.GetContentByUrl(url);
+            LoggerService.Debug("finished loading page content from provider with url {0}, has value: {1}", LoggingCategory.Performance, url, Convert.ToString(!(string.IsNullOrEmpty(pageContentFromBroker))));
 
-                if (string.IsNullOrEmpty(pageContentFromBroker))
-                {
-                    CacheAgent.Store(cacheKey, CacheRegion404, CacheValueNull);
-                }
-                else
-                {
-                    LoggerService.Debug("about to create IPage from content for url {0}", LoggingCategory.Performance, url);
-                    IList<string> indirectDependencies = new List<string>();
-                    page = GetIPageObject(pageContentFromBroker, out indirectDependencies);
-                    if (IncludeLastPublishedDate)
-                        ((Page)page).LastPublishedDate = PageProvider.GetLastPublishedDateByUrl(url);
-                    LoggerService.Debug("finished creating IPage from content for url {0}", LoggingCategory.Performance, url);
-                    LoggerService.Debug("about to store page in cache with key {0}", LoggingCategory.Performance, cacheKey);
+            var dependencies = new List<string>() {page.Id};
+            if (string.IsNullOrEmpty(pageContentFromBroker))
+            {
+                CacheAgent.Store(cacheKey, CacheRegion404, CacheValueNull, dependencies);
+            }
+            else
+            {
+                LoggerService.Debug("about to create IPage from content for url {0}", LoggingCategory.Performance, url);
+                IList<string> indirectDependencies = new List<string>();
+                page = GetIPageObject(pageContentFromBroker, out indirectDependencies);
+                if (IncludeLastPublishedDate)
+                    ((Page)page).LastPublishedDate = PageProvider.GetLastPublishedDateByUrl(url);
+                LoggerService.Debug("finished creating IPage from content for url {0}", LoggingCategory.Performance, url);
+                LoggerService.Debug("about to store page in cache with key {0}", LoggingCategory.Performance, cacheKey);
 
-                    List<string> dependencies = indirectDependencies == null ? new List<string>()  : indirectDependencies as List<string>;
-                    dependencies.Add(page.Id);
-                    CacheAgent.Store(cacheKey, CacheRegion, page, dependencies);
-                    LoggerService.Debug("finished storing page in cache with key {0}", LoggingCategory.Performance, cacheKey);
-                    LoggerService.Debug("<<TryFindPage ({0}", LoggingCategory.Performance, url);
-                    return true;
+                dependencies.AddRange(indirectDependencies);
+                CacheAgent.Store(cacheKey, CacheRegion, page, dependencies);
+                LoggerService.Debug("finished storing page in cache with key {0}", LoggingCategory.Performance, cacheKey);
+                LoggerService.Debug("<<TryFindPage ({0}", LoggingCategory.Performance, url);
+                return true;
                 }
             }
 
@@ -183,7 +183,13 @@ namespace DD4T.Factories
             LoggerService.Debug("<<TryFindPageContent ({0}", LoggingCategory.Performance, url);
             return false;
         }
-
+        /// <summary>
+        /// Get Page Content as a string by providing its URL
+        /// Note: Content that is retrieved with this method is cached and its contents are NOT invalidated by messages received from the publisher.
+        /// If you are using cache invalidation using Message Queue, consider using GetPageContent instead.
+        /// </summary>
+        /// <param name="url">Url of the page</param>
+        /// <returns>Page content as a string</returns>
         public string FindPageContent(string url)
         {
             string pageContent;
@@ -213,7 +219,8 @@ namespace DD4T.Factories
                 if (IncludeLastPublishedDate)
                     ((Page)page).LastPublishedDate = PageProvider.GetLastPublishedDateByUri(tcmUri);
 
-                CacheAgent.Store(cacheKey, CacheRegion, page);
+                var dependencies = new List<string>() { page.Id };
+                CacheAgent.Store(cacheKey, CacheRegion, page, dependencies);
 
                 return true;
             }
@@ -247,8 +254,9 @@ namespace DD4T.Factories
                 string tempPageContent = PageProvider.GetContentByUri(tcmUri);
                 if (tempPageContent != string.Empty)
                 {
+                    var dependencies = new List<string>() { tcmUri };
                     pageContent = tempPageContent;
-                    CacheAgent.Store(cacheKey, CacheRegion, pageContent);
+                    CacheAgent.Store(cacheKey, CacheRegion, pageContent, dependencies);
                     return true;
                 }
             }
@@ -275,7 +283,7 @@ namespace DD4T.Factories
         /// <summary>
         /// Returns an IPage object
         /// </summary>
-        /// <param name="pageStringContent">String to desirialize to an IPage object</param>
+        /// <param name="pageStringContent">String to deserialize to an IPage object</param>
         /// <returns>IPage object</returns>
         public IPage GetIPageObject(string pageStringContent)
         {
