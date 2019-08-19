@@ -33,29 +33,6 @@ namespace DD4T.Factories
             LinkProvider = linkProvider;
         }
 
-        //private object lock1 = new object();
-        //private ILinkProvider GetLinkProvider(string uri)
-        //{
-        //    TcmUri u = new TcmUri(uri);
-        //    if (u == null)
-        //        // invalid uri, return null
-        //        return null;
-
-        //    if (_linkProviders.ContainsKey(u.PublicationId))
-        //        return _linkProviders[u.PublicationId];
-        //    lock (lock1)
-        //    {
-        //        if (!_linkProviders.ContainsKey(u.PublicationId)) // we must test again, because in the mean time another thread might have added a record to the dictionary!
-        //        {
-        //            Type t = LinkProvider.GetType();
-        //            ILinkProvider lp = (ILinkProvider)Activator.CreateInstance(t);
-        //            lp.PublicationId = u.PublicationId;
-        //            _linkProviders.Add(u.PublicationId, lp);
-        //        }
-        //    }
-        //    return _linkProviders[u.PublicationId];
-        //}
-
         public string ResolveLink(string componentUri)
         {
             string cacheKey = String.Format(CacheKeyFormat, componentUri);
@@ -69,18 +46,17 @@ namespace DD4T.Factories
                 return link;
             }
             else
-            {
-               
+            {  
                 string resolvedUrl = LinkProvider.ResolveLink(componentUri);
                 if (resolvedUrl == null)
                 {
                     //CacheAgent.Store(cacheKey, CacheRegion, CacheValueNull, new List<string>() { String.Format(ComponentFactory.CacheKeyFormatByUri, componentUri) });
-                    CacheAgent.Store(cacheKey, CacheRegion, CacheValueNull);
+                    CacheAgent.Store(cacheKey, CacheRegion, CacheValueNull, new List<string>() { componentUri });
                 }
                 else
                 {
                     //CacheAgent.Store(cacheKey, CacheRegion, resolvedUrl, new List<string>() { String.Format(ComponentFactory.CacheKeyFormatByUri, componentUri) });
-                    CacheAgent.Store(cacheKey, CacheRegion, resolvedUrl);
+                    CacheAgent.Store(cacheKey, CacheRegion, resolvedUrl, new List<string>() { componentUri });
                 }
                 return resolvedUrl;
             }
@@ -103,11 +79,11 @@ namespace DD4T.Factories
                 string resolvedUrl = LinkProvider.ResolveLink(sourcePageUri, componentUri, excludeComponentTemplateUri);
                 if (resolvedUrl == null)
                 {
-                    CacheAgent.Store(cacheKey, CacheRegion, CacheValueNull);
+                    CacheAgent.Store(cacheKey, CacheRegion, CacheValueNull, new List<string>() { componentUri, sourcePageUri });
                 }
                 else
                 {
-                    CacheAgent.Store(cacheKey, CacheRegion, resolvedUrl);
+                    CacheAgent.Store(cacheKey, CacheRegion, resolvedUrl, new List<string>() { componentUri, sourcePageUri });
                 }
                 return resolvedUrl;
             }
