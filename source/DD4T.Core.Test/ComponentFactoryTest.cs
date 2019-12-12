@@ -31,5 +31,24 @@ namespace DD4T.Core.Test
             Assert.IsFalse(string.IsNullOrEmpty(component.Title));
         }
 
+        [TestMethod]
+        public void GetIComponentObject()
+        {
+            var cp = ComponentPresentationFactory.GetComponentPresentation("");
+            var serializedComponent = SerializerService.Serialize<IComponent>(cp.Component);
+            var component = ComponentFactory.GetIComponentObject(serializedComponent);
+            Assert.IsNotNull(component);
+            Assert.IsFalse(string.IsNullOrEmpty(component.Title));
+        }
+
+        [TestMethod]
+        public void GetLastPublishedDateCallBack()
+        {
+            IComponent component = ComponentFactory.GetComponent("");
+            var dateTime = ((ComponentFactory)ComponentFactory).GetLastPublishedDateCallBack("some-key", component);
+            Assert.IsTrue(dateTime != default(DateTime));
+        }
+
+
     }
 }
