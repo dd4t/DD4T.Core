@@ -80,13 +80,22 @@
 		<MSBuild Projects="$(SolutionFile)" Targets="Clean" />
 	</Target>
 	<Target Name="Package">
+	<ItemGroup>
+      <PackageFiles Include="$(MSBuildProjectDirectory)\**\*.*;"/>
+    </ItemGroup>
+    <Message Text="Starting Package, here are all the files I have now:"/>
+    <Message Text="%(PackageFiles.FullPath)"/>
 		<ItemGroup>
 			<PackageFilesCleanup Include="$(BuildPackageDirectory)\**\*.*"/>
 		</ItemGroup>
 		<Delete Files="@(PackageFilesCleanup)" />
-		<Message Text="About to build the NuGet package, first we will wait for all projects to finish" Importance="high" />
-		<Sleep Milliseconds="30000" />
-		<Message Text="All projects should have finished by now, let's start packaging" Importance="high" />		
+
+	<ItemGroup>
+      <PackageFilesAfterClean Include="$(MSBuildProjectDirectory)\**\*.*;"/>
+    </ItemGroup>
+    <Message Text="After cleaning the package folder, here are all the files I have now:"/>
+    <Message Text="%(PackageFilesAfterClean.FullPath)"/>
+
 		<MakeDir Directories="@(NuGetStructureFolders)"/>
 
 		<ItemGroup>
