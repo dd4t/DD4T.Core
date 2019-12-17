@@ -81,7 +81,7 @@
 	</Target>
 	<Target Name="Package">
 	<ItemGroup>
-      <PackageFiles Include="$(MSBuildProjectDirectory)\**\*.*;"/>
+      <SolutionFiles Include="$(SolutionDir)\**\*.*;"/>
     </ItemGroup>
     <Message Text="Starting Package, here are all the files I have now:"/>
     <Message Text="%(PackageFiles.FullPath)"/>
@@ -91,10 +91,10 @@
 		<Delete Files="@(PackageFilesCleanup)" />
 
 	<ItemGroup>
-      <PackageFilesAfterClean Include="$(MSBuildProjectDirectory)\**\*.*;"/>
+		<SolutionFilesAfterClean Include="$(SolutionDir)\**\*.*;"/>
     </ItemGroup>
     <Message Text="After cleaning the package folder, here are all the files I have now:"/>
-    <Message Text="%(PackageFilesAfterClean.FullPath)"/>
+    <Message Text="%(SolutionFilesAfterClean.FullPath)"/>
 
 		<MakeDir Directories="@(NuGetStructureFolders)"/>
 
