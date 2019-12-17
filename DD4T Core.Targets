@@ -140,6 +140,9 @@
 	</Target>
 	
 	<Target Name="Install">
+		<Message Text="About to build the NuGet package, first we will wait for all projects to finish" Importance="high" />
+		<Sleep Milliseconds="30000" />
+		<Message Text="All projects should have finished by now, let's start packaging" Importance="high" />
 		<ItemGroup>
 			<NuGetPackage Include="$(BuildPackageDirectory)\**\*.nupkg"/>
 		</ItemGroup>
