@@ -80,21 +80,10 @@
 		<MSBuild Projects="$(SolutionFile)" Targets="Clean" />
 	</Target>
 	<Target Name="Package">
-	<ItemGroup>
-      <SolutionFiles Include="$(SolutionDir)\..\**\*.*;"/>
-    </ItemGroup>
-    <Message Text="Starting Package, here are all the files I have now:"/>
-    <Message Text="%(SolutionDir.FullPath)"/>
 		<ItemGroup>
 			<PackageFilesCleanup Include="$(BuildPackageDirectory)\**\*.*"/>
 		</ItemGroup>
 		<Delete Files="@(PackageFilesCleanup)" />
-
-	<ItemGroup>
-		<SolutionFilesAfterClean Include="$(SolutionDir)\..\**\*.*;"/>
-    </ItemGroup>
-    <Message Text="After cleaning the package folder, here are all the files I have now:"/>
-    <Message Text="%(SolutionFilesAfterClean.FullPath)"/>
 
 		<MakeDir Directories="@(NuGetStructureFolders)"/>
 
