@@ -98,6 +98,7 @@
     <ProjectReference Include="..\DD4T.ViewModels\DD4T.ViewModels.csproj">
       <Project>{cc2b55da-ffbc-44b9-ada5-c087876ac199}</Project>
       <Name>DD4T.ViewModels</Name>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
