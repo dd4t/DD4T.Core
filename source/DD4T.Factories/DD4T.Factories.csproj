@@ -131,4 +131,5 @@
     <Message Text="Installing package to local NuGet repo" Importance="high" Condition="'$(NUGET_LOCALREPO)' != ''" />
     <CallTarget Targets="Install" Condition="'$(NUGET_LOCALREPO)' != ''" />
   </Target>
+  <Import Project="$(SolutionDir)\PrivateFalse.targets" Condition="Exists('$(SolutionDir)\PrivateFalse.targets')" />
 </Project>
