@@ -81,17 +81,17 @@
 	</Target>
 	<Target Name="Package">
 	<ItemGroup>
-      <SolutionFiles Include="$(SolutionDir)\**\*.*;"/>
+      <SolutionFiles Include="$(SolutionDir)\..\**\*.*;"/>
     </ItemGroup>
     <Message Text="Starting Package, here are all the files I have now:"/>
-    <Message Text="%(PackageFiles.FullPath)"/>
+    <Message Text="%(SolutionDir.FullPath)"/>
 		<ItemGroup>
 			<PackageFilesCleanup Include="$(BuildPackageDirectory)\**\*.*"/>
 		</ItemGroup>
 		<Delete Files="@(PackageFilesCleanup)" />
 
 	<ItemGroup>
-		<SolutionFilesAfterClean Include="$(SolutionDir)\**\*.*;"/>
+		<SolutionFilesAfterClean Include="$(SolutionDir)\..\**\*.*;"/>
     </ItemGroup>
     <Message Text="After cleaning the package folder, here are all the files I have now:"/>
     <Message Text="%(SolutionFilesAfterClean.FullPath)"/>
