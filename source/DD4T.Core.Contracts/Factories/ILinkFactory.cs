@@ -9,5 +9,6 @@ namespace DD4T.ContentModel.Factories
         ICacheAgent CacheAgent { get; set; }
         string ResolveLink(string componentUri);
         string ResolveLink(string sourcePageUri, string componentUri, string excludeComponentTemplateUri);
+        string ResolvePageLink(string pageUri);
     }
 }
