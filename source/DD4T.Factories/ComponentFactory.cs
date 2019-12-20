@@ -16,6 +16,7 @@ namespace DD4T.Factories
     /// Factory for the creation of IComponents
     /// </summary>
 
+    [Obsolete("This class is only provided for backwards compatibility with DD4T 1, which we will drop in the next major release. Use ComponentPresentationFactory instead.")]
     public class ComponentFactory : FactoryBase, IComponentFactory
     {
         public IComponentPresentationFactory ComponentPresentationFactory
@@ -24,7 +25,7 @@ namespace DD4T.Factories
             set;
         }
 
-        public ComponentFactory( IComponentPresentationFactory componentPresentationFactory,
+        public ComponentFactory(IComponentPresentationFactory componentPresentationFactory,
                             IFactoryCommonServices factoryCommonServices)
             : base(factoryCommonServices)
         {
@@ -45,7 +46,7 @@ namespace DD4T.Factories
         [Obsolete("Use the ComponentPresentationFactory to deserialize into a ComponentPresentation, then take the Component from there")]
         public IComponent GetIComponentObject(string componentStringContent)
         {
-            throw new NotImplementedException();
+            return ComponentPresentationFactory.GetIComponentPresentationObject(componentStringContent)?.Component;
         }
 
         /// <summary>
@@ -76,7 +77,13 @@ namespace DD4T.Factories
         [Obsolete]
         public override DateTime GetLastPublishedDateCallBack(string key, object cachedItem)
         {
-            throw new NotImplementedException();
+            if (cachedItem == null)
+                return DateTime.Now; // this will force the item to be removed from the cache
+            if (cachedItem is IComponent)
+            {
+                return GetLastPublishedDate(((IComponent)cachedItem).Id);
+            }
+            throw new Exception(string.Format("GetLastPublishedDateCallBack called for unexpected object type '{0}' or with unexpected key '{1}'", cachedItem.GetType(), key));
         }
 
         public bool TryGetComponent(string componentUri, out IComponent component, string templateUri = "")
