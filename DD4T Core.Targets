@@ -84,7 +84,7 @@
 			<PackageFilesCleanup Include="$(BuildPackageDirectory)\**\*.*"/>
 		</ItemGroup>
 		<Delete Files="@(PackageFilesCleanup)" />
-		
+
 		<MakeDir Directories="@(NuGetStructureFolders)"/>
 
 		<ItemGroup>

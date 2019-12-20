@@ -1,4 +1,4 @@
-version: 2.2.10
+version: 2.5
 pull_requests:
   do_not_increment_build_number: true
 branches:
@@ -27,6 +27,8 @@ notifications:
     auth_token:
       secure: sPqYbVki+502+OjRT+o3eITyiG8UDZ0Fu4M1fejZxs3O6OKtYu9JCNS9Ssw3/XjL
     channel: development
+skip_commits:
+  message: /\[nobuild\]/
 deploy:
 - provider: NuGet
   api_key:

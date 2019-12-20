@@ -38,6 +38,7 @@ namespace DD4T.Utils
         private bool? _linkToAnchor;
         private bool? _isPreview;
         private bool? _useDefaultViewModels;
+        private bool? _udpEnabled;
 
         public int PublicationId
         {
@@ -495,9 +496,33 @@ namespace DD4T.Utils
                     {
                         _useDefaultViewModels = true; // the default for this setting is TRUE!
                     }
-                    _useDefaultViewModels = setting.ToLower() == "yes" || setting.ToLower() == "true";
+                    else
+                    {
+                        _useDefaultViewModels = setting.ToLower() == "yes" || setting.ToLower() == "true";
+                    }
                 }
                 return _useDefaultViewModels.Value;
+            }
+        }
+
+
+        public bool UDPEnabled
+        {
+            get
+            {
+                if (_udpEnabled == null)
+                {
+                    string setting = SafeGetConfigSettingAsString(ConfigurationKeys.UDPEnabled);
+                    if (string.IsNullOrEmpty(setting))
+                    {
+                        _udpEnabled = true; // the default for this setting is TRUE!
+                    }
+                    else
+                    {
+                        _udpEnabled = setting.ToLower() == "yes" || setting.ToLower() == "true";
+                    }
+                }
+                return _udpEnabled.Value;
             }
         }
 

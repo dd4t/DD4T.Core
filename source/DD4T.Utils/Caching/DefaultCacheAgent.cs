@@ -5,6 +5,7 @@ using DD4T.ContentModel.Contracts.Configuration;
 using DD4T.ContentModel.Contracts.Logging;
 using DD4T.ContentModel.Contracts.Caching;
 using System.IO;
+using DD4T.ContentModel;
 
 namespace DD4T.Utils.Caching
 {
@@ -16,6 +17,10 @@ namespace DD4T.Utils.Caching
         private readonly IDD4TConfiguration _configuration;
         private readonly ILogger _logger;
         private IDisposable unsubscriber;
+
+        private static readonly string LEGACY_CACHE_KEY_FORMAT = "{0}:{1}";
+        private static readonly string UDP_CACHE_KEY_FORMAT = "1:{0}:{1}";
+
 
         public DefaultCacheAgent(IDD4TConfiguration configuration, ILogger logger)
         {
@@ -35,6 +40,19 @@ namespace DD4T.Utils.Caching
             get
             {
                 return MemoryCache.Default;
+            }
+        }
+
+
+        /// <summary>
+        /// Returns the format of the cache key. This changed with the introduction of UDP in SDL Web 8.5
+        /// Before, the key looked like 14:1120 (pubid:itemid), since UDP the key looks like 1:14:1120, where 1 represents Tridion Sites (and 2 stands for Tridion Docs)
+        /// </summary>
+        public string CacheKeyFormat
+        {
+            get
+            {
+                return _configuration.UDPEnabled ? UDP_CACHE_KEY_FORMAT : LEGACY_CACHE_KEY_FORMAT;
             }
         }
 
@@ -105,8 +123,7 @@ namespace DD4T.Utils.Caching
             {
                 foreach (string tcmUri in dependOnTcmUris)
                 {
-                    TcmUri u = new TcmUri(tcmUri);
-                    string lookupkey = string.Format("{0}:{1}", u.PublicationId, u.ItemId);  // Tridion communicates about cache expiry using a key like 6:1120 (pubid:itemid)
+                    string lookupkey = ConvertTcmUriToCacheKey(tcmUri);  
                     IList<string> dependentItems = (IList<string>)Cache[GetDependencyCacheKey(lookupkey)];
                     if (dependentItems == null)
                     {
@@ -176,24 +193,75 @@ namespace DD4T.Utils.Caching
         private static object lockOnDependencyList = new object();
         public void OnNext(ICacheEvent cacheEvent)
         {
-            _logger.Debug("received event with region {0}, uri {1} and type {2}", LoggingCategory.Background, cacheEvent.RegionPath, cacheEvent.Key, cacheEvent.Type);
+            _logger.Debug("Received event with region {0}, uri {1} and type {2}", LoggingCategory.Background, cacheEvent.RegionPath, cacheEvent.Key, cacheEvent.Type);
+            // only proceed for events in the region ItemMeta
+            if (!cacheEvent.RegionPath.Contains("ItemMeta"))
+            {
+                return;
+            }
             // get the list of dependent items from the cache
             // NOTE: locking is not a problem here since this code is always running on a background thread (QS)
             lock (lockOnDependencyList)
             {
-                IList<string> dependencies = (IList<string>)Cache[GetDependencyCacheKey(cacheEvent.Key)];
-                if (dependencies != null)
-                {
-                    foreach (var cacheKey in dependencies)
-                    {
-                        Cache.Remove(cacheKey);
-                        _logger.Debug("Removed item from cache (key = {0})", LoggingCategory.Background, cacheKey);
-
-                    }
-                    Cache.Remove(GetDependencyCacheKey(cacheEvent.Key));
-                }
+                RemoveWithDependencies(cacheEvent.Key, 0);               
             }
         }
+
+        private void RemoveWithDependencies(string key, int depth)
+        {
+            var prefix = "";
+            for (var i = 0; i <= depth; i++) prefix += ">";
+            _logger.Debug($"{prefix} Called RemoveWithDependencies for key {key} and depth {depth}");
+            if (depth > 4) // TODO: make this configurable
+            {
+                _logger.Debug($"{prefix} Max depth reached");
+                return;
+            }
+            IList<string> dependencies = (IList<string>)Cache[GetDependencyCacheKey(key)];
+            if (dependencies != null)
+            {
+                _logger.Debug($"{prefix} Found one or more dependencies for an (un)published item with cache key {key}");
+                foreach (var cacheKey in dependencies)
+                {
+                    // if the item in the cache represents a Tridion item, let's look for indirect dependencies and remove them also
+                    if (!Cache.Contains(cacheKey))
+                    {
+                        _logger.Debug($"{prefix} Found dependency {cacheKey} that doesn't exist in the cache any longer; skipping");
+                        continue;
+                    }
+                    _logger.Debug($"{prefix} Found dependency in the cache with key {cacheKey} of type {Cache[cacheKey].GetType()}");
+                    var payloadAsCp = Cache[cacheKey] as IComponentPresentation;
+                    if (payloadAsCp != null)
+                    {
+                        var dependentCacheKey = ConvertTcmUriToCacheKey(payloadAsCp.Component.Id);
+                        if (dependentCacheKey != key)
+                        {
+                            RemoveWithDependencies(dependentCacheKey, depth + 1);
+                        }
+                    }
+                    var payloadAsPage = Cache[cacheKey] as IPage;
+                    if (payloadAsPage != null)
+                    {
+                        var dependentCacheKey = ConvertTcmUriToCacheKey(payloadAsPage.Id);
+                        if (dependentCacheKey != key)
+                        {
+                            RemoveWithDependencies(dependentCacheKey, depth + 1);
+                        }
+                    }
+                    Cache.Remove(cacheKey);
+                    _logger.Debug($"{prefix} Removed item from cache (key = {cacheKey})", LoggingCategory.Background);
+
+                }
+                Cache.Remove(GetDependencyCacheKey(key));
+            }
+        }
+
+        private string ConvertTcmUriToCacheKey(string id)
+        {
+            var uri = new TcmUri(id);
+            return string.Format(CacheKeyFormat, uri.PublicationId, uri.ItemId);
+        }
+
         #endregion
 
         #region IDisposable
