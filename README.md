@@ -42,8 +42,9 @@ The Java version of DD4T is not included in this release. If you want to use DD4
 - [ComponentFactory throws NotImplementedExceptions](https://github.com/dd4t/DD4T.Core/issues/79)
 
 
-## Setting Up Your Development Environment
-https://github.com/dd4t/DD4T.Core/wiki/9.3-Setting-up-your-development-environment
+## Getting started with DD4T
+
+If you want to start using DD4T yourself, please check out the [Wiki](https://github.com/dd4t/DD4T.Core/wiki).
 
 
 ## Regions in Tridion 9
