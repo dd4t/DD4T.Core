@@ -35,4 +35,4 @@ deploy:
     secure: Q2V4fhDUDtQQhJU13r1AuHbKgooa6ePP5MLK9XRXFEsLbTjn1pimaiiPfG3Vsl1M
   artifact: /.*\.nupkg/
   on:
-    branch: develop
+    branch: develop, master
