@@ -34,13 +34,13 @@ skip_commits:
 deploy:
 - provider: NuGet
   api_key:
-    secure: Q2V4fhDUDtQQhJU13r1AuHbKgooa6ePP5MLK9XRXFEsLbTjn1pimaiiPfG3Vsl1M
+    secure: 88PTY4aknzE3Kev1FNnzpo37htA8qZKhjQxiNgbbcPQzgHBMI5fqb6bhjCnLQq8R
   artifact: /.*\.nupkg/
   on:
     branch: develop
 - provider: NuGet
   api_key:
-    secure: Q2V4fhDUDtQQhJU13r1AuHbKgooa6ePP5MLK9XRXFEsLbTjn1pimaiiPfG3Vsl1M
+    secure: 88PTY4aknzE3Kev1FNnzpo37htA8qZKhjQxiNgbbcPQzgHBMI5fqb6bhjCnLQq8R
   artifact: /.*\.nupkg/
   on:
     branch: master
