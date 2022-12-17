@@ -1,4 +1,4 @@
-version: 2.5
+version: 2.6
 pull_requests:
   do_not_increment_build_number: true
 branches:
@@ -14,6 +14,8 @@ assembly_info:
   assembly_informational_version: '{version}'
 install:
 - choco install msbuild.communitytasks -y
+before_build:
+- ps: ((Get-Content -path "C:\projects\dd4t-core\DD4T Core.Targets" | Out-String) -replace [Regex]::Escape('$(SolutionDir)packages\MSBuildTasks.1.5.0.235\build\MSBuildTasks.targets'),'C:\Program Files (x86)\MSBuild\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets') | Set-Content -Path "C:\projects\dd4t-core\DD4T Core.Targets"
 build:
   project: build.msbuild
   verbosity: normal
@@ -32,7 +34,14 @@ skip_commits:
 deploy:
 - provider: NuGet
   api_key:
-    secure: QmYvNY2pkxjIhWiI/UwFB/rjAkoNhZpElLZhmXiNVKvasN3qRyvvag0/2ZQD5eFb
+    secure: 88PTY4aknzE3Kev1FNnzpo37htA8qZKhjQxiNgbbcPQzgHBMI5fqb6bhjCnLQq8R
   artifact: /.*\.nupkg/
   on:
     branch: develop
+- provider: NuGet
+  api_key:
+    secure: 88PTY4aknzE3Kev1FNnzpo37htA8qZKhjQxiNgbbcPQzgHBMI5fqb6bhjCnLQq8R
+  artifact: /.*\.nupkg/
+  on:
+    branch: master
+

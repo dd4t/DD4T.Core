@@ -321,7 +321,7 @@ namespace DD4T.ViewModels
                 {
                     foreach (var val in values)
                     {
-                        if (elementType.IsAssignableFrom(val.GetType()))
+                        if (val != null && elementType.IsAssignableFrom(val.GetType()))
                         {
                             prop.AddToCollection(tempValues, val);
                         }
