@@ -88,7 +88,7 @@
 		<MakeDir Directories="@(NuGetStructureFolders)"/>
 
 		<ItemGroup>
-        	<MainPackageFiles Include="$(BuildBinDirectory)\**\*.dll;$(BuildBinDirectory)\**\*.xml;$(BuildBinDirectory)\**\*.pdb" Exclude="$(BuildBinDirectory)\**\*CodeAnalysis*;$(BuildBinDirectory)\**\*Test.dll;$(BuildBinDirectory)\**\*Test.pdb"/>
+        	<MainPackageFiles Include="$(BuildBinDirectory)\**\DD4T.Core.Contracts.dll;$(BuildBinDirectory)\**\DD4T.Factories.dll;$(BuildBinDirectory)\**\DD4T.Utils.dll;$(BuildBinDirectory)\**\DD4T.ViewModels.dll;$(BuildBinDirectory)\**\DD4T.Core.Contracts.pdb;$(BuildBinDirectory)\**\DD4T.Factories.pdb;$(BuildBinDirectory)\**\DD4T.Utils.pdb;$(BuildBinDirectory)\**\DD4T.ViewModels.pdb" />
         	<VersionFiles Include="$(BuildBinDirectory)\$(AssemblyName).dll"/>
         </ItemGroup>
     	 

@@ -9,10 +9,11 @@
     <description>DD4T .NET Core</description>
     <releaseNotes>
     </releaseNotes>
-    <tags>SDLTridion Tridion DD4T DD4T.Core DD4TCore SDLWeb8 SDL web SDLWEB</tags>
+    <tags>SDLTridion Tridion DD4T DD4T.Core DD4TCore SDLWeb8 SDL web SDLWEB Sites</tags>
     <dependencies>
-      <dependency id="DD4T.Model" version="2.5" />
-      <dependency id="Newtonsoft.Json" version="11.0.2" />
+      <dependency id="DD4T.Model" version="2.6" />
+      <dependency id="Newtonsoft.Json" version="13.0.3" />
+      <dependency id="SixLabors.ImageSharp" version="2.1.9" />
     </dependencies>
   </metadata>
 </package>
