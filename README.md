@@ -6,6 +6,16 @@
 DD4T - delivery framework for Microsoft.NET
 
 
+## Release notes for version 2.6.1
+- Bump Newtonsoft to 13.0.3
+- It is now possible to resize webp image
+
+
+## Release notes for version 2.6
+- Bump version of DD4T.Model to 2.6
+- Bump Newtonsoft to 13.0.2
+- Added a nullcheck to prevent an error when building a page viewmodel with en empty list of component view models
+
 ## Release notes for version 2.5
 
 This release rolls up the bugfixes and stabilization and performance improvements that have been released in the various DD4T NuGet packages over the last years. 

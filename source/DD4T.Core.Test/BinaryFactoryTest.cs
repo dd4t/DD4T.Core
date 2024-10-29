@@ -95,7 +95,7 @@ namespace DD4T.Core.Test
             Assert.IsNotNull(binary);
             Assert.IsTrue(binary.BinaryData.Length > 100, "byte array is too small, something went wrong");
             Assert.IsFalse(string.IsNullOrEmpty(binary.Id), "binary.Id is missing");
-            Image img = GetImageFromBytes(binary.BinaryData);
+            var img = GetImageFromBytes(binary.BinaryData);
             Assert.IsTrue(img.Width == 160);
             Assert.IsTrue(img.Height == 55);
 
@@ -108,9 +108,23 @@ namespace DD4T.Core.Test
             Assert.IsNotNull(binary);
             Assert.IsTrue(binary.BinaryData.Length > 100, "byte array is too small, something went wrong");
             Assert.IsFalse(string.IsNullOrEmpty(binary.Id), "binary.Id is missing");
-            Image img = GetImageFromBytes(binary.BinaryData);
+            var img = GetImageFromBytes(binary.BinaryData);
             Assert.IsTrue(img.Height == 55);
             Assert.IsTrue(img.Width == 160);
+        }
+
+        [TestMethod]
+        public void ResizeWebpToWidth()
+        {
+
+            IBinary binary = BinaryFactory.FindBinary("/media/image_w160.webp");
+            Assert.IsNotNull(binary);
+            Assert.IsTrue(binary.BinaryData.Length > 100, "byte array is too small, something went wrong");
+            Assert.IsFalse(string.IsNullOrEmpty(binary.Id), "binary.Id is missing");
+            var img = GetImageFromBytes(binary.BinaryData);
+            Assert.AreEqual(160, img.Width);
+            Assert.AreEqual(107, img.Height);
+
         }
 
 
@@ -124,7 +138,7 @@ namespace DD4T.Core.Test
             Assert.IsNotNull(binary);
             Assert.IsTrue(binary.BinaryData.Length > 100, "byte array is too small, something went wrong");
             Assert.IsFalse(string.IsNullOrEmpty(binary.Id), "binary.Id is missing");
-            Image img = GetImageFromBytes(binary.BinaryData);
+            var img = GetImageFromBytes(binary.BinaryData);
             Assert.IsTrue(img.Width == 320);
             Assert.IsTrue(img.Height == 110);
 
@@ -165,7 +179,7 @@ namespace DD4T.Core.Test
             Assert.IsNotNull(binary);
             Assert.IsTrue(binary.BinaryData.Length > 100, "byte array is too small, something went wrong");
             Assert.IsFalse(string.IsNullOrEmpty(binary.Id), "binary.Id is missing");
-            Image img = GetImageFromBytes(binary.BinaryData);
+            var img = GetImageFromBytes(binary.BinaryData);
             Assert.IsTrue(img.Width == 300, "width is not 300 when image is retrieved for the first time");
             Assert.IsTrue(img.Height == 400, "height is not 400 when image is retrieved for the first time");
 
@@ -199,7 +213,7 @@ namespace DD4T.Core.Test
             Assert.IsNotNull(binary);
             Assert.IsTrue(binary.BinaryData.Length > 100, "byte array is too small, something went wrong");
             Assert.IsFalse(string.IsNullOrEmpty(binary.Id), "binary.Id is missing");
-            Image img = GetImageFromBytes(binary.BinaryData);
+            var img = GetImageFromBytes(binary.BinaryData);
             Assert.IsTrue(img.Width == 300);
             Assert.IsTrue(img.Height == 400);
 
@@ -239,7 +253,7 @@ namespace DD4T.Core.Test
             Assert.IsNotNull(binary);
             Assert.IsTrue(binary.BinaryData.Length > 100, "byte array is too small, something went wrong");
             Assert.IsFalse(string.IsNullOrEmpty(binary.Id), "binary.Id is missing");
-            Image img = GetImageFromBytes(binary.BinaryData);
+            var img = GetImageFromBytes(binary.BinaryData);
             Assert.IsTrue(img.Width == 320);
             Assert.IsTrue(img.Height == 110);
 
@@ -272,11 +286,12 @@ namespace DD4T.Core.Test
             Assert.IsTrue(binary.BinaryData.Length > 100, "byte array is too small, something went wrong");
         }
 
-        private Image GetImageFromBytes(byte[] bytes)
+        private SixLabors.ImageSharp.Image GetImageFromBytes(byte[] bytes)
         {
-            MemoryStream ms = new MemoryStream(bytes, 0, bytes.Length);
-            ms.Position = 0; // this is important
-            return Image.FromStream(ms, true);
+            using (MemoryStream inStream = new MemoryStream(bytes))
+            {
+                return SixLabors.ImageSharp.Image.Load(inStream);
+            }
         }
 
         private void ResetImageDimensions()
