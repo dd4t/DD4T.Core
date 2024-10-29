@@ -6,12 +6,12 @@ using DD4T.ContentModel.Contracts.Providers;
 using DD4T.ContentModel.Exceptions;
 using DD4T.Utils.Caching;
 using DD4T.ContentModel.Factories;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.Drawing.Drawing2D;
 using System.Text.RegularExpressions;
 using System.Linq;
 using System.Web;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Processing;
+using SixLabors.ImageSharp.Formats;
 
 namespace DD4T.Factories
 {
@@ -295,7 +295,7 @@ namespace DD4T.Factories
                 string uniqueName = Guid.NewGuid().ToString();
                 var movedPhysicalPath = $"{tempLocationToDeleteFile}{uniqueName}";
                 try
-                {                    
+                {
                     File.Move(physicalPath, movedPhysicalPath); //moving file as it happens during request
                     File.Delete(movedPhysicalPath); //File got unpublished / File does not exists
                 }
@@ -396,76 +396,91 @@ namespace DD4T.Factories
             return result;
         }
 
-        internal static byte[] ResizeImageFile(byte[] imageFile, Dimensions dimensions, ImageFormat imageFormat)
+        internal static byte[] ResizeImageFile(byte[] imageFile, Dimensions dimensions, System.Drawing.Imaging.ImageFormat imageFormat)
         {
-            int targetHeight, targetWidth;
-            using (Image originalImage = Image.FromStream(new MemoryStream(imageFile)))
+            using (MemoryStream inStream = new MemoryStream(imageFile))
             {
-                if (dimensions.Width > 0 && dimensions.Height > 0 && !(dimensions.Width == originalImage.Width && dimensions.Height == originalImage.Height))
+                using (var outStream = new MemoryStream())
+                using (var image = Image.Load(inStream, out IImageFormat format))
                 {
-                    targetWidth = dimensions.Width;
-                    targetHeight = dimensions.Height;
-                }
-                else if (dimensions.Width > 0 && dimensions.Width != originalImage.Width)
-                {
-                    targetWidth = dimensions.Width;
-                    targetHeight = (int)(originalImage.Height * ((float)targetWidth / (float)originalImage.Width));
-                }
-                else if (dimensions.Height > 0 && dimensions.Height != originalImage.Height)
-                {
-                    targetHeight = dimensions.Height;
-                    targetWidth = (int)(originalImage.Width * ((float)targetHeight / (float)originalImage.Height));
-                }
-                else
-                {
-                    //No need to resize the image, return the original bytes.
-                    return imageFile;
-                }
-
-                using (ImageAttributes imageAttributes = new ImageAttributes())
-                {
-                    Bitmap bitmapResized = new Bitmap(targetWidth, targetHeight, PixelFormat.Format24bppRgb);
-                    Bitmap bitmapOriginal = new Bitmap(originalImage);
-
-                    imageAttributes.SetWrapMode(WrapMode.TileFlipXY);
-
-                    bitmapResized.SetResolution(72, 72);
-                    bitmapResized.MakeTransparent(bitmapOriginal.GetPixel(0, 0));
-
-                    using (Graphics graphics = Graphics.FromImage(bitmapResized))
-                    {
-                        graphics.CompositingMode = CompositingMode.SourceCopy;
-                        graphics.SmoothingMode = SmoothingMode.AntiAlias;
-                        graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                        graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
-                        graphics.DrawImage(bitmapOriginal, new Rectangle(0, 0, targetWidth, targetHeight), 0, 0, originalImage.Width, originalImage.Height, GraphicsUnit.Pixel, imageAttributes);
-
-                        // Save out to memory and then to a file.  We dispose of all objects to make sure the files don't stay locked.
-                        using (MemoryStream memoryStream = new MemoryStream())
-                        {
-                            bitmapResized.Save(memoryStream, imageFormat);
-                            return memoryStream.GetBuffer();
-                        }
-                    }
+                    var clone = image.Clone(i => i.Resize(dimensions.Width, dimensions.Height));
+                    clone.Save(outStream, format);
+                    return outStream.ToArray();
                 }
             }
+
+
+            //int targetHeight, targetWidth;
+            //using (Image originalImage = Image.FromStream(new MemoryStream(imageFile)))
+            //{
+            //    if (dimensions.Width > 0 && dimensions.Height > 0 && !(dimensions.Width == originalImage.Width && dimensions.Height == originalImage.Height))
+            //    {
+            //        targetWidth = dimensions.Width;
+            //        targetHeight = dimensions.Height;
+            //    }
+            //    else if (dimensions.Width > 0 && dimensions.Width != originalImage.Width)
+            //    {
+            //        targetWidth = dimensions.Width;
+            //        targetHeight = (int)(originalImage.Height * ((float)targetWidth / (float)originalImage.Width));
+            //    }
+            //    else if (dimensions.Height > 0 && dimensions.Height != originalImage.Height)
+            //    {
+            //        targetHeight = dimensions.Height;
+            //        targetWidth = (int)(originalImage.Width * ((float)targetHeight / (float)originalImage.Height));
+            //    }
+            //    else
+            //    {
+            //        //No need to resize the image, return the original bytes.
+            //        return imageFile;
+            //    }
+
+            //    using (ImageAttributes imageAttributes = new ImageAttributes())
+            //    {
+            //        Bitmap bitmapResized = new Bitmap(targetWidth, targetHeight, PixelFormat.Format24bppRgb);
+            //        Bitmap bitmapOriginal = new Bitmap(originalImage);
+
+            //        imageAttributes.SetWrapMode(WrapMode.TileFlipXY);
+
+            //        bitmapResized.SetResolution(72, 72);
+            //        bitmapResized.MakeTransparent(bitmapOriginal.GetPixel(0, 0));
+
+            //        using (Graphics graphics = Graphics.FromImage(bitmapResized))
+            //        {
+            //            graphics.CompositingMode = CompositingMode.SourceCopy;
+            //            graphics.SmoothingMode = SmoothingMode.AntiAlias;
+            //            graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            //            graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+            //            graphics.DrawImage(bitmapOriginal, new Rectangle(0, 0, targetWidth, targetHeight), 0, 0, originalImage.Width, originalImage.Height, GraphicsUnit.Pixel, imageAttributes);
+
+            //            // Save out to memory and then to a file.  We dispose of all objects to make sure the files don't stay locked.
+            //            using (MemoryStream memoryStream = new MemoryStream())
+            //            {
+            //                bitmapResized.Save(memoryStream, imageFormat);
+            //                return memoryStream.GetBuffer();
+            //            }
+            //        }
+            //    }
+            //}
         }
 
-        private ImageFormat GetImageFormat(string path)
+        private System.Drawing.Imaging.ImageFormat GetImageFormat(string path)
         {
             switch (Path.GetExtension(path).ToLower())
             {
                 case ".jpg":
                 case ".jpeg":
-                    return ImageFormat.Jpeg;
+                    return System.Drawing.Imaging.ImageFormat.Jpeg;
 
                 case ".png":
-                    return ImageFormat.Png;
+                    return System.Drawing.Imaging.ImageFormat.Png;
 
                 case ".gif":
-                    return ImageFormat.Gif;
+                    return System.Drawing.Imaging.ImageFormat.Gif;
+
+                    //case ".webp":
+                    //    return ImageFormat.We;
             }
-            return ImageFormat.Png; // use png as default
+            return System.Drawing.Imaging.ImageFormat.Png; // use png as default
         }
 
         private IBinary GetIBinaryObject(byte[] binaryContent, string url)

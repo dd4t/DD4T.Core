@@ -25,6 +25,10 @@ namespace DD4T.Providers.Test
 
         public byte[] GetBinaryByUrl(string url)
         {
+            if (url.EndsWith(".webp"))
+            {
+                return File.ReadAllBytes("test.webp");
+            }
             return GenerateImage();
         }
 
